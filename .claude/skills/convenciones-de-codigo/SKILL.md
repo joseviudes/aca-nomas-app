@@ -70,6 +70,7 @@ El `code` es `UPPER_SNAKE_CASE` y estable. El `message` va en español.
 
 ## Pruebas
 
+- Las pruebas van en `backend/tests/` (ver `estructura-del-proyecto`), en archivos `.test.ts`.
 - Vitest para lógica (`isOpenNow`, servicios). Se prueba **comportamiento**, no detalles internos.
 - `isOpenNow` recibe la hora como parámetro: se prueba con cualquier fecha.
 - Casos obligatorios de horarios: turno partido, cierre pasada la medianoche, día sin turnos, "hoy no abro", pausa.

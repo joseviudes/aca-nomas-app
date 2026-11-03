@@ -7,6 +7,8 @@ description: Reglas de Git de AcáNomás. Usar al crear una rama, escribir un co
 
 El repositorio es **público** y `main` está **protegida**: nada se sube directo a `main`.
 
+Las reglas completas están en `CONTRIBUTING.md` (raíz del repo). Esta skill es su resumen: si difieren, vale `CONTRIBUTING.md` y hay que corregir la skill.
+
 ## Ramas
 
 Formato: `tipo/descripcion-corta-en-ingles`, siempre desde `main` actualizada.

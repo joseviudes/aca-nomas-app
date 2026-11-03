@@ -15,15 +15,15 @@ Seguir los pasos en orden. Antes de empezar, leer los criterios de aceptación d
 
 ## Pasos
 
-1. **Base de datos (si cambia el modelo):** editar `prisma/schema.prisma`, crear la migración y actualizar el seed. Las tablas van en `snake_case` y plural. La migración se sube en el mismo PR.
+1. **Base de datos (si cambia el modelo):** editar `backend/prisma/schema.prisma`, crear la migración y actualizar el seed. Las tablas van en `snake_case` y plural. La migración se sube en el mismo PR.
 2. **Esquema Zod** en `schemas/`: cuerpo, parámetros y consulta. Los tipos salen de `z.infer`.
 3. **Contrato del repositorio** (interfaz) en `shared/ports/` y **repositorio** en `repositories/` (`PrismaXRepository`).
 4. **Servicio** en `services/`: reglas de negocio. Lanza subclases de `AppError` con un `code` estable (`BUSINESS_NOT_FOUND`).
 5. **Controlador** en `controllers/`: lee la request, llama al servicio, devuelve la response. Sin reglas de negocio.
 6. **Ruta** en `routes/`: sustantivo en plural bajo `/api`, con `validate(schema)` y, si es del panel, `requireAuth`.
 7. **Conexión** en `container.ts` y registro de la ruta en `app.ts`.
-8. **Pruebas** con Vitest sobre el servicio: el caso feliz, cada error y los bordes. Si el endpoint es del panel, probar 401 (sin sesión) y 403 (negocio ajeno).
-9. **Postman:** agregar o actualizar la request en la colección y exportarla a `docs/postman/`.
+8. **Pruebas** en `backend/tests/unit/<módulo>/` con Vitest sobre el servicio: el caso feliz, cada error y los bordes. Cuando existan los endpoints principales, también una prueba con Supertest en `backend/tests/integration/<módulo>/`. Si el endpoint es del panel, probar 401 (sin sesión) y 403 (negocio ajeno).
+9. **Postman:** agregar o actualizar la request en la colección y exportarla a `docs/postman/` (en la raíz del repo).
 10. **Cierre:** `lint` y `test` en verde, tildar la tarea en el checklist de la historia y abrir el PR (`git-y-pr`).
 
 ## Controles de calidad

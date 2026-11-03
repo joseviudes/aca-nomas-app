@@ -8,6 +8,8 @@ Este archivo se lee siempre. Es corto a propósito: tiene las reglas que no se n
 
 Node.js + Express 5 + TypeScript (ESM) · Prisma · PostgreSQL (Docker local; Supabase solo en staging y producción) · Zod · Vitest · ESLint + Prettier. Frontend más adelante.
 
+El código del servidor está en `backend/` y las pruebas en `backend/tests/`. El mapa de carpetas completo está en la skill `estructura-del-proyecto`.
+
 ## Reglas que no se negocian
 
 1. **Capas:** `controllers → services → repositories`. No se saltean capas. Los módulos se hablan por servicios, nunca por repositorios ni tablas ajenas.
