@@ -8,6 +8,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 |---|---|---|---|
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Registro inicial |
 | 0.2 | 03/11/2026 | Tobias | Agrega D-21. Corrige el nombre del repositorio en D-16 (`aca-nomas-app`) |
+| 0.3 | 03/11/2026 | José | Agrega D-22 (modelo de datos) y divide la fila del modelo y la API en D-20 |
 
 ## Índice
 
@@ -34,6 +35,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-19 | Patrones de diseño | Aceptada |
 | D-20 | Decisiones diferidas | Pendiente |
 | D-21 | Sin atribución a IA en commits y PR | Aceptada |
+| D-22 | Modelo de datos | Pendiente de revisión del equipo |
 
 ---
 
@@ -200,10 +202,26 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | Rubros | Lista fija chica por seed; administración en otra fase | A definir |
 | Frontend de la web pública | Next.js o renderizado en el servidor para vistas previas al compartir; panel como SPA con Vite | Cuando llegue el curso de React |
 | Hosting del primer despliegue | Sin definir | Pendiente |
-| Modelo de datos y diseño de la API | Se definen en el plan de implementación | Pendiente |
+| Modelo de datos | Propuesto en D-22 | En revisión del equipo |
+| Diseño de la API | Se define en el plan de implementación | Pendiente |
 
 ## D-21 Sin atribución a IA en commits y PR
 - **Decisión:** los commits y los PR no llevan `Co-Authored-By` ni mencionan a Claude u otra herramienta de IA.
 - **Motivo:** el autor del commit es quien sube el cambio y responde por él. Algunas herramientas agregan la atribución por defecto, así que la regla tiene que estar escrita.
 - **Descartado:** dejar que cada integrante decida, porque el historial queda inconsistente.
 - **Nota:** la regla está en `CONTRIBUTING.md` y en la skill `git-y-pr`.
+
+## D-22 Modelo de datos
+- **Decisión:**
+  - Seis tablas: `localities`, `categories`, `users`, `businesses`, `opening_hours` y `contact_channels`. El diagrama está en `docs/diagramas/modelo-de-datos.md`.
+  - Identificadores de tipo `uuid`.
+  - Una sola tabla `users` con la columna `role` (`owner` o `admin`). El visitante no tiene cuenta, por lo que no es un usuario.
+  - El rubro del negocio es obligatorio.
+  - Una sola foto por negocio, en la columna `photo_url`.
+  - Los horarios van en una tabla (`opening_hours`), con un turno por fila. Los canales de contacto van en otra (`contact_channels`), cada uno con su visibilidad.
+  - `JSONB` solo para los medios de pago (`payment_methods`). El resto del modelo es relacional.
+  - "Hoy no abro" se guarda como la fecha local (`closed_today_date`), así vence solo al cambiar el día. La pausa se guarda en `paused`.
+  - El estado "abierto ahora" no se guarda: se calcula con `isOpenNow`.
+- **Motivo:** las relaciones entre dueño, negocio, localidad y rubro encajan en SQL (D-03). Los horarios en filas permiten leer todos los turnos juntos para `isOpenNow` y validar que no se superpongan. Guardar la fecha de "hoy no abro" evita un proceso que lo reinicie cada día. Los medios de pago son una lista de etiquetas sin relaciones, el caso típico de dato flexible. Un rol en una sola tabla de cuentas coincide con D-10.
+- **Descartado:** identificadores enteros autoincrementales; tabla `owners` separada de los administradores; tabla de fotos (se retoma si se quieren varias por negocio); tabla de medios de pago con relación muchos a muchos; guardar el estado "abierto ahora" en la base.
+- **Nota:** el rol `admin` existe en el modelo, pero el panel de administración está fuera del MVP, por lo que no tiene interfaz. Si más adelante se agregan cuentas de vecinos, se suma un valor nuevo al rol con una migración. El estado pasa a `Aceptada` cuando el equipo termine la revisión.
