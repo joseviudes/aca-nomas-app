@@ -7,7 +7,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Registro inicial |
-| 0.2 | 03/11/2026 | Tobias | Agrega D-21 |
+| 0.2 | 03/11/2026 | Tobias | Agrega D-21. Corrige el nombre del repositorio en D-16 (`aca-nomas-app`) |
 
 ## Índice
 
@@ -158,7 +158,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
   - Ramas: `feat/`, `fix/`, `docs/`, `chore/` + descripción corta en inglés (`feat/business-search`).
   - Commits convencionales: tipo en inglés y descripción en español (`feat(businesses): agrega búsqueda por texto`).
   - Plantilla de PR con lista de verificación y revisión cruzada entre compañeros.
-- **Nombres:** `aca-nomas` en carpetas y repositorio; "AcáNomás" en la interfaz.
+- **Nombres:** `aca-nomas-app` en carpetas y repositorio; "AcáNomás" en la interfaz.
 
 ## D-17 Organización del trabajo
 - **Decisión:** tablero Kanban en Trello con tareas técnicas chicas (de uno a dos días). Cada integrante toma tareas y se las asigna. Máximo dos tarjetas en curso por persona.

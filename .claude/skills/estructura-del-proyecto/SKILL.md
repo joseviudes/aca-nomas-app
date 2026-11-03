@@ -10,7 +10,7 @@ Arquitectura: **monolito modular en capas**, con puertos y adaptadores en los bo
 ## Carpetas
 
 ```
-aca-nomas/
+aca-nomas-app/
 ├── CLAUDE.md
 ├── CONTRIBUTING.md            ramas, commits, flujo de PR, definición de hecho
 ├── README.md                  cómo levantar el proyecto
@@ -95,6 +95,6 @@ Todo el código del servidor vive en `backend/`. El frontend (web y panel) se ag
 ## Nombres de carpetas y archivos
 
 - Carpetas y archivos en `kebab-case` con sufijo de rol: `business.service.ts`, `business.controller.ts`, `business.schema.ts`.
-- Repo y carpetas: `aca-nomas`. En la interfaz se escribe "AcáNomás".
+- Repo y carpetas: `aca-nomas-app`. En la interfaz se escribe "AcáNomás".
 
 Más sobre nombres en `convenciones-de-codigo`.
