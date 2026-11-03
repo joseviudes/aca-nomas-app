@@ -37,6 +37,7 @@ chore: actualiza dependencias de Prisma
 
 - Un commit = un cambio con sentido. Commits chicos y frecuentes.
 - No mezclar en un mismo commit formato, refactor y funcionalidad.
+- Sin atribución a IA: no agregar `Co-Authored-By` ni mencionar a Claude u otra herramienta en commits ni en PR. El autor es quien sube el cambio.
 
 ## Pull request
 
@@ -87,3 +88,4 @@ Funciona, tiene prueba, el PR fue revisado y está mergeado.
 - Subir `.env`, claves o datos reales de personas.
 - Hacer `push --force` sobre `main`.
 - Mergear tu propio PR sin revisión.
+- Agregar `Co-Authored-By` o cualquier atribución a una IA en commits o PR.
