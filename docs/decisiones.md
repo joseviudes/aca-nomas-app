@@ -7,6 +7,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Registro inicial |
+| 0.2 | 03/11/2026 | Tobias | Agrega D-21 |
 
 ## Índice
 
@@ -32,6 +33,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-18 | Un único MVP | Aceptada |
 | D-19 | Patrones de diseño | Aceptada |
 | D-20 | Decisiones diferidas | Pendiente |
+| D-21 | Sin atribución a IA en commits y PR | Aceptada |
 
 ---
 
@@ -199,3 +201,9 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | Frontend de la web pública | Next.js o renderizado en el servidor para vistas previas al compartir; panel como SPA con Vite | Cuando llegue el curso de React |
 | Hosting del primer despliegue | Sin definir | Pendiente |
 | Modelo de datos y diseño de la API | Se definen en el plan de implementación | Pendiente |
+
+## D-21 Sin atribución a IA en commits y PR
+- **Decisión:** los commits y los PR no llevan `Co-Authored-By` ni mencionan a Claude u otra herramienta de IA.
+- **Motivo:** el autor del commit es quien sube el cambio y responde por él. Algunas herramientas agregan la atribución por defecto, así que la regla tiene que estar escrita.
+- **Descartado:** dejar que cada integrante decida, porque el historial queda inconsistente.
+- **Nota:** la regla está en `CONTRIBUTING.md` y en la skill `git-y-pr`.
