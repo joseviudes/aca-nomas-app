@@ -9,6 +9,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Registro inicial |
 | 0.2 | 03/11/2026 | Tobias | Agrega D-21. Corrige el nombre del repositorio en D-16 (`aca-nomas-app`) |
 | 0.3 | 03/11/2026 | Tobias | Agrega la rama `develop` a las decisiones diferidas (D-20) |
+| 0.4 | 04/11/2026 | Tobias | Agrega la respuesta paginada y la librería de logs a las decisiones diferidas (D-20) |
 
 ## Índice
 
@@ -203,6 +204,8 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | Hosting del primer despliegue | Sin definir | Pendiente |
 | Modelo de datos y diseño de la API | Se definen en el plan de implementación | Pendiente |
 | Rama `develop` | Sin `develop`: las ramas salen de `main` y en EP-00 los PR agrupan varias tareas por bloque | Se evalúa con el primer despliegue |
+| Respuesta paginada | `{ data, page, limit, total }`, con `limit` máximo de 100 | A confirmar en el diseño de la API |
+| Librería de logs | Logger propio mínimo con `console` (una línea por request) | Se evalúa antes del primer despliegue |
 
 ## D-21 Sin atribución a IA en commits y PR
 - **Decisión:** los commits y los PR no llevan `Co-Authored-By` ni mencionan a Claude u otra herramienta de IA.
