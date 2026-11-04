@@ -5,6 +5,7 @@
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Borrador inicial |
+| 0.2 | 03/11/2026 | Equipo AcáNomás | Se actualiza el estado del modelo de datos en la sección 10 |
 
 ---
 
@@ -260,4 +261,4 @@ Cartel con QR para compartir, métricas para el dueño, ferias y eventos, cuenta
 | Un dueño con varios negocios | El modelo lo permite; la interfaz del MVP muestra uno | A confirmar |
 | Rubros disponibles | Lista fija chica cargada por seed | A definir |
 | Hosting del primer despliegue | Sin definir | Pendiente |
-| Modelo de datos detallado | Se define en el plan de implementación | Pendiente |
+| Modelo de datos detallado | Propuesto en D-22 y en `docs/diagramas/modelo-de-datos.md` | En revisión del equipo |
