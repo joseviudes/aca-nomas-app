@@ -43,8 +43,9 @@ aca-nomas-app/
     │   │       └── domain/         tipos y reglas puras (isOpenNow)
     │   ├── shared/
     │   │   ├── ports/         contratos (interfaces) de todo lo externo
-    │   │   ├── errors/        AppError y subclases
-    │   │   └── middlewares/   validate, requireAuth, errores, logs, 404
+    │   │   ├── errors/        AppError, subclases y formato estándar de error
+    │   │   ├── middlewares/   validate, requireAuth, errores, logs, 404
+    │   │   └── pagination/    esquema de page y limit, y armado de la respuesta paginada
     │   └── infrastructure/
     │       ├── database/      solo el cliente de Prisma
     │       ├── storage/       adaptador local y de Supabase Storage

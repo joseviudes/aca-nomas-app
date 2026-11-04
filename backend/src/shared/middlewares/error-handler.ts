@@ -1,5 +1,6 @@
 import type { ErrorRequestHandler } from 'express';
 import { AppError } from '../errors/app-error.js';
+import { toErrorBody } from '../errors/error-response.js';
 
 function isInvalidJson(err: unknown): boolean {
   return err instanceof SyntaxError && 'type' in err && err.type === 'entity.parse.failed';
@@ -9,22 +10,16 @@ function isInvalidJson(err: unknown): boolean {
 // Los cuatro parámetros son obligatorios: así Express lo reconoce como manejador de errores.
 export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   if (err instanceof AppError) {
-    res.status(err.statusCode).json({
-      error: { code: err.code, message: err.message, details: err.details },
-    });
+    res.status(err.statusCode).json(toErrorBody(err.code, err.message, err.details));
     return;
   }
 
   if (isInvalidJson(err)) {
-    res.status(400).json({
-      error: { code: 'INVALID_JSON', message: 'El cuerpo no es un JSON válido', details: [] },
-    });
+    res.status(400).json(toErrorBody('INVALID_JSON', 'El cuerpo no es un JSON válido'));
     return;
   }
 
   // Un error inesperado se registra completo, pero al cliente no se le muestra el detalle.
   console.error(err);
-  res.status(500).json({
-    error: { code: 'INTERNAL_ERROR', message: 'Error interno del servidor', details: [] },
-  });
+  res.status(500).json(toErrorBody('INTERNAL_ERROR', 'Error interno del servidor'));
 };
