@@ -21,7 +21,7 @@ Seguir los pasos en orden. Antes de empezar, leer los criterios de aceptación d
 4. **Servicio** en `services/`: reglas de negocio. Lanza subclases de `AppError` con un `code` estable (`BUSINESS_NOT_FOUND`).
 5. **Controlador** en `controllers/`: lee la request, llama al servicio, devuelve la response. Sin reglas de negocio.
 6. **Ruta** en `routes/`: sustantivo en plural bajo `/api`, con `validate(schema)` y, si es del panel, `requireAuth`.
-7. **Conexión** en `container.ts` y registro de la ruta en `app.ts`.
+7. **Conexión** en `container.ts` y registro del router del módulo en `src/routes.ts`, sin el prefijo `/api` (D-23). `app.ts` no se toca.
 8. **Pruebas** en `backend/tests/unit/<módulo>/` con Vitest sobre el servicio: el caso feliz, cada error y los bordes. Cuando existan los endpoints principales, también una prueba con Supertest en `backend/tests/integration/<módulo>/`. Si el endpoint es del panel, probar 401 (sin sesión) y 403 (negocio ajeno).
 9. **Postman:** agregar o actualizar la request en la colección y exportarla a `docs/postman/` (en la raíz del repo).
 10. **Cierre:** `lint` y `test` en verde, tildar la tarea en el checklist de la historia y abrir el PR (`git-y-pr`).

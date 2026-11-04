@@ -5,6 +5,7 @@
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Borrador inicial para revisión |
+| 0.2 | 04/11/2026 | Tobias | Agrega a EP-00 la tarea del registro central de rutas (D-23) |
 
 ## Cómo leer este documento
 
@@ -53,6 +54,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 - [BE][M] Middlewares base: manejo de errores (`AppError` y subclases), logger, `validate(schema)` y 404.
 - [BE][S] Helpers del formato estándar de errores y de paginación.
 - [BE][S] Crear `container.ts` y el cliente único de Prisma en `infrastructure/database`.
+- [BE][S] Registro central de rutas en `routes.ts`, montado bajo `/api` desde `app.ts` (D-23).
 
 **Base de datos**
 - [DB][L] Diseñar el modelo de datos: localidad, dueño, negocio, rubro, horarios, canales de contacto, foto y ubicación. Decidir qué va en tablas y qué en `JSONB`. Revisión del equipo.
