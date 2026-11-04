@@ -1,10 +1,8 @@
 import { createApp } from './app.js';
-
-// Provisorio hasta config/env.ts: ahí el puerto se valida con Zod.
-const port = Number(process.env.PORT ?? 3000);
+import { env } from './config/env.js';
 
 const app = createApp();
 
-app.listen(port, () => {
-  console.log(`API escuchando en http://localhost:${port}`);
+app.listen(env.PORT, () => {
+  console.log(`API escuchando en http://localhost:${env.PORT}`);
 });
