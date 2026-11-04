@@ -28,7 +28,8 @@ aca-nomas-app/
     ├── .env.example
     ├── prisma/                schema.prisma, migrations/, seed.ts
     ├── src/
-    │   ├── app.ts             arma Express (middlewares y rutas)
+    │   ├── app.ts             arma Express (cadena de middlewares) y monta las rutas bajo /api
+    │   ├── routes.ts          registro central: suma el router de cada módulo (D-23)
     │   ├── server.ts          abre el puerto
     │   ├── container.ts       conecta las dependencias
     │   ├── config/
@@ -43,8 +44,9 @@ aca-nomas-app/
     │   │       └── domain/         tipos y reglas puras (isOpenNow)
     │   ├── shared/
     │   │   ├── ports/         contratos (interfaces) de todo lo externo
-    │   │   ├── errors/        AppError y subclases
-    │   │   └── middlewares/   validate, requireAuth, errores, logs, 404
+    │   │   ├── errors/        AppError, subclases y formato estándar de error
+    │   │   ├── middlewares/   validate, requireAuth, errores, logs, 404
+    │   │   └── pagination/    esquema de page y limit, y armado de la respuesta paginada
     │   └── infrastructure/
     │       ├── database/      solo el cliente de Prisma
     │       ├── storage/       adaptador local y de Supabase Storage
@@ -62,7 +64,8 @@ Todo el código del servidor vive en `backend/`. El frontend (web y panel) se ag
 - Dentro de `unit/` e `integration/` se repite la estructura de `src/modules/`:
   `tests/unit/businesses/business.service.test.ts` prueba `src/modules/businesses/services/business.service.ts`.
 - Los archivos terminan en `.test.ts`.
-- `integration/` se crea cuando existan los endpoints principales (D-15).
+- Una prueba que levanta la app y le hace requests reales es de integración: va en `integration/`, aunque no use la base.
+- Supertest se suma cuando existan los endpoints principales (D-15). Hasta entonces, `integration/` usa `fetch` contra la app en un puerto libre.
 
 ## Qué hace cada capa
 

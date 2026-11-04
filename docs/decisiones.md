@@ -9,6 +9,9 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Registro inicial |
 | 0.2 | 03/11/2026 | Tobias | Agrega D-21. Corrige el nombre del repositorio en D-16 (`aca-nomas-app`) |
 | 0.3 | 03/11/2026 | José | Agrega D-22 (modelo de datos) y divide la fila del modelo y la API en D-20 |
+| 0.4 | 03/11/2026 | Tobias | Agrega la rama `develop` a las decisiones diferidas (D-20) |
+| 0.5 | 04/11/2026 | Tobias | Agrega la respuesta paginada y la librería de logs a las decisiones diferidas (D-20) |
+| 0.6 | 04/11/2026 | Tobias | Agrega D-23: registro central de rutas en `routes.ts` |
 
 ## Índice
 
@@ -36,6 +39,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-20 | Decisiones diferidas | Pendiente |
 | D-21 | Sin atribución a IA en commits y PR | Aceptada |
 | D-22 | Modelo de datos | Pendiente de revisión del equipo |
+| D-23 | Registro central de rutas en `routes.ts` | Aceptada |
 
 ---
 
@@ -204,6 +208,9 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | Hosting del primer despliegue | Sin definir | Pendiente |
 | Modelo de datos | Propuesto en D-22 | En revisión del equipo |
 | Diseño de la API | Se define en el plan de implementación | Pendiente |
+| Rama `develop` | Sin `develop`: las ramas salen de `main` y en EP-00 los PR agrupan varias tareas por bloque | Se evalúa con el primer despliegue |
+| Respuesta paginada | `{ data, page, limit, total }`, con `limit` máximo de 100 | A confirmar en el diseño de la API |
+| Librería de logs | Logger propio mínimo con `console` (una línea por request) | Se evalúa antes del primer despliegue |
 
 ## D-21 Sin atribución a IA en commits y PR
 - **Decisión:** los commits y los PR no llevan `Co-Authored-By` ni mencionan a Claude u otra herramienta de IA.
@@ -225,3 +232,9 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Motivo:** las relaciones entre dueño, negocio, localidad y rubro encajan en SQL (D-03). Los horarios en filas permiten leer todos los turnos juntos para `isOpenNow` y validar que no se superpongan. Guardar la fecha de "hoy no abro" evita un proceso que lo reinicie cada día. Los medios de pago son una lista de etiquetas sin relaciones, el caso típico de dato flexible. Un rol en una sola tabla de cuentas coincide con D-10.
 - **Descartado:** identificadores enteros autoincrementales; tabla `owners` separada de los administradores; tabla de fotos (se retoma si se quieren varias por negocio); tabla de medios de pago con relación muchos a muchos; guardar el estado "abierto ahora" en la base.
 - **Nota:** el rol `admin` existe en el modelo, pero el panel de administración está fuera del MVP, por lo que no tiene interfaz. Si más adelante se agregan cuentas de vecinos, se suma un valor nuevo al rol con una migración. El estado pasa a `Aceptada` cuando el equipo termine la revisión.
+
+## D-23 Registro central de rutas en `routes.ts`
+- **Decisión:** las rutas de todos los módulos se registran en `src/routes.ts`. Ese archivo arma un único router (`createApiRouter`) y `app.ts` lo monta bajo `/api`. Cada módulo sigue definiendo sus rutas en su carpeta `routes/`.
+- **Motivo:** `app.ts` arma la cadena de middlewares (logs, JSON, rutas, 404 y errores). La lista de rutas cambia cada vez que se agrega un módulo, por otra razón. Separarlas deja `app.ts` legible de un vistazo y evita que crezca con cada módulo.
+- **Descartado:** registrar cada router con `app.use()` directo en `app.ts`, porque mezcla las dos responsabilidades y se llena a medida que aparecen módulos.
+- **Nota:** complementa a D-07. El prefijo `/api` (D-11) se define una sola vez, en `app.ts`; en `routes.ts` las rutas van sin el prefijo (`/businesses`).
