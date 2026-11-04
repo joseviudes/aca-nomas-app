@@ -8,13 +8,13 @@ Este documento muestra cómo se organiza la base de datos de AcáNomás: qué ta
 |---|---|---|---|
 | 0.1 | 03/11/2026 | Equipo AcáNomás | Borrador para revisión del equipo |
 | 0.2 | 03/11/2026 | Equipo AcáNomás | Se aclara que el visitante no tiene cuenta y los roles de `users` |
-| 0.3 | 04/11/2026 | Tobias | Aplica la revisión: enums en lugar de texto libre, medios de pago como enum, `photo_key` en lugar de `photo_url`, restricciones `CHECK`, comportamiento al borrar, índices, `slug` en rubros, UUID v7 y fechas de auditoría en todas las tablas |
+| 0.3 | 04/11/2026 | Tobias | Aplica la revisión: enums en lugar de texto libre, `photo_key` en lugar de `photo_url`, restricciones `CHECK`, comportamiento al borrar, índices, `slug` en rubros, UUID v7 y fechas de auditoría en todas las tablas |
 
 ## Índice
 
 1. Diagrama entidad-relación
 2. Tablas
-3. Qué va en columnas, en tablas y en enums
+3. Qué va en columnas, en tablas, en enums y en JSONB
 4. Reglas que no controla la base de datos
 5. Decisiones a confirmar
 
@@ -68,7 +68,7 @@ erDiagram
     float latitude "Opcional. Las dos coordenadas o ninguna"
     float longitude "Opcional. Las dos coordenadas o ninguna"
     varchar photo_key "Opcional. Clave en el almacenamiento, no la URL"
-    payment_method_array payment_methods "Lista del enum payment_method"
+    jsonb payment_methods "Lista de medios de pago, validada con Zod"
     boolean offers_delivery "Si hace entregas"
     boolean is_paused "Pausado por vacaciones, RN-01"
     date closed_today_date "Fecha local en que marcó hoy no abro"
@@ -116,9 +116,7 @@ erDiagram
 |---|---|---|
 | `user_role` | `owner`, `admin` | `users.role` |
 | `channel_type` | `whatsapp`, `instagram` | `contact_channels.type` |
-| `payment_method` | `cash`, `transfer`, `card`, `mercado_pago` (propuesta) | `businesses.payment_methods` |
-
-Un enum hace que la base rechace los valores inválidos (`"ownr"`, `"efectibo"`). Agregar un valor nuevo requiere una migración, y está bien: es un cambio que decide el equipo.
+Un enum hace que la base rechace los valores inválidos (`"ownr"`, `"whatsap"`). Agregar un valor nuevo requiere una migración, y está bien: es un cambio que decide el equipo.
 
 **Restricciones que no se ven en el diagrama:**
 
@@ -126,6 +124,7 @@ Un enum hace que la base rechace los valores inválidos (`"ownr"`, `"efectibo"`)
 - `businesses.slug` y `categories.slug` son únicos. El de los negocios nunca se actualiza (RN-05).
 - `opening_hours.day_of_week` solo admite valores de 1 a 7 (`CHECK`).
 - `businesses.latitude` y `businesses.longitude` van las dos o ninguna (`CHECK`).
+- `businesses.payment_methods` siempre es una lista JSON (`CHECK (jsonb_typeof(payment_methods) = 'array')`), con `[]` por defecto.
 - Un negocio sin filas en `opening_hours` se considera cerrado todos los días (RN-03).
 - Un negocio sin fila de un canal en `contact_channels` no tiene ese canal cargado (RN-06).
 - `users.role` solo admite `owner` y `admin`. El visitante no tiene cuenta (ERS 2.2), así que no es un usuario ni tiene fila en ninguna tabla: usa solo la API pública. Si más adelante se agregan cuentas de vecinos, se suma un valor nuevo al enum con una migración.
@@ -151,9 +150,9 @@ Un enum hace que la base rechace los valores inválidos (`"ownr"`, `"efectibo"`)
 
 ---
 
-## 3. Qué va en columnas, en tablas y en enums
+## 3. Qué va en columnas, en tablas, en enums y en JSONB
 
-Regla de D-03: el modelo es relacional y `JSONB` se usa solo donde el dato es flexible o anidado. En este modelo ningún dato lo es, así que no hay `JSONB`.
+Regla de D-03: el modelo es relacional y `JSONB` se usa solo donde el dato es flexible o anidado.
 
 | Dato | Dónde | Por qué |
 |---|---|---|
@@ -161,7 +160,7 @@ Regla de D-03: el modelo es relacional y `JSONB` se usa solo donde el dato es fl
 | Ubicación | Columnas `latitude` y `longitude` | La distancia se calcula en la aplicación con Haversine, sin PostGIS (D-05) |
 | Horarios | Tabla `opening_hours`, un turno por fila | Hasta dos turnos por día, y `isOpenNow` los lee todos juntos |
 | Canales de contacto | Tabla `contact_channels` | Cada canal tiene su propia visibilidad, y agregar otro canal no cambia el esquema |
-| Medios de pago | Columna `payment_methods`, lista del enum `payment_method` | Es una lista cerrada que se muestra como etiquetas. El enum valida los valores como lo haría una tabla, sin sumar joins. Se descartó `JSONB` porque no valida nada |
+| Medios de pago | `JSONB` en `payment_methods` | Es una lista de etiquetas sin relaciones ni consultas, que solo se muestra en la ficha. La base no valida los valores, así que el esquema Zod acepta solo los permitidos (`z.array(z.enum([...]))`), y un `CHECK` asegura que siempre sea una lista |
 | Entregas | Columna booleana `offers_delivery` | Es un sí o no |
 | Pausa | Columna booleana `is_paused` | Es un sí o no, y tiene la mayor precedencia en RN-01 |
 | Hoy no abro | Columna `closed_today_date` (fecha) | Se guarda la fecha local, así vence sola cuando cambia el día (US-23) |
@@ -183,6 +182,7 @@ Las valida el servicio o el esquema Zod antes de guardar:
 | Contraseña de al menos 8 caracteres (RF-13) | Esquema Zod de registro |
 | Email en minúsculas antes de guardar o buscar, para que `Juan@mail.com` y `juan@mail.com` sean la misma cuenta (RF-13) | Esquema Zod de registro y de login |
 | Descripción de hasta 80 caracteres (RF-16) | Esquema Zod, y `varchar(80)` en la base |
+| Medios de pago solo de la lista permitida, sin repetidos (RF-18) | Esquema Zod de la ficha |
 | WhatsApp en formato internacional (`5493794123456`) e Instagram sin `@` (RF-17) | Esquema Zod de contacto |
 | Un dueño solo modifica sus propios negocios (RN-07) | `requireAuth` y verificación de propiedad |
 | Foto en JPG, PNG o WebP de hasta 5 MB (RF-20) | Endpoint de subida |
@@ -203,7 +203,7 @@ El ERS (sección 10) y `decisiones.md` (D-20) dejan el modelo detallado como pen
 | Tabla de cuentas | Una sola tabla `users` con la columna `role` (D-10 habla de los roles `owner` y `admin`) | Tabla `owners` separada |
 | Rubro del negocio | Obligatorio (`category_id` no nulo) | Opcional |
 | Foto | Una columna `photo_key` con la clave en el almacenamiento | URL completa (se rompe al cambiar de entorno) o tabla `business_photos` si se quieren varias fotos |
-| Medios de pago | Lista del enum `payment_method` | `JSONB` (no valida los valores) o tabla `payment_methods` con relación muchos a muchos |
-| Valores de `payment_method` | Efectivo, transferencia, tarjeta y Mercado Pago | Otra lista |
+| Medios de pago | `JSONB` validado con Zod | Lista de un enum de PostgreSQL (la base valida los valores) o tabla `payment_methods` con relación muchos a muchos |
+| Valores permitidos de medios de pago | Efectivo, transferencia, tarjeta y Mercado Pago (`cash`, `transfer`, `card`, `mercado_pago`) | Otra lista |
 | Borrar un usuario con negocios | No se permite (`RESTRICT`) | Borrar sus negocios en cascada |
 | Dueño con varios negocios | El modelo lo permite (relación uno a muchos) y la interfaz del MVP muestra uno | Ya figura como "a confirmar" en el ERS |
