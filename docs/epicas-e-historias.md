@@ -6,6 +6,7 @@
 |---|---|---|---|
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Borrador inicial para revisión |
 | 0.2 | 04/11/2026 | Tobias | Agrega a EP-00 la tarea del registro central de rutas (D-23) |
+| 0.3 | 04/11/2026 | Tobias | Sincroniza con Trello: suma criterios de aceptación, el esqueleto de carpetas y separa `docker-compose.yml` del `Dockerfile` |
 
 ## Cómo leer este documento
 
@@ -41,13 +42,14 @@
 Sin historias de usuario. Todo lo demás depende de esto.
 
 **Repositorio y proceso**
-- [INFRA][M] Crear el repositorio público `aca-nomas` con `backend/` y `docs/`, `.gitignore`, `.env.example`, licencia y README inicial.
+- [INFRA][M] Crear el repositorio público `aca-nomas-app` con `backend/` y `docs/`, `.gitignore`, `.env.example`, licencia y README inicial.
 - [INFRA][S] Proteger `main`, activar el análisis de secretos de GitHub y agregar la plantilla de PR.
 - [DOC][S] Escribir `CONTRIBUTING.md` (ramas, commits, flujo de PR, definición de hecho).
 - [DOC][S] Copiar el ERS y `decisiones.md` a `docs/`.
 
 **Backend base**
 - [BE][M] Inicializar Node, TypeScript y Express 5 con ESM: `tsconfig`, scripts, `app.ts` y `server.ts`.
+- [BE][S] Crear el esqueleto de carpetas de `backend/src` y `backend/tests` según la skill `estructura-del-proyecto`.
 - [BE][S] Configurar ESLint y Prettier, con reglas de importación entre capas (los servicios no importan Prisma ni Express).
 - [BE][S] Configurar Vitest con una prueba de ejemplo.
 - [BE][M] Validar las variables de entorno con Zod (`config/env.ts`).
@@ -59,11 +61,12 @@ Sin historias de usuario. Todo lo demás depende de esto.
 **Base de datos**
 - [DB][L] Diseñar el modelo de datos: localidad, dueño, negocio, rubro, horarios, canales de contacto, foto y ubicación. Decidir qué va en tablas y qué en `JSONB`. Revisión del equipo.
 - [DB][S] Dibujar el diagrama entidad-relación en Mermaid y guardarlo en `docs/diagramas/`.
+- [INFRA][S] `docker-compose.yml` con PostgreSQL local, en el puerto 5433 para no chocar con un PostgreSQL instalado en la máquina. Va antes del schema porque la migración necesita la base levantada.
 - [DB][M] Escribir `schema.prisma` y la primera migración.
 - [DB][M] Seed con datos ficticios: una localidad (Corrientes Capital), rubros, dueños y entre 8 y 12 negocios con horarios variados, incluido uno con turno que cruza la medianoche y uno pausado.
 
 **Infraestructura**
-- [INFRA][M] `docker-compose.yml` con PostgreSQL local y `Dockerfile` de la API.
+- [INFRA][S] `Dockerfile` de la API (se usa en el primer despliegue).
 - [INFRA][M] GitHub Actions: lint y pruebas en cada PR.
 - [INFRA][S] Validar el formato de commits y del título del PR en CI (opcional).
 - [DOC][S] README con los pasos para levantar el proyecto (`docker compose up`, migrar, seed, correr).
@@ -101,7 +104,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-03 Filtrar por rubro
 **Como** visitante **quiero** elegir un rubro **para** ver solo ese tipo de negocios.
 - **RF-03** · Prioridad Alta
-- **Criterios:** solo se listan negocios del rubro elegido; "Todo" quita el filtro.
+- **Criterios:** solo se listan negocios del rubro elegido; "Todo" quita el filtro; los rubros salen de una lista fija cargada con el seed.
 - **Tareas:**
   - [BE][S] Endpoint `GET /api/categories`.
   - [BE][S] Filtro `category` en el listado.
@@ -110,7 +113,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-04 Filtrar por "abierto ahora"
 **Como** visitante **quiero** ver solo lo que está abierto **para** no ir a un lugar cerrado.
 - **RF-04** · Prioridad Alta · **Requiere HT-01**
-- **Criterios:** solo aparecen negocios con estado abierto; el total y la paginación respetan el filtro.
+- **Criterios:** solo aparecen negocios con estado abierto; el total y la paginación respetan el filtro; un negocio pausado o con "hoy no abro" nunca aparece como abierto.
 - **Tareas:**
   - [BE][S] Decidir cómo combinar el filtro `openNow` con la paginación (calcular el estado de los negocios de la localidad y paginar el resultado).
   - [BE][M] Implementar el filtro usando `isOpenNow`.
@@ -119,7 +122,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-05 Ver primero lo que está abierto y cerca
 **Como** visitante **quiero** que los resultados vengan ordenados **para** ver primero lo más útil.
 - **RF-05** · Prioridad Alta
-- **Criterios:** abiertos primero, luego por cercanía; sin ubicación, desempate por nombre.
+- **Criterios:** abiertos primero y, dentro de cada grupo, por cercanía; sin ubicación del visitante, los abiertos siguen primero y el desempate es por nombre.
 - **Tareas:**
   - [BE][M] Estrategias de ordenamiento (`OpenFirstThenDistance` y `ByName`) detrás de una interfaz.
   - [BE][S] Pruebas de los dos órdenes.
@@ -136,7 +139,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-07 Ver los negocios en un mapa
 **Como** visitante **quiero** verlos en un mapa **para** ubicarlos respecto de donde estoy.
 - **RF-07** · Prioridad Media
-- **Criterios:** pin por negocio con estado abierto o cerrado; al tocarlo se abre la ficha.
+- **Criterios:** pin por negocio con estado abierto o cerrado; al tocarlo se abre la ficha; la lista y el mapa se mantienen sincronizados.
 - **Tareas:**
   - [WEB][L] Mapa con Leaflet y OpenStreetMap con pines de dos estados.
   - [WEB][M] Sincronizar la lista con el mapa.
@@ -149,7 +152,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-08 Abrir la ficha de un negocio con su propio enlace
 **Como** visitante **quiero** abrir la página de un negocio **para** ver todos sus datos y compartirla.
 - **RF-08, RF-12** · Prioridad Alta
-- **Criterios:** `/businesses/:slug` devuelve la ficha o 404; el enlace funciona sin sesión en una pestaña nueva.
+- **Criterios:** `/businesses/:slug` devuelve la ficha o 404; el enlace funciona sin sesión en una pestaña nueva; hay un botón para copiar el enlace.
 - **Tareas:**
   - [BE][M] Endpoint `GET /api/businesses/:slug` con error 404 estándar.
   - [BE][S] Generación de slug único a partir del nombre, con pruebas.
@@ -159,7 +162,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-09 Ver si está abierto y sus horarios
 **Como** visitante **quiero** ver el estado actual y el horario **para** saber cuándo puedo ir.
 - **RF-09** · Prioridad Alta · **Requiere HT-01**
-- **Criterios:** muestra estado, horario de hoy y semana completa; coincide con RN-01.
+- **Criterios:** muestra estado, horario de hoy y semana completa; indica a qué hora cierra o cuándo vuelve a abrir; coincide con RN-01.
 - **Tareas:**
   - [BE][S] Incluir estado, hora de cierre o próxima apertura y horario semanal en la respuesta.
   - [WEB][M] Mostrar el estado, "Hoy" y la semana desplegable.
@@ -175,7 +178,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-11 Ver la foto del negocio
 **Como** visitante **quiero** ver una foto **para** reconocer el lugar.
 - **RF-11** · Prioridad Media
-- **Criterios:** si no hay foto, se muestra un marcador por defecto.
+- **Criterios:** la foto se ve en la ficha y en la tarjeta del listado; si no hay foto, se muestra un marcador por defecto.
 - **Tareas:**
   - [WEB][S] Mostrar la foto o el marcador por defecto en ficha y tarjeta.
 
@@ -196,7 +199,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-13 Iniciar y cerrar sesión
 **Como** dueño **quiero** entrar y salir de mi cuenta **para** acceder a mi panel de forma segura.
 - **RF-14** · Prioridad Alta
-- **Criterios:** credenciales inválidas devuelven un error genérico; hay límite de intentos; la sesión usa cookie `httpOnly`.
+- **Criterios:** credenciales inválidas devuelven un error genérico (no revela si el email existe); hay límite de intentos; la sesión usa cookie `httpOnly`; cerrar sesión invalida la sesión en el navegador.
 - **Tareas:**
   - [BE][M] Login con JWT corto en cookie `httpOnly` y `SameSite`, y logout.
   - [BE][S] Límite de intentos en el login.
@@ -229,7 +232,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-16 Elegir qué datos de contacto son públicos
 **Como** dueño **quiero** decidir qué canales se muestran **para** controlar cómo me contactan.
 - **RF-17** · Prioridad Alta
-- **Criterios:** WhatsApp e Instagram son opcionales y cada uno tiene un interruptor de visibilidad.
+- **Criterios:** WhatsApp e Instagram son opcionales y cada uno tiene un interruptor de visibilidad; un canal oculto no aparece en la API pública.
 - **Tareas:**
   - [BE][S] Aplicar la visibilidad en la respuesta pública, con pruebas.
   - [PANEL][M] Campos de contacto con interruptores.
@@ -237,6 +240,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-17 Indicar medios de pago y entregas
 **Como** dueño **quiero** decir cómo se paga y si hago entregas **para** que el cliente lo sepa antes de ir.
 - **RF-18** · Prioridad Media
+- **Criterios:** el dueño elige los medios de pago y si hace entregas; se muestran como etiquetas en la ficha pública.
 - **Tareas:**
   - [BE][S] Guardar y devolver medios de pago y entrega.
   - [PANEL][S] Selección de pagos y entregas.
@@ -253,7 +257,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-19 Subir una foto de mi local
 **Como** dueño **quiero** subir una foto **para** que me reconozcan.
 - **RF-20** · Prioridad Media
-- **Criterios:** JPG, PNG o WebP de hasta 5 MB; otros formatos se rechazan con un error claro.
+- **Criterios:** JPG, PNG o WebP de hasta 5 MB; otros formatos o tamaños se rechazan con un error claro; en desarrollo se guarda en disco local y en staging en Supabase Storage.
 - **Tareas:**
   - [BE][S] Puerto `StorageService`.
   - [BE][M] Adaptador de almacenamiento local (desarrollo y pruebas).
@@ -264,7 +268,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-20 Ver cómo queda mi ficha
 **Como** dueño **quiero** una vista previa **para** revisar antes de guardar.
 - **RF-21** · Prioridad Media
-- **Criterios:** la vista previa refleja los cambios aún sin guardar.
+- **Criterios:** la vista previa muestra la tarjeta y la ficha como las verá el visitante, y refleja los cambios aún sin guardar.
 - **Tareas:**
   - [PANEL][M] Vista previa en vivo reutilizando los componentes de tarjeta y ficha.
 
@@ -275,6 +279,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### HT-01 Cálculo de "abierto ahora" (primera tarea de dominio)
 Función pura que decide el estado de un negocio. La usan el listado, la ficha y el panel.
 - **Reglas:** RN-01 a RN-04 y RN-10 · Prioridad Alta
+- **Criterios:** precedencia pausa → "hoy no abro" (fecha local de hoy) → horario semanal; inicio inclusivo y fin exclusivo; un turno con fin menor o igual al inicio cruza la medianoche; un día sin turnos es cerrado; usa la zona horaria de la localidad; devuelve la hora de cierre o la próxima apertura.
 - **Tareas:**
   - [BE][S] Definir los tipos de dominio: `OpeningHours`, `Shift` y `BusinessStatus`.
   - [BE][S] Instalar y configurar la librería de fechas (Luxon o date-fns-tz).
@@ -294,7 +299,7 @@ Función pura que decide el estado de un negocio. La usan el listado, la ficha y
 ### US-22 Copiar un horario al resto de los días
 **Como** dueño **quiero** repetir un horario **para** no cargarlo día por día.
 - **RF-23** · Prioridad Media
-- **Criterios:** reemplaza los demás días solo después de confirmar.
+- **Criterios:** reemplaza los demás días solo después de confirmar; no modifica el día de origen.
 - **Tareas:**
   - [PANEL][S] Acción "copiar a todos" con confirmación.
 
@@ -352,11 +357,11 @@ Se avanza junto con las demás épicas; no se deja para el final.
 
 | Épica | Historias | Tareas aprox. |
 |---|---|---|
-| EP-00 Cimientos | — | 20 |
+| EP-00 Cimientos | — | 26 |
 | EP-01 Exploración | 7 | 19 |
 | EP-02 Ficha de negocio | 4 | 10 |
 | EP-03 Cuentas de dueños | 3 | 11 |
 | EP-04 Gestión de la ficha | 6 | 16 |
 | EP-05 Horarios y estado | 1 técnica + 5 | 18 |
 | EP-06 Calidad y entrega | — | 11 |
-| **Total** | **26** | **~105** |
+| **Total** | **26** | **~111** |

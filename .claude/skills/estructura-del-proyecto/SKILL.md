@@ -26,8 +26,10 @@ aca-nomas-app/
 └── backend/
     ├── Dockerfile
     ├── .env.example
+    ├── prisma.config.ts       configuración de la CLI de Prisma (carga .env)
     ├── prisma/                schema.prisma, migrations/, seed.ts
     ├── src/
+    │   ├── generated/         cliente de Prisma generado por npm install (no se sube ni se edita)
     │   ├── app.ts             arma Express (cadena de middlewares) y monta las rutas bajo /api
     │   ├── routes.ts          registro central: suma el router de cada módulo (D-23)
     │   ├── server.ts          abre el puerto
@@ -48,7 +50,7 @@ aca-nomas-app/
     │   │   ├── middlewares/   validate, requireAuth, errores, logs, 404
     │   │   └── pagination/    esquema de page y limit, y armado de la respuesta paginada
     │   └── infrastructure/
-    │       ├── database/      solo el cliente de Prisma
+    │       ├── database/      solo el cliente único de Prisma (prisma.ts)
     │       ├── storage/       adaptador local y de Supabase Storage
     │       └── mailer/        adaptadores de mails
     └── tests/

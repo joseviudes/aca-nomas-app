@@ -1,5 +1,7 @@
 node_modules/
 dist/
+# Cliente de Prisma: se genera con npm install (postinstall)
+backend/src/generated/
 build/
 coverage/
 .env

@@ -19,7 +19,7 @@ Código, base de datos y rutas en **inglés**. Interfaz, documentación, commits
 | horario | `openingHours` |
 | abierto ahora | `isOpenNow` |
 | hoy no abro | `closedToday` |
-| pausa | `paused` |
+| pausa | `isPaused` |
 
 Si falta una palabra, agregarla a esta tabla en el mismo PR.
 

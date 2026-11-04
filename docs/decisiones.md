@@ -12,6 +12,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.4 | 03/11/2026 | Tobias | Agrega la rama `develop` a las decisiones diferidas (D-20) |
 | 0.5 | 04/11/2026 | Tobias | Agrega la respuesta paginada y la librería de logs a las decisiones diferidas (D-20) |
 | 0.6 | 04/11/2026 | Tobias | Agrega D-23: registro central de rutas en `routes.ts` |
+| 0.7 | 04/11/2026 | Tobias | Actualiza D-22 con la revisión del modelo. En D-07, "pausa" pasa a `isPaused` |
 
 ## Índice
 
@@ -109,7 +110,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | horario | `openingHours` |
 | abierto ahora | `isOpenNow` |
 | hoy no abro | `closedToday` |
-| pausa | `paused` |
+| pausa | `isPaused` |
 
 ## D-09 Validación con Zod y middlewares
 - **Decisión:** los esquemas de Zod cumplen el rol de DTO. Un middleware `validate(schema)` valida cuerpo, parámetros y consulta. Los tipos se obtienen con `z.infer`. Las variables de entorno también se validan con Zod al arrancar.
@@ -221,16 +222,19 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 ## D-22 Modelo de datos
 - **Decisión:**
   - Seis tablas: `localities`, `categories`, `users`, `businesses`, `opening_hours` y `contact_channels`. El diagrama está en `docs/diagramas/modelo-de-datos.md`.
-  - Identificadores de tipo `uuid`.
+  - Identificadores UUID v7: empiezan con la fecha, así los registros quedan ordenados y el índice rinde mejor.
   - Una sola tabla `users` con la columna `role` (`owner` o `admin`). El visitante no tiene cuenta, por lo que no es un usuario.
   - El rubro del negocio es obligatorio.
-  - Una sola foto por negocio, en la columna `photo_url`.
+  - Una sola foto por negocio. La imagen vive en el almacenamiento (D-14); la base guarda solo su clave en `photo_key`, y el adaptador arma la URL según el entorno.
   - Los horarios van en una tabla (`opening_hours`), con un turno por fila. Los canales de contacto van en otra (`contact_channels`), cada uno con su visibilidad.
-  - `JSONB` solo para los medios de pago (`payment_methods`). El resto del modelo es relacional.
-  - "Hoy no abro" se guarda como la fecha local (`closed_today_date`), así vence solo al cambiar el día. La pausa se guarda en `paused`.
+  - Los roles y los tipos de canal son enums de PostgreSQL (`user_role` y `channel_type`).
+  - `JSONB` para los medios de pago (`payment_methods`): una lista de etiquetas validada con Zod en el borde, y un `CHECK` que asegura que sea una lista. El resto del modelo es relacional.
+  - Restricciones en la base: `day_of_week` entre 1 y 7, latitud y longitud juntas o ninguna, `RESTRICT` al borrar un usuario, rubro o localidad en uso, y `CASCADE` en turnos y canales.
+  - Índices en las claves foráneas que usan el listado y el panel. Los rubros tienen `slug` para el filtro. Todas las tablas tienen `created_at` y `updated_at`.
+  - "Hoy no abro" se guarda como la fecha local (`closed_today_date`), así vence solo al cambiar el día. La pausa se guarda en `is_paused`.
   - El estado "abierto ahora" no se guarda: se calcula con `isOpenNow`.
-- **Motivo:** las relaciones entre dueño, negocio, localidad y rubro encajan en SQL (D-03). Los horarios en filas permiten leer todos los turnos juntos para `isOpenNow` y validar que no se superpongan. Guardar la fecha de "hoy no abro" evita un proceso que lo reinicie cada día. Los medios de pago son una lista de etiquetas sin relaciones, el caso típico de dato flexible. Un rol en una sola tabla de cuentas coincide con D-10.
-- **Descartado:** identificadores enteros autoincrementales; tabla `owners` separada de los administradores; tabla de fotos (se retoma si se quieren varias por negocio); tabla de medios de pago con relación muchos a muchos; guardar el estado "abierto ahora" en la base.
+- **Motivo:** las relaciones entre dueño, negocio, localidad y rubro encajan en SQL (D-03). Los horarios en filas permiten leer todos los turnos juntos para `isOpenNow` y validar que no se superpongan. Guardar la fecha de "hoy no abro" evita un proceso que lo reinicie cada día. Los medios de pago son una lista de etiquetas sin relaciones que solo se muestra, el caso de dato flexible de D-03; Zod valida los valores antes de guardar. Los enums hacen que la base rechace roles y tipos de canal inválidos. Guardar la clave de la foto evita que las fotos se rompan al cambiar de entorno o de almacenamiento. Un rol en una sola tabla de cuentas coincide con D-10.
+- **Descartado:** identificadores enteros autoincrementales; tabla `owners` separada de los administradores; tabla de fotos (se retoma si se quieren varias por negocio); guardar la URL completa de la foto; enum de PostgreSQL o tabla con relación muchos a muchos para los medios de pago; texto libre para roles y tipos de canal; guardar el estado "abierto ahora" en la base.
 - **Nota:** el rol `admin` existe en el modelo, pero el panel de administración está fuera del MVP, por lo que no tiene interfaz. Si más adelante se agregan cuentas de vecinos, se suma un valor nuevo al rol con una migración. El estado pasa a `Aceptada` cuando el equipo termine la revisión.
 
 ## D-23 Registro central de rutas en `routes.ts`

@@ -1,0 +1,10 @@
+// Los modelos se agregan en la tarea "Escribir schema.prisma y la primera migración" (D-22).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
