@@ -25,10 +25,17 @@ docs/      ERS, registro de decisiones, épicas e historias
 - [Especificación de requisitos (ERS)](docs/ers.md)
 - [Registro de decisiones](docs/decisiones.md)
 - [Épicas e historias](docs/epicas-e-historias.md)
+- [Entorno local sin Docker para el backend](docs/entorno-local.md)
 
 ## Cómo levantar el proyecto
 
-Pendiente: se completa cuando estén listos Docker, las migraciones y el seed.
+`docker-compose.yml` levanta PostgreSQL local en el puerto `5433`:
+
+```
+docker compose up -d
+```
+
+Para correr el backend (migraciones, seed, modo desarrollo), ver [docs/entorno-local.md](docs/entorno-local.md).
 
 ## Licencia
 
