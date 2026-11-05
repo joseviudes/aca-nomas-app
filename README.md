@@ -4,11 +4,12 @@ Directorio web de negocios locales: los vecinos encuentran negocios de su locali
 
 ## Estado
 
-En construcción. Etapa actual: **EP-00 Cimientos** (repositorio, backend inicial, base de datos e infraestructura).
+En construcción. Etapa actual: **EP-00 Cimientos** (repositorio, backend inicial, web pública inicial, base de datos e infraestructura).
 
 ## Stack
 
 - **Backend:** Node.js, Express 5 y TypeScript (ESM)
+- **Web pública:** Next.js y TypeScript (D-27)
 - **Base de datos:** PostgreSQL 17 con Prisma
 - **Desarrollo local:** Docker para la base de datos y, si se quiere, también para la API (D-26)
 - **Validación:** Zod
@@ -18,6 +19,7 @@ En construcción. Etapa actual: **EP-00 Cimientos** (repositorio, backend inicia
 
 ```
 backend/   API REST (código en src/, pruebas en tests/, base de datos en prisma/)
+web/       Web pública con Next.js (D-27)
 docs/      ERS, decisiones, épicas e historias, modelo de datos, diseño de la API y colección de Postman
 ```
 
@@ -101,6 +103,10 @@ Se corren dentro de `backend/`.
 | `npm run db:generate` | Regenera el cliente de Prisma |
 
 Cada PR corre `lint`, `format:check`, `typecheck`, `test` y `build` en GitHub Actions.
+
+## Web pública
+
+Corre en `web/` y es independiente del backend (dependencias y scripts propios). Pasos para levantarla en [web/README.md](web/README.md).
 
 ## Documentación
 
