@@ -13,6 +13,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.5 | 04/11/2026 | Tobias | Agrega la respuesta paginada y la librería de logs a las decisiones diferidas (D-20) |
 | 0.6 | 04/11/2026 | Tobias | Agrega D-23: registro central de rutas en `routes.ts` |
 | 0.7 | 04/11/2026 | Tobias | Actualiza D-22 con la revisión del modelo. En D-07, "pausa" pasa a `isPaused` |
+| 0.8 | 05/11/2026 | Tobias | D-22 pasa a `Aceptada`. Agrega D-24: PostgreSQL local en el puerto 5433 |
 
 ## Índice
 
@@ -39,8 +40,9 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-19 | Patrones de diseño | Aceptada |
 | D-20 | Decisiones diferidas | Pendiente |
 | D-21 | Sin atribución a IA en commits y PR | Aceptada |
-| D-22 | Modelo de datos | Pendiente de revisión del equipo |
+| D-22 | Modelo de datos | Aceptada |
 | D-23 | Registro central de rutas en `routes.ts` | Aceptada |
+| D-24 | PostgreSQL local en el puerto 5433 | Aceptada |
 
 ---
 
@@ -207,7 +209,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | Rubros | Lista fija chica por seed; administración en otra fase | A definir |
 | Frontend de la web pública | Next.js o renderizado en el servidor para vistas previas al compartir; panel como SPA con Vite | Cuando llegue el curso de React |
 | Hosting del primer despliegue | Sin definir | Pendiente |
-| Modelo de datos | Propuesto en D-22 | En revisión del equipo |
+| Modelo de datos | Definido en D-22 | Resuelta |
 | Diseño de la API | Se define en el plan de implementación | Pendiente |
 | Rama `develop` | Sin `develop`: las ramas salen de `main` y en EP-00 los PR agrupan varias tareas por bloque | Se evalúa con el primer despliegue |
 | Respuesta paginada | `{ data, page, limit, total }`, con `limit` máximo de 100 | A confirmar en el diseño de la API |
@@ -235,10 +237,16 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
   - El estado "abierto ahora" no se guarda: se calcula con `isOpenNow`.
 - **Motivo:** las relaciones entre dueño, negocio, localidad y rubro encajan en SQL (D-03). Los horarios en filas permiten leer todos los turnos juntos para `isOpenNow` y validar que no se superpongan. Guardar la fecha de "hoy no abro" evita un proceso que lo reinicie cada día. Los medios de pago son una lista de etiquetas sin relaciones que solo se muestra, el caso de dato flexible de D-03; Zod valida los valores antes de guardar. Los enums hacen que la base rechace roles y tipos de canal inválidos. Guardar la clave de la foto evita que las fotos se rompan al cambiar de entorno o de almacenamiento. Un rol en una sola tabla de cuentas coincide con D-10.
 - **Descartado:** identificadores enteros autoincrementales; tabla `owners` separada de los administradores; tabla de fotos (se retoma si se quieren varias por negocio); guardar la URL completa de la foto; enum de PostgreSQL o tabla con relación muchos a muchos para los medios de pago; texto libre para roles y tipos de canal; guardar el estado "abierto ahora" en la base.
-- **Nota:** el rol `admin` existe en el modelo, pero el panel de administración está fuera del MVP, por lo que no tiene interfaz. Si más adelante se agregan cuentas de vecinos, se suma un valor nuevo al rol con una migración. El estado pasa a `Aceptada` cuando el equipo termine la revisión.
+- **Nota:** el rol `admin` existe en el modelo, pero el panel de administración está fuera del MVP, por lo que no tiene interfaz. Si más adelante se agregan cuentas de vecinos, se suma un valor nuevo al rol con una migración. El equipo terminó la revisión el 05/11/2026.
 
 ## D-23 Registro central de rutas en `routes.ts`
 - **Decisión:** las rutas de todos los módulos se registran en `src/routes.ts`. Ese archivo arma un único router (`createApiRouter`) y `app.ts` lo monta bajo `/api`. Cada módulo sigue definiendo sus rutas en su carpeta `routes/`.
 - **Motivo:** `app.ts` arma la cadena de middlewares (logs, JSON, rutas, 404 y errores). La lista de rutas cambia cada vez que se agrega un módulo, por otra razón. Separarlas deja `app.ts` legible de un vistazo y evita que crezca con cada módulo.
 - **Descartado:** registrar cada router con `app.use()` directo en `app.ts`, porque mezcla las dos responsabilidades y se llena a medida que aparecen módulos.
 - **Nota:** complementa a D-07. El prefijo `/api` (D-11) se define una sola vez, en `app.ts`; en `routes.ts` las rutas van sin el prefijo (`/businesses`).
+
+## D-24 PostgreSQL local en el puerto 5433
+- **Decisión:** el `docker-compose.yml` expone PostgreSQL en el puerto `5433` de la máquina (`5433:5432`). `DATABASE_URL` en `backend/.env.example` apunta a `localhost:5433`.
+- **Motivo:** quien ya tiene PostgreSQL instalado en su máquina lo tiene ocupando el `5432`. Con `5433` el contenedor y la instalación conviven sin conflicto, y todo el equipo usa la misma URL.
+- **Descartado:** el `5432` por defecto, porque obliga a apagar el PostgreSQL instalado o a que cada uno cambie el puerto en su `.env`.
+- **Nota:** dentro del contenedor PostgreSQL sigue en `5432`; solo cambia el puerto de la máquina. Complementa a D-04.
