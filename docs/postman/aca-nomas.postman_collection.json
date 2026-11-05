@@ -1,0 +1,248 @@
+{
+  "info": {
+    "name": "AcáNomás API",
+    "description": "Colección de la API de AcáNomás. Sigue la lista de endpoints de docs/api.md (D-25).\n\nCómo usarla:\n1. Levantar la base y el backend (ver README).\n2. Importar este archivo en Postman (Import > File).\n3. Para los pedidos del panel, correr primero Cuenta > Iniciar sesión: Postman guarda la cookie de sesión y la manda sola en los pedidos siguientes.\n\nLos pedidos marcados como [Pendiente] todavía no tienen endpoint: se completan (cuerpo y ejemplo de respuesta) en el PR de su historia.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api", "type": "string" },
+    { "key": "businessSlug", "value": "panaderia-la-espiga", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Salud",
+      "item": [
+        {
+          "name": "Comprobar que la API responde",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] },
+            "description": "Responde 200 con { \"status\": \"ok\" }. No usa la base de datos."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+              "body": "{\n  \"status\": \"ok\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Negocios (público)",
+      "item": [
+        {
+          "name": "[Pendiente] Listar negocios",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/businesses?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "q", "value": "", "description": "Texto a buscar en nombre y descripción (US-02)", "disabled": true },
+                { "key": "category", "value": "panaderia", "description": "Slug del rubro (US-03)", "disabled": true },
+                { "key": "openNow", "value": "true", "description": "Solo los abiertos ahora (US-04)", "disabled": true },
+                { "key": "lat", "value": "-27.4692", "description": "Latitud del visitante (US-05, US-06)", "disabled": true },
+                { "key": "lng", "value": "-58.8306", "description": "Longitud del visitante (US-05, US-06)", "disabled": true }
+              ]
+            },
+            "description": "US-01 a US-07. Listado paginado: { data, page, limit, total }."
+          }
+        },
+        {
+          "name": "[Pendiente] Ver la ficha de un negocio",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/businesses/{{businessSlug}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses", "{{businessSlug}}"]
+            },
+            "description": "US-08 a US-11. 404 BUSINESS_NOT_FOUND si el slug no existe."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rubros",
+      "item": [
+        {
+          "name": "[Pendiente] Listar rubros",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/categories", "host": ["{{baseUrl}}"], "path": ["categories"] },
+            "description": "US-03. Rubros para el filtro del listado."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cuenta",
+      "item": [
+        {
+          "name": "[Pendiente] Registrarse",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nuevo@example.com\",\n  \"password\": \"acanomas123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "description": "US-12. 409 EMAIL_TAKEN si el email ya existe."
+          }
+        },
+        {
+          "name": "[Pendiente] Iniciar sesión",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"owner1@example.com\",\n  \"password\": \"acanomas123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "description": "US-13. Usa una cuenta del seed. Deja la cookie de sesión, que Postman manda sola en los pedidos siguientes."
+          }
+        },
+        {
+          "name": "[Pendiente] Cerrar sesión",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/auth/logout", "host": ["{{baseUrl}}"], "path": ["auth", "logout"] },
+            "description": "US-13. Borra la cookie de sesión."
+          }
+        },
+        {
+          "name": "[Pendiente] Ver la sesión actual",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] },
+            "description": "US-14. Propuesta en docs/api.md. 401 sin sesión."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Panel del dueño (con sesión)",
+      "description": "Correr antes Cuenta > Iniciar sesión. Sin sesión responden 401; sobre un negocio ajeno, 403.",
+      "item": [
+        {
+          "name": "[Pendiente] Mis negocios",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/me/businesses", "host": ["{{baseUrl}}"], "path": ["me", "businesses"] },
+            "description": "US-15 y US-25. Propuesta en docs/api.md. Incluye canales ocultos y el estado con su motivo."
+          }
+        },
+        {
+          "name": "[Pendiente] Crear la ficha",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/businesses", "host": ["{{baseUrl}}"], "path": ["businesses"] },
+            "description": "US-15. El cuerpo se define al implementar la historia."
+          }
+        },
+        {
+          "name": "[Pendiente] Editar la ficha",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/businesses/{{businessSlug}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses", "{{businessSlug}}"]
+            },
+            "description": "US-15 a US-18. El cuerpo se define al implementar cada historia."
+          }
+        },
+        {
+          "name": "[Pendiente] Subir la foto",
+          "request": {
+            "method": "PUT",
+            "body": { "mode": "formdata", "formdata": [{ "key": "photo", "type": "file", "src": [] }] },
+            "url": {
+              "raw": "{{baseUrl}}/businesses/{{businessSlug}}/photo",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses", "{{businessSlug}}", "photo"]
+            },
+            "description": "US-19. Propuesta en docs/api.md. JPG, PNG o WebP de hasta 5 MB."
+          }
+        },
+        {
+          "name": "[Pendiente] Guardar el horario semanal",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/businesses/{{businessSlug}}/opening-hours",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses", "{{businessSlug}}", "opening-hours"]
+            },
+            "description": "US-21 y US-22. Reemplaza el horario completo. El cuerpo se define al implementar la historia."
+          }
+        },
+        {
+          "name": "[Pendiente] Marcar hoy no abro",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{baseUrl}}/businesses/{{businessSlug}}/closed-today",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses", "{{businessSlug}}", "closed-today"]
+            },
+            "description": "US-23. Propuesta en docs/api.md."
+          }
+        },
+        {
+          "name": "[Pendiente] Quitar hoy no abro",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/businesses/{{businessSlug}}/closed-today",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses", "{{businessSlug}}", "closed-today"]
+            },
+            "description": "US-23. Propuesta en docs/api.md."
+          }
+        },
+        {
+          "name": "[Pendiente] Pausar el negocio",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{baseUrl}}/businesses/{{businessSlug}}/pause",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses", "{{businessSlug}}", "pause"]
+            },
+            "description": "US-24. Propuesta en docs/api.md."
+          }
+        },
+        {
+          "name": "[Pendiente] Reactivar el negocio",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/businesses/{{businessSlug}}/pause",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses", "{{businessSlug}}", "pause"]
+            },
+            "description": "US-24. Propuesta en docs/api.md."
+          }
+        }
+      ]
+    }
+  ]
+}
