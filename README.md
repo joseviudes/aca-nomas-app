@@ -10,7 +10,7 @@ En construcción. Etapa actual: **EP-00 Cimientos** (repositorio, backend inicia
 
 - **Backend:** Node.js, Express 5 y TypeScript (ESM)
 - **Base de datos:** PostgreSQL 17 con Prisma
-- **Desarrollo local:** Docker (solo para la base de datos)
+- **Desarrollo local:** Docker para la base de datos y, si se quiere, también para la API (D-26)
 - **Validación:** Zod
 - **Pruebas:** Vitest
 
@@ -18,7 +18,7 @@ En construcción. Etapa actual: **EP-00 Cimientos** (repositorio, backend inicia
 
 ```
 backend/   API REST (código en src/, pruebas en tests/, base de datos en prisma/)
-docs/      ERS, registro de decisiones, épicas e historias, modelo de datos
+docs/      ERS, decisiones, épicas e historias, modelo de datos, diseño de la API y colección de Postman
 ```
 
 ## Requisitos
@@ -26,7 +26,7 @@ docs/      ERS, registro de decisiones, épicas e historias, modelo de datos
 | Herramienta | Versión | Para qué |
 |---|---|---|
 | [Node.js](https://nodejs.org) | 24 (está en `.nvmrc`) | Correr el backend. Con `nvm` o `fnm`, `nvm use` elige la versión correcta |
-| [Docker](https://www.docker.com) | Docker Desktop, o Docker Engine con Compose v2 o superior | Levantar PostgreSQL. El comando es `docker compose` (con espacio); el viejo `docker-compose` (con guion) no está soportado |
+| [Docker](https://www.docker.com) | Docker Desktop, o Docker Engine con Compose v2 o superior | Levantar PostgreSQL (y la API, si no se instala Node). El comando es `docker compose` (con espacio); el viejo `docker-compose` (con guion) no está soportado |
 | [Git](https://git-scm.com) | cualquier versión reciente | Clonar el repositorio |
 
 No hace falta instalar PostgreSQL: corre en un contenedor de Docker. Si ya tenés uno instalado, no hay conflicto: el contenedor usa el puerto `5433` (D-24).
