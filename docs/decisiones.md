@@ -16,6 +16,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.8 | 05/11/2026 | Tobias | D-22 pasa a `Aceptada`. Agrega D-24: PostgreSQL local en el puerto 5433 |
 | 0.9 | 05/11/2026 | Tobias | Agrega D-25: diseño de la API en dos niveles y respuesta paginada. Cierra esos dos temas en D-20 |
 | 0.10 | 05/11/2026 | Tobias | Agrega D-26: API en Docker para desarrollo, con perfiles de Docker Compose |
+| 0.11 | 05/11/2026 | Josi | Agrega D-27: frontend con Next.js para la web pública. Cierra ese tema en D-20 |
 
 ## Índice
 
@@ -47,6 +48,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-24 | PostgreSQL local en el puerto 5433 | Aceptada |
 | D-25 | Diseño de la API en dos niveles y respuesta paginada | Aceptada |
 | D-26 | API en Docker para desarrollo, con perfiles de Docker Compose | Aceptada |
+| D-27 | Frontend con Next.js para la web pública | Aceptada |
 
 ---
 
@@ -211,7 +213,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | Aprobación de fichas nuevas | Se publican de inmediato | A confirmar |
 | Un dueño con varios negocios | El modelo lo permite; la interfaz del MVP muestra uno | A confirmar |
 | Rubros | Lista fija chica por seed; administración en otra fase | A definir |
-| Frontend de la web pública | Next.js o renderizado en el servidor para vistas previas al compartir; panel como SPA con Vite | Cuando llegue el curso de React |
+| Frontend de la web pública | Next.js o renderizado en el servidor para vistas previas al compartir; panel como SPA con Vite | Resuelta en D-27 |
 | Hosting del primer despliegue | Sin definir | Pendiente |
 | Modelo de datos | Definido en D-22 | Resuelta |
 | Diseño de la API | Definido en D-25 (`docs/api.md`) | Resuelta |
@@ -276,3 +278,12 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Motivo:** que un integrante pueda trabajar en el proyecto con solo Docker, sin instalar Node ni configurar dependencias. Quien prefiere Node en su máquina sigue usando `npm run dev` y levanta solo la base. Compose Watch y no una carpeta montada porque en Windows con Docker Desktop el contenedor no se entera de los archivos guardados y el reinicio automático falla. Debian slim porque `bcrypt` trae binarios compilados para glibc, la biblioteca de C que usa Debian y no Alpine.
 - **Descartado:** una imagen de producción ahora, porque depende del hosting, que no está definido (D-20); montar la carpeta del backend como volumen, por el problema de Windows; un segundo archivo de compose para la API, porque obliga a pasar los dos archivos en cada comando; levantar siempre la API con la base, porque choca con `npm run dev` en el puerto 3000.
 - **Nota:** complementa a D-04 y D-24. La imagen de producción se define con el hosting del primer despliegue.
+
+## D-27 Frontend con Next.js para la web pública
+- **Decisión:**
+  - La web pública se construye con Next.js (TypeScript, App Router), en la carpeta `web/`, hermana de `backend/`.
+  - El panel se mantiene como SPA con Vite y React, en `panel/`, tal como ya figuraba por defecto en D-20.
+  - Ambos frontends validan con Zod en el borde (formularios, parámetros), igual que el backend (D-09).
+- **Motivo:** las fichas de negocio se comparten por WhatsApp y redes, y necesitan vista previa (título, imagen, descripción) al pegar el enlace. Eso requiere que el HTML llegue armado desde el servidor, algo que una SPA con Vite no da sin trabajo extra. El panel es privado y no necesita SEO ni vista previa, así que una SPA alcanza y es más simple.
+- **Descartado:** Vite + SPA también para la web pública, porque pierde la vista previa al compartir sin agregar una capa de renderizado aparte.
+- **Nota:** el equipo tuvo la primera clase de React del bootcamp el 05/11/2026, lo que desbloquea las dos tareas de inicialización de EP-00 (`[WEB]` y `[PANEL]`).
