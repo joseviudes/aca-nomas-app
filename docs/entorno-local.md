@@ -43,10 +43,11 @@ No hace falta instalar PostgreSQL aparte: corre en el contenedor de Docker.
    npm install
    ```
 3. Copiar `backend/.env.example` a `backend/.env`. Los valores por defecto ya apuntan al Postgres del paso 1 (`localhost:5433`); no hace falta cambiarlos para desarrollo local.
-4. Correr las migraciones y el seed (cuando existan):
+4. Aplicar las migraciones (crea las tablas en la base del paso 1):
    ```
-   npx prisma migrate dev
+   npm run db:migrate
    ```
+   El seed con datos ficticios se suma cuando exista.
 5. Levantar el backend en modo desarrollo:
    ```
    npm run dev

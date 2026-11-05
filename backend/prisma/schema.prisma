@@ -1,4 +1,5 @@
-// Los modelos se agregan en la tarea "Escribir schema.prisma y la primera migración" (D-22).
+// Modelo de datos de AcáNomás (D-22). El diagrama está en docs/diagramas/modelo-de-datos.md.
+// Las restricciones CHECK no se pueden declarar en Prisma: están escritas a mano en la migración.
 
 generator client {
   provider = "prisma-client"
@@ -7,4 +8,120 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+enum UserRole {
+  owner
+  admin
+
+  @@map("user_role")
+}
+
+enum ChannelType {
+  whatsapp
+  instagram
+
+  @@map("channel_type")
+}
+
+model Locality {
+  id         String     @id @default(uuid(7)) @db.Uuid
+  name       String     @unique
+  // Zona horaria IANA, por ejemplo America/Argentina/Buenos_Aires (D-12).
+  timezone   String
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt  DateTime   @updatedAt @map("updated_at") @db.Timestamptz(3)
+  businesses Business[]
+
+  @@map("localities")
+}
+
+model Category {
+  id         String     @id @default(uuid(7)) @db.Uuid
+  name       String     @unique
+  slug       String     @unique
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt  DateTime   @updatedAt @map("updated_at") @db.Timestamptz(3)
+  businesses Business[]
+
+  @@map("categories")
+}
+
+model User {
+  id           String     @id @default(uuid(7)) @db.Uuid
+  // Siempre en minúsculas: lo normaliza el esquema Zod antes de guardar.
+  email        String     @unique
+  passwordHash String     @map("password_hash")
+  role         UserRole
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamptz(3)
+  businesses   Business[]
+
+  @@map("users")
+}
+
+model Business {
+  id              String           @id @default(uuid(7)) @db.Uuid
+  ownerId         String           @map("owner_id") @db.Uuid
+  localityId      String           @map("locality_id") @db.Uuid
+  categoryId      String           @map("category_id") @db.Uuid
+  name            String
+  // Se genera del nombre y nunca cambia (RN-05).
+  slug            String           @unique
+  description     String?          @db.VarChar(80)
+  latitude        Float?
+  longitude       Float?
+  // Clave en el almacenamiento, no la URL: el adaptador arma la URL según el entorno (D-14).
+  photoKey        String?          @map("photo_key")
+  // Lista de medios de pago. Zod valida los valores permitidos antes de guardar.
+  paymentMethods  Json             @default("[]") @map("payment_methods")
+  offersDelivery  Boolean          @default(false) @map("offers_delivery")
+  isPaused        Boolean          @default(false) @map("is_paused")
+  // Fecha local en que el dueño marcó "hoy no abro": vence sola al cambiar el día.
+  closedTodayDate DateTime?        @map("closed_today_date") @db.Date
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+  owner           User             @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  locality        Locality         @relation(fields: [localityId], references: [id], onDelete: Restrict)
+  category        Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  openingHours    OpeningHour[]
+  contactChannels ContactChannel[]
+
+  @@index([localityId])
+  @@index([categoryId])
+  @@index([ownerId])
+  @@map("businesses")
+}
+
+model OpeningHour {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  businessId String   @map("business_id") @db.Uuid
+  // 1 es lunes y 7 es domingo. El turno pertenece al día en que empieza (RN-02).
+  dayOfWeek  Int      @map("day_of_week") @db.SmallInt
+  // Inicio inclusive y fin exclusivo. Si el fin es menor o igual al inicio, cruza la medianoche.
+  opensAt    DateTime @map("opens_at") @db.Time(0)
+  closesAt   DateTime @map("closes_at") @db.Time(0)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@index([businessId])
+  @@map("opening_hours")
+}
+
+model ContactChannel {
+  id         String      @id @default(uuid(7)) @db.Uuid
+  businessId String      @map("business_id") @db.Uuid
+  type       ChannelType
+  // WhatsApp en formato internacional o usuario de Instagram sin @ (lo valida Zod).
+  value      String
+  // Interruptor de visibilidad en la ficha pública (RN-06).
+  isPublic   Boolean     @default(true) @map("is_public")
+  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt  DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+  business   Business    @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  // Un negocio no repite canal. Este índice único también sirve para buscar por business_id.
+  @@unique([businessId, type])
+  @@map("contact_channels")
 }
