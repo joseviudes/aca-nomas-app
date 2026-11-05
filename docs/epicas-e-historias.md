@@ -7,6 +7,7 @@
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Borrador inicial para revisión |
 | 0.2 | 04/11/2026 | Tobias | Agrega a EP-00 la tarea del registro central de rutas (D-23) |
 | 0.3 | 04/11/2026 | Tobias | Sincroniza con Trello: suma criterios de aceptación, el esqueleto de carpetas y separa `docker-compose.yml` del `Dockerfile` |
+| 0.4 | 05/11/2026 | Tobias | Sincroniza con Trello la tarea de diseño de la API (D-25) y la del `Dockerfile` (D-26) |
 
 ## Cómo leer este documento
 
@@ -66,13 +67,13 @@ Sin historias de usuario. Todo lo demás depende de esto.
 - [DB][M] Seed con datos ficticios: una localidad (Corrientes Capital), rubros, dueños y entre 8 y 12 negocios con horarios variados, incluido uno con turno que cruza la medianoche y uno pausado.
 
 **Infraestructura**
-- [INFRA][S] `Dockerfile` de la API (se usa en el primer despliegue).
+- [INFRA][S] `Dockerfile` de desarrollo de la API y perfil `api` en `docker-compose.yml`: levantar solo la base o la base y la API, sin instalar Node (D-26). La imagen de producción se define con el hosting.
 - [INFRA][M] GitHub Actions: lint y pruebas en cada PR.
 - [INFRA][S] Validar el formato de commits y del título del PR en CI (opcional).
 - [DOC][S] README con los pasos para levantar el proyecto (`docker compose up`, migrar, seed, correr).
 
 **API y frontends**
-- [DOC][M] Diseñar la API: lista de endpoints, ejemplos de petición y respuesta, códigos de error.
+- [DOC][M] Diseñar la API en `docs/api.md` (D-25): reglas comunes (respuestas, paginación, errores, fechas, códigos HTTP) y lista de endpoints del MVP. El detalle de cada endpoint se escribe al implementar su historia.
 - [DOC][M] Crear la colección base de Postman con ese diseño (permite que el frontend avance con datos simulados).
 - [WEB][M] Inicializar la web pública. *Bloqueada hasta decidir Next.js o Vite y llegar al curso de React.*
 - [PANEL][M] Inicializar el panel con Vite y React. *Bloqueada hasta el curso de React.*

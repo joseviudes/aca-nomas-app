@@ -1,0 +1,59 @@
+# Verifica que el título del PR y sus commits sigan el formato de CONTRIBUTING.md:
+# `tipo(módulo): descripción`, sin punto final y sin atribución a IA (D-16 y D-21).
+name: Formato del PR
+
+on:
+  pull_request:
+    branches: [main]
+    # edited: vuelve a correr si se corrige el título del PR.
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    name: Título del PR y commits
+    runs-on: ubuntu-latest
+    env:
+      # Tipo en inglés, módulo opcional en kebab-case, descripción sin punto final.
+      PATTERN: '^(feat|fix|docs|chore|refactor|test)(\([a-z0-9-]+\))?: [^ ].*[^.]$'
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Hace falta el historial para leer los commits del PR.
+          fetch-depth: 0
+
+      - name: Título del PR
+        # El título va por variable de entorno, nunca interpolado en el script: así no se puede
+        # inyectar un comando desde el título.
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if ! printf '%s\n' "$TITLE" | grep -Eq "$PATTERN"; then
+            echo "::error::El título del PR no sigue el formato 'tipo(módulo): descripción': $TITLE"
+            exit 1
+          fi
+          echo "Título correcto: $TITLE"
+
+      - name: Commits del PR
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          failed=0
+          # Los commits de merge los arma GitHub o git: no siguen el formato y no se revisan.
+          for sha in $(git rev-list --no-merges "$BASE..$HEAD"); do
+            subject=$(git log -1 --format=%s "$sha")
+            if ! printf '%s\n' "$subject" | grep -Eq "$PATTERN"; then
+              echo "::error::Commit ${sha:0:7} con formato incorrecto: $subject"
+              failed=1
+            fi
+            if git log -1 --format=%B "$sha" | grep -qi '^co-authored-by:'; then
+              echo "::error::Commit ${sha:0:7} tiene Co-Authored-By: CONTRIBUTING.md y D-21 no lo permiten"
+              failed=1
+            fi
+          done
+          if [ "$failed" -eq 0 ]; then echo "Todos los commits tienen el formato correcto"; fi
+          exit "$failed"

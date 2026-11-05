@@ -9,6 +9,7 @@ Este documento muestra cómo se organiza la base de datos de AcáNomás: qué ta
 | 0.1 | 03/11/2026 | Equipo AcáNomás | Borrador para revisión del equipo |
 | 0.2 | 03/11/2026 | Equipo AcáNomás | Se aclara que el visitante no tiene cuenta y los roles de `users` |
 | 0.3 | 04/11/2026 | Tobias | Aplica la revisión: enums en lugar de texto libre, `photo_key` en lugar de `photo_url`, restricciones `CHECK`, comportamiento al borrar, índices, `slug` en rubros, UUID v7 y fechas de auditoría en todas las tablas |
+| 1.0 | 05/11/2026 | Tobias | El equipo aprueba el modelo: D-22 pasa a `Aceptada` |
 
 ## Índice
 
@@ -16,7 +17,7 @@ Este documento muestra cómo se organiza la base de datos de AcáNomás: qué ta
 2. Tablas
 3. Qué va en columnas, en tablas, en enums y en JSONB
 4. Reglas que no controla la base de datos
-5. Decisiones a confirmar
+5. Decisiones del modelo
 
 ---
 
@@ -193,11 +194,11 @@ Las valida el servicio o el esquema Zod antes de guardar:
 
 ---
 
-## 5. Decisiones a confirmar
+## 5. Decisiones del modelo
 
-El ERS (sección 10) y `decisiones.md` (D-20) dejan el modelo detallado como pendiente. Estas son las elecciones de este borrador que el equipo tiene que confirmar. Al aprobarlas, D-22 pasa a `Aceptada`.
+El equipo aprobó estas elecciones el 05/11/2026 y quedaron registradas en D-22 (`decisiones.md`). La columna "Alternativa" muestra lo que se descartó.
 
-| Tema | Propuesta de este borrador | Alternativa |
+| Tema | Elección | Alternativa |
 |---|---|---|
 | Tipo de los identificadores | UUID v7 | UUID v4 (aleatorio) o números enteros autoincrementales |
 | Tabla de cuentas | Una sola tabla `users` con la columna `role` (D-10 habla de los roles `owner` y `admin`) | Tabla `owners` separada |
@@ -206,4 +207,4 @@ El ERS (sección 10) y `decisiones.md` (D-20) dejan el modelo detallado como pen
 | Medios de pago | `JSONB` validado con Zod | Lista de un enum de PostgreSQL (la base valida los valores) o tabla `payment_methods` con relación muchos a muchos |
 | Valores permitidos de medios de pago | Efectivo, transferencia, tarjeta y Mercado Pago (`cash`, `transfer`, `card`, `mercado_pago`) | Otra lista |
 | Borrar un usuario con negocios | No se permite (`RESTRICT`) | Borrar sus negocios en cascada |
-| Dueño con varios negocios | El modelo lo permite (relación uno a muchos) y la interfaz del MVP muestra uno | Ya figura como "a confirmar" en el ERS |
+| Dueño con varios negocios | El modelo lo permite (relación uno a muchos) y la interfaz del MVP muestra uno | Sigue "a confirmar" en el ERS y en D-20: solo afecta a la interfaz, no al modelo |

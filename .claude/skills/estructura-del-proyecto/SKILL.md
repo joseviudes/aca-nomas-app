@@ -14,13 +14,15 @@ aca-nomas-app/
 ├── CLAUDE.md
 ├── CONTRIBUTING.md            ramas, commits, flujo de PR, definición de hecho
 ├── README.md                  cómo levantar el proyecto
-├── docker-compose.yml         PostgreSQL local
+├── docker-compose.yml         PostgreSQL local y la API con el perfil api (D-26)
 ├── .github/                   pull_request_template.md y workflows (GitHub Actions)
 ├── .claude/skills/
 ├── docs/
 │   ├── ers.md
 │   ├── decisiones.md
 │   ├── epicas-e-historias.md
+│   ├── api.md                 reglas comunes de la API y lista de endpoints (D-25)
+│   ├── entorno-local.md       el día a día con la base y el backend
 │   ├── diagramas/             diagrama entidad-relación (Mermaid)
 │   └── postman/               colección exportada
 └── backend/

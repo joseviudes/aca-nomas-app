@@ -1,0 +1,8 @@
+# Lo que no entra a la imagen: se genera adentro o no tiene que viajar.
+node_modules/
+dist/
+coverage/
+src/generated/
+# El contenedor recibe sus variables desde docker-compose.yml, no desde .env.
+.env
+*.log

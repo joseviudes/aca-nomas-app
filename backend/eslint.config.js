@@ -23,7 +23,7 @@ export default tseslint.config(
   },
 
   {
-    files: ['src/**/*.ts', 'tests/**/*.ts'],
+    files: ['src/**/*.ts', 'tests/**/*.ts', 'prisma/**/*.ts'],
     languageOptions: {
       parserOptions: {
         projectService: true,

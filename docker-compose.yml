@@ -1,7 +1,15 @@
-# PostgreSQL local para desarrollo (D-04).
-# El major (17) debe coincidir con el de Supabase.
-# Puerto 5433 en tu máquina para no chocar con un PostgreSQL instalado.
-# Credenciales de desarrollo: coinciden con DATABASE_URL de backend/.env.example.
+# Entorno de DESARROLLO con perfiles (D-26). Se elige qué levantar:
+#   docker compose up -d                      solo la base de datos
+#   docker compose --profile api up --watch   la base y la API, que se reinicia al guardar
+# A futuro, el frontend se suma con su propio perfil.
+#
+# PostgreSQL: el major (17) debe coincidir con el de Supabase (D-04). Puerto 5433 en tu máquina
+# para no chocar con un PostgreSQL instalado (D-24). Credenciales de desarrollo: coinciden con
+# DATABASE_URL de backend/.env.example.
+
+# Nombre fijo del proyecto: sin esto, Docker lo saca de la carpeta del repo y cambia en cada máquina.
+name: aca-nomas
+
 services:
   db:
     image: postgres:17
@@ -20,6 +28,50 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+  # API en modo desarrollo. Al arrancar aplica las migraciones pendientes y corre `npm run dev`.
+  api:
+    profiles: [api]
+    build: ./backend
+    container_name: aca-nomas-api
+    environment:
+      # Dentro de Docker la base se llama "db" y escucha en 5432, no en localhost:5433.
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/aca_nomas
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - '3000:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+    # Compose Watch: copia al contenedor cada archivo que se guarda, y `tsx watch` reinicia el
+    # servidor. Funciona igual en Windows, Mac y Linux (montar la carpeta no avisa los cambios en
+    # Windows). Si cambian las dependencias o el schema, reconstruye la imagen.
+    develop:
+      watch:
+        - action: sync
+          path: ./backend/src
+          target: /app/src
+          ignore:
+            - generated/
+        - action: sync
+          path: ./backend/tests
+          target: /app/tests
+        - action: rebuild
+          path: ./backend/package-lock.json
+        - action: rebuild
+          path: ./backend/prisma
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:3000/api/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
 volumes:
   db-data:

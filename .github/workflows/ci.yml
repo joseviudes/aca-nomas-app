@@ -1,0 +1,44 @@
+# Verifica cada PR antes de mergear: si algo falla, GitHub lo marca en el PR (D-15).
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Solo lee el código: no necesita permisos de escritura.
+permissions:
+  contents: read
+
+# Si se suben commits nuevos al mismo PR, cancela la corrida anterior.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (lint, formato, tipos, pruebas y build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      # npm ci instala exactamente lo del package-lock.json. El postinstall genera el cliente de Prisma.
+      - run: npm ci
+
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+      # Las pruebas unitarias no usan la base: vitest.config.ts define un DATABASE_URL de prueba.
+      - run: npm test
+      - run: npm run build
