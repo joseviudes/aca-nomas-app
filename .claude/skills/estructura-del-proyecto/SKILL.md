@@ -25,42 +25,46 @@ aca-nomas-app/
 │   ├── entorno-local.md       el día a día con la base y el backend
 │   ├── diagramas/             diagrama entidad-relación (Mermaid)
 │   └── postman/               colección exportada
-└── backend/
-    ├── Dockerfile
-    ├── .env.example
-    ├── prisma.config.ts       configuración de la CLI de Prisma (carga .env)
-    ├── prisma/                schema.prisma, migrations/, seed.ts
-    ├── src/
-    │   ├── generated/         cliente de Prisma generado por npm install (no se sube ni se edita)
-    │   ├── app.ts             arma Express (cadena de middlewares) y monta las rutas bajo /api
-    │   ├── routes.ts          registro central: suma el router de cada módulo (D-23)
-    │   ├── server.ts          abre el puerto
-    │   ├── container.ts       conecta las dependencias
-    │   ├── config/
-    │   │   └── env.ts         variables de entorno validadas con Zod
-    │   ├── modules/
-    │   │   └── businesses/    un módulo = una carpeta (auth, businesses, categories…)
-    │   │       ├── routes/
-    │   │       ├── controllers/
-    │   │       ├── services/
-    │   │       ├── repositories/   PrismaBusinessRepository
-    │   │       ├── schemas/        esquemas Zod (hacen de DTO)
-    │   │       └── domain/         tipos y reglas puras (isOpenNow)
-    │   ├── shared/
-    │   │   ├── ports/         contratos (interfaces) de todo lo externo
-    │   │   ├── errors/        AppError, subclases y formato estándar de error
-    │   │   ├── middlewares/   validate, requireAuth, errores, logs, 404
-    │   │   └── pagination/    esquema de page y limit, y armado de la respuesta paginada
-    │   └── infrastructure/
-    │       ├── database/      solo el cliente único de Prisma (prisma.ts)
-    │       ├── storage/       adaptador local y de Supabase Storage
-    │       └── mailer/        adaptadores de mails
-    └── tests/
-        ├── unit/              Vitest: servicios y reglas puras
-        └── integration/       Supertest: endpoints contra una base de pruebas
+├── backend/
+│   ├── Dockerfile
+│   ├── .env.example
+│   ├── prisma.config.ts       configuración de la CLI de Prisma (carga .env)
+│   ├── prisma/                schema.prisma, migrations/, seed.ts
+│   ├── src/
+│   │   ├── generated/         cliente de Prisma generado por npm install (no se sube ni se edita)
+│   │   ├── app.ts             arma Express (cadena de middlewares) y monta las rutas bajo /api
+│   │   ├── routes.ts          registro central: suma el router de cada módulo (D-23)
+│   │   ├── server.ts          abre el puerto
+│   │   ├── container.ts       conecta las dependencias
+│   │   ├── config/
+│   │   │   └── env.ts         variables de entorno validadas con Zod
+│   │   ├── modules/
+│   │   │   └── businesses/    un módulo = una carpeta (auth, businesses, categories…)
+│   │   │       ├── routes/
+│   │   │       ├── controllers/
+│   │   │       ├── services/
+│   │   │       ├── repositories/   PrismaBusinessRepository
+│   │   │       ├── schemas/        esquemas Zod (hacen de DTO)
+│   │   │       └── domain/         tipos y reglas puras (isOpenNow)
+│   │   ├── shared/
+│   │   │   ├── ports/         contratos (interfaces) de todo lo externo
+│   │   │   ├── errors/        AppError, subclases y formato estándar de error
+│   │   │   ├── middlewares/   validate, requireAuth, errores, logs, 404
+│   │   │   └── pagination/    esquema de page y limit, y armado de la respuesta paginada
+│   │   └── infrastructure/
+│   │       ├── database/      solo el cliente único de Prisma (prisma.ts)
+│   │       ├── storage/       adaptador local y de Supabase Storage
+│   │       └── mailer/        adaptadores de mails
+│   └── tests/
+│       ├── unit/              Vitest: servicios y reglas puras
+│       └── integration/       Supertest: endpoints contra una base de pruebas
+└── panel/                      Panel del dueño, SPA con Vite y React (D-20), independiente del backend
+    ├── src/                    App.tsx, main.tsx y los componentes
+    ├── public/                 archivos estáticos
+    └── package.json            dependencias y scripts propios (puerto 3002 en dev)
 ```
 
-Todo el código del servidor vive en `backend/`. El frontend (web y panel) se agrega después como carpetas hermanas, sin mezclarse con `backend/`.
+Todo el código del servidor vive en `backend/`. El frontend es `panel/` (panel del dueño, SPA con Vite y React) y más adelante `web/` (web pública): carpetas hermanas de `backend/`, con sus propias dependencias, sin mezclarse entre sí.
 
 ## Pruebas
 
