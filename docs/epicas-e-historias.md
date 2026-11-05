@@ -7,6 +7,7 @@
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Borrador inicial para revisión |
 | 0.2 | 04/11/2026 | Tobias | Agrega a EP-00 la tarea del registro central de rutas (D-23) |
 | 0.3 | 04/11/2026 | Tobias | Sincroniza con Trello: suma criterios de aceptación, el esqueleto de carpetas y separa `docker-compose.yml` del `Dockerfile` |
+| 0.4 | 05/11/2026 | Tobias | Sincroniza con Trello la tarea de diseño de la API (D-25) |
 
 ## Cómo leer este documento
 
@@ -72,7 +73,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 - [DOC][S] README con los pasos para levantar el proyecto (`docker compose up`, migrar, seed, correr).
 
 **API y frontends**
-- [DOC][M] Diseñar la API: lista de endpoints, ejemplos de petición y respuesta, códigos de error.
+- [DOC][M] Diseñar la API en `docs/api.md` (D-25): reglas comunes (respuestas, paginación, errores, fechas, códigos HTTP) y lista de endpoints del MVP. El detalle de cada endpoint se escribe al implementar su historia.
 - [DOC][M] Crear la colección base de Postman con ese diseño (permite que el frontend avance con datos simulados).
 - [WEB][M] Inicializar la web pública. *Bloqueada hasta decidir Next.js o Vite y llegar al curso de React.*
 - [PANEL][M] Inicializar el panel con Vite y React. *Bloqueada hasta el curso de React.*
