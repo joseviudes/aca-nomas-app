@@ -7,7 +7,7 @@
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Borrador inicial para revisión |
 | 0.2 | 04/11/2026 | Tobias | Agrega a EP-00 la tarea del registro central de rutas (D-23) |
 | 0.3 | 04/11/2026 | Tobias | Sincroniza con Trello: suma criterios de aceptación, el esqueleto de carpetas y separa `docker-compose.yml` del `Dockerfile` |
-| 0.4 | 05/11/2026 | Tobias | Sincroniza con Trello la tarea de diseño de la API (D-25) |
+| 0.4 | 05/11/2026 | Tobias | Sincroniza con Trello la tarea de diseño de la API (D-25) y la del `Dockerfile` (D-26) |
 
 ## Cómo leer este documento
 
@@ -67,7 +67,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 - [DB][M] Seed con datos ficticios: una localidad (Corrientes Capital), rubros, dueños y entre 8 y 12 negocios con horarios variados, incluido uno con turno que cruza la medianoche y uno pausado.
 
 **Infraestructura**
-- [INFRA][S] `Dockerfile` de la API (se usa en el primer despliegue).
+- [INFRA][S] `Dockerfile` de desarrollo de la API y perfil `api` en `docker-compose.yml`: levantar solo la base o la base y la API, sin instalar Node (D-26). La imagen de producción se define con el hosting.
 - [INFRA][M] GitHub Actions: lint y pruebas en cada PR.
 - [INFRA][S] Validar el formato de commits y del título del PR en CI (opcional).
 - [DOC][S] README con los pasos para levantar el proyecto (`docker compose up`, migrar, seed, correr).
