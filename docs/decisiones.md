@@ -15,6 +15,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.7 | 04/11/2026 | Tobias | Actualiza D-22 con la revisión del modelo. En D-07, "pausa" pasa a `isPaused` |
 | 0.8 | 05/11/2026 | Tobias | D-22 pasa a `Aceptada`. Agrega D-24: PostgreSQL local en el puerto 5433 |
 | 0.9 | 05/11/2026 | Tobias | Agrega D-25: diseño de la API en dos niveles y respuesta paginada. Cierra esos dos temas en D-20 |
+| 0.10 | 05/11/2026 | Tobias | Agrega D-26: API en Docker para desarrollo, con perfiles de Docker Compose |
 
 ## Índice
 
@@ -45,6 +46,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-23 | Registro central de rutas en `routes.ts` | Aceptada |
 | D-24 | PostgreSQL local en el puerto 5433 | Aceptada |
 | D-25 | Diseño de la API en dos niveles y respuesta paginada | Aceptada |
+| D-26 | API en Docker para desarrollo, con perfiles de Docker Compose | Aceptada |
 
 ---
 
@@ -263,3 +265,14 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Motivo:** especificar cada campo de todos los módulos antes de programar lleva a un documento que se desactualiza al implementar. Con las reglas comunes definidas, cada integrante diseña los endpoints de su historia sin coordinar cada detalle, y la revisión del PR verifica que las respete. El slug nunca cambia (RN-05), así que sirve como único identificador del negocio.
 - **Descartado:** diseñar el detalle de todos los endpoints antes de empezar; envolver también los recursos sueltos en `{ data }`; usar el `id` en las rutas del panel y el `slug` en las públicas, porque habría dos identificadores para lo mismo.
 - **Nota:** complementa a D-11. La colección de Postman (`docs/postman/`) sigue a `docs/api.md`.
+
+## D-26 API en Docker para desarrollo, con perfiles de Docker Compose
+- **Decisión:**
+  - `backend/Dockerfile` es una imagen de **desarrollo**: corre `npm run dev`, que reinicia el servidor al guardar. Al arrancar aplica las migraciones pendientes.
+  - `docker-compose.yml` usa perfiles para elegir qué levantar. Sin perfil levanta solo la base de datos; con `--profile api` levanta también la API.
+  - Los cambios llegan al contenedor con Compose Watch (`up --watch`): copia cada archivo guardado de `src/` y `tests/`, y reconstruye la imagen si cambian las dependencias o la carpeta `prisma/`.
+  - El frontend se suma más adelante con su propio perfil.
+  - La imagen usa Debian slim (`node:24-bookworm-slim`), no Alpine.
+- **Motivo:** que un integrante pueda trabajar en el proyecto con solo Docker, sin instalar Node ni configurar dependencias. Quien prefiere Node en su máquina sigue usando `npm run dev` y levanta solo la base. Compose Watch y no una carpeta montada porque en Windows con Docker Desktop el contenedor no se entera de los archivos guardados y el reinicio automático falla. Debian slim porque `bcrypt` trae binarios compilados para glibc, la biblioteca de C que usa Debian y no Alpine.
+- **Descartado:** una imagen de producción ahora, porque depende del hosting, que no está definido (D-20); montar la carpeta del backend como volumen, por el problema de Windows; un segundo archivo de compose para la API, porque obliga a pasar los dos archivos en cada comando; levantar siempre la API con la base, porque choca con `npm run dev` en el puerto 3000.
+- **Nota:** complementa a D-04 y D-24. La imagen de producción se define con el hosting del primer despliegue.

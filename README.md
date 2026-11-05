@@ -71,6 +71,8 @@ Los comandos funcionan en PowerShell, en Git Bash y en Linux o macOS.
    ```
    Para comprobar que anda, abrir `http://localhost:3000/api/health`. Tiene que responder `{"status":"ok"}`.
 
+**Solo con Docker, sin instalar Node:** después de clonar, `docker compose --profile api up --watch` levanta la base y la API en modo desarrollo, aplica las migraciones y reinicia el servidor al guardar. Los detalles están en [docs/entorno-local.md](docs/entorno-local.md#levantar-la-api-en-docker).
+
 Los pasos 1 a 7 se hacen una sola vez. Los datos quedan guardados aunque se apague el contenedor o la computadora. El día a día (apagar, resetear la base, traer migraciones nuevas) está en [docs/entorno-local.md](docs/entorno-local.md).
 
 ### Cuentas del seed
