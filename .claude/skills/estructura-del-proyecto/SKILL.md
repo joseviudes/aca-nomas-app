@@ -21,6 +21,8 @@ aca-nomas-app/
 │   ├── ers.md
 │   ├── decisiones.md
 │   ├── epicas-e-historias.md
+│   ├── api.md                 reglas comunes de la API y lista de endpoints (D-25)
+│   ├── entorno-local.md       el día a día con la base y el backend
 │   ├── diagramas/             diagrama entidad-relación (Mermaid)
 │   └── postman/               colección exportada
 └── backend/

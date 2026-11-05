@@ -14,6 +14,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.6 | 04/11/2026 | Tobias | Agrega D-23: registro central de rutas en `routes.ts` |
 | 0.7 | 04/11/2026 | Tobias | Actualiza D-22 con la revisión del modelo. En D-07, "pausa" pasa a `isPaused` |
 | 0.8 | 05/11/2026 | Tobias | D-22 pasa a `Aceptada`. Agrega D-24: PostgreSQL local en el puerto 5433 |
+| 0.9 | 05/11/2026 | Tobias | Agrega D-25: diseño de la API en dos niveles y respuesta paginada. Cierra esos dos temas en D-20 |
 
 ## Índice
 
@@ -43,6 +44,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-22 | Modelo de datos | Aceptada |
 | D-23 | Registro central de rutas en `routes.ts` | Aceptada |
 | D-24 | PostgreSQL local en el puerto 5433 | Aceptada |
+| D-25 | Diseño de la API en dos niveles y respuesta paginada | Aceptada |
 
 ---
 
@@ -210,9 +212,9 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | Frontend de la web pública | Next.js o renderizado en el servidor para vistas previas al compartir; panel como SPA con Vite | Cuando llegue el curso de React |
 | Hosting del primer despliegue | Sin definir | Pendiente |
 | Modelo de datos | Definido en D-22 | Resuelta |
-| Diseño de la API | Se define en el plan de implementación | Pendiente |
+| Diseño de la API | Definido en D-25 (`docs/api.md`) | Resuelta |
 | Rama `develop` | Sin `develop`: las ramas salen de `main` y en EP-00 los PR agrupan varias tareas por bloque | Se evalúa con el primer despliegue |
-| Respuesta paginada | `{ data, page, limit, total }`, con `limit` máximo de 100 | A confirmar en el diseño de la API |
+| Respuesta paginada | `{ data, page, limit, total }`, con `limit` máximo de 100 | Resuelta en D-25 |
 | Librería de logs | Logger propio mínimo con `console` (una línea por request) | Se evalúa antes del primer despliegue |
 
 ## D-21 Sin atribución a IA en commits y PR
@@ -250,3 +252,14 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Motivo:** quien ya tiene PostgreSQL instalado en su máquina lo tiene ocupando el `5432`. Con `5433` el contenedor y la instalación conviven sin conflicto, y todo el equipo usa la misma URL.
 - **Descartado:** el `5432` por defecto, porque obliga a apagar el PostgreSQL instalado o a que cada uno cambie el puerto en su `.env`.
 - **Nota:** dentro del contenedor PostgreSQL sigue en `5432`; solo cambia el puerto de la máquina. Complementa a D-04.
+
+## D-25 Diseño de la API en dos niveles y respuesta paginada
+- **Decisión:**
+  - La API se diseña en dos niveles, en `docs/api.md`. Las **reglas comunes** (forma de las respuestas, paginación, errores, nombres, fechas y códigos HTTP) se definen una vez y valen para todos los módulos. El **detalle de cada endpoint** (campos, ejemplo y errores propios) lo escribe quien implementa la historia, en el mismo PR.
+  - El documento tiene además una lista de los endpoints del MVP, sacada de las historias. Se actualiza en el PR que agrega o cambia un endpoint.
+  - Una lista se responde siempre paginada: `{ data, page, limit, total }`. `limit` es 20 por defecto y 100 como máximo.
+  - Un recurso se responde como objeto directo, sin envoltorio.
+  - Un negocio se identifica por su `slug` en todas las rutas, públicas y del panel.
+- **Motivo:** especificar cada campo de todos los módulos antes de programar lleva a un documento que se desactualiza al implementar. Con las reglas comunes definidas, cada integrante diseña los endpoints de su historia sin coordinar cada detalle, y la revisión del PR verifica que las respete. El slug nunca cambia (RN-05), así que sirve como único identificador del negocio.
+- **Descartado:** diseñar el detalle de todos los endpoints antes de empezar; envolver también los recursos sueltos en `{ data }`; usar el `id` en las rutas del panel y el `slug` en las públicas, porque habría dos identificadores para lo mismo.
+- **Nota:** complementa a D-11. La colección de Postman (`docs/postman/`) sigue a `docs/api.md`.

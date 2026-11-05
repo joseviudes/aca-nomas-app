@@ -106,6 +106,7 @@ Cada PR corre `lint`, `format:check`, `typecheck`, `test` y `build` en GitHub Ac
 - [Registro de decisiones](docs/decisiones.md)
 - [Épicas e historias](docs/epicas-e-historias.md)
 - [Modelo de datos](docs/diagramas/modelo-de-datos.md)
+- [Diseño de la API](docs/api.md)
 - [Entorno local: el día a día](docs/entorno-local.md)
 - [Cómo contribuir](CONTRIBUTING.md)
 
