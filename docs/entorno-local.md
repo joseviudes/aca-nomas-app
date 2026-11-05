@@ -47,7 +47,11 @@ No hace falta instalar PostgreSQL aparte: corre en el contenedor de Docker.
    ```
    npm run db:migrate
    ```
-   El seed con datos ficticios se suma cuando exista.
+   Después, cargar los datos ficticios (se puede repetir: borra todo y vuelve a cargar):
+   ```
+   npm run db:seed
+   ```
+   Las cuentas del seed son `admin@example.com` y `owner1@example.com` a `owner10@example.com`, todas con la contraseña `acanomas123`.
 5. Levantar el backend en modo desarrollo:
    ```
    npm run dev
