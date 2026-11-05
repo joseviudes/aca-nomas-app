@@ -7,6 +7,7 @@ Qué instalar para correr el backend directo en tu máquina (sin contenedor), us
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 04/11/2026 | Josi | Versión inicial |
+| 0.2 | 05/11/2026 | Tobias | Aclara que el backend en contenedor todavía no existe |
 
 ## Índice
 
@@ -18,7 +19,7 @@ Qué instalar para correr el backend directo en tu máquina (sin contenedor), us
 
 El `docker-compose.yml` del repositorio levanta solo PostgreSQL, en el puerto `5433`. Esta guía es para quien prefiere correr el backend (Node) instalado directo en su máquina en vez de en un contenedor, por ejemplo para depurar más fácil o porque ya tiene el entorno de Node configurado.
 
-Para alguien que prefiera levantar todo en contenedores (por ejemplo en Linux), hay un perfil de Docker aparte que incluye el backend. Esa opción se documenta cuando exista el `Dockerfile` de la API (tarea `[INFRA] Dockerfile de la API`).
+Levantar también el backend en un contenedor todavía no es posible: depende del `Dockerfile` de la API (tarea `[INFRA] Dockerfile de la API`). Esa opción se documenta cuando exista.
 
 ## Requisitos
 
