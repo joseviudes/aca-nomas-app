@@ -45,7 +45,7 @@ jobs:
 
   # La web y el panel tienen los mismos scripts: un solo job que corre una vez por cada app.
   frontend:
-    name: ${{ matrix.app }} (lint, formato, tipos y build)
+    name: ${{ matrix.app }} (lint, formato, tipos, pruebas y build)
     runs-on: ubuntu-latest
     strategy:
       # Si falla una app, la otra sigue: así el PR muestra todos los errores juntos.
@@ -70,6 +70,7 @@ jobs:
       - run: npm run lint
       - run: npm run format:check
       - run: npm run typecheck
+      - run: npm test
       # El build es de producción, así que config/env.ts exige la URL de la API. Acá basta con una
       # de muestra: la CI solo compila, no llama a la API.
       - run: npm run build
