@@ -18,6 +18,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.10 | 05/11/2026 | Tobias | Agrega D-26: API en Docker para desarrollo, con perfiles de Docker Compose |
 | 0.11 | 05/11/2026 | Josi | Agrega D-27: frontend con Next.js para la web pública. Cierra ese tema en D-20 |
 | 0.12 | 06/11/2026 | Tobias | Agrega D-28 a D-32: CORS, URLs en español, `fetch` con `http-client`, estructura del frontend y React Router. Suma a D-20 la cookie en producción y TanStack Query |
+| 0.13 | 06/11/2026 | Tobias | Agrega D-33: la web y el panel en Docker para desarrollo, y `API_INTERNAL_URL` |
 
 ## Índice
 
@@ -55,6 +56,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-30 | `fetch` con un `http-client` propio en los dos frontends | Aceptada |
 | D-31 | Estructura del frontend por módulos y capas | Aceptada |
 | D-32 | React Router en el panel | Aceptada |
+| D-33 | Web y panel en Docker para desarrollo | Aceptada |
 
 ---
 
@@ -317,7 +319,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
   - El `http-client` arma la URL desde `config/env.ts`, manda siempre `credentials: 'include'`, convierte el JSON y, si la respuesta no es `ok`, lanza un `ApiError` con el `code`, el `message` y los `details` del formato de errores de la API. Opcionalmente valida la respuesta con un esquema Zod.
   - Todo error sale como `ApiError`: sin conexión (`NETWORK_ERROR`), respuesta que no es JSON o no coincide con el esquema (`INVALID_RESPONSE`) y errores de la API con su propio `code`. Las pantallas nunca reciben un `ZodError` ni un `TypeError`.
   - La URL base va en `NEXT_PUBLIC_API_URL` (web) y `VITE_API_URL` (panel), documentada en el `.env.example` de cada app. En desarrollo vale por defecto `http://localhost:3000/api`; en producción es obligatoria.
-  - Hay una copia del `http-client` en cada app (D-31). Un cambio en una se repite en la otra.
+  - Hay una copia del `http-client` en cada app (D-31). Un cambio en una se repite en la otra. La única diferencia es que la web elige la URL según corra en el servidor o en el navegador (D-33).
 - **Motivo:** Next extiende `fetch` en el servidor con caché (`next: { revalidate, tags }`) y Axios no la aprovecha. Lo que suma Axios (JSON automático, error en 4xx y 5xx, configuración común) lo cubre un archivo chico. Usar lo mismo en las dos apps hace que las llamadas se escriban igual en todo el proyecto.
 - **Descartado:** Axios en las dos apps, por la caché de Next; Axios en el panel y `fetch` en la web, porque son dos formas de hacer lo mismo; un valor por defecto también en producción, porque si se olvida la variable la app compila, apunta a `localhost` y ninguna llamada funciona sin que nada lo avise.
 
@@ -338,3 +340,14 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Motivo:** es el router más usado y documentado para una SPA con React, y el más probable en el curso. Tener todas las rutas en un archivo sigue la idea de D-23 en el backend.
 - **Descartado:** TanStack Router, que tiene mejor tipado pero menos material para aprender; ruteo propio con estado, porque no maneja el historial ni los enlaces.
 - **Nota:** desde la versión 8, `RouterProvider` se importa de `react-router/dom` y todo lo demás de `react-router`. Ya no existe `react-router-dom`.
+
+## D-33 Web y panel en Docker para desarrollo
+- **Decisión:**
+  - `web/Dockerfile` y `panel/Dockerfile` son imágenes de **desarrollo**, con la misma base que la API (`node:24-bookworm-slim`). Corren `npm run dev` escuchando en `0.0.0.0`.
+  - `docker-compose.yml` suma los perfiles `web` y `panel`, y `full` para levantar todo. La API queda en `api` y `full`. Los perfiles se combinan.
+  - Los cambios llegan con Compose Watch, igual que en la API (D-26). Si cambia la configuración (`next.config.ts`, `vite.config.ts`, `index.html`), se reinicia el contenedor; si cambia `package-lock.json`, se reconstruye la imagen.
+  - La web y el panel no dependen de la API para arrancar: se pueden levantar contra una API que corra con `npm run dev`.
+  - La web suma la variable `API_INTERNAL_URL`, solo del servidor: es la dirección de la API vista desde el servidor de Next. En Docker vale `http://api:3000/api`. El `http-client` la usa en el servidor y la pública en el navegador (D-30).
+- **Motivo:** completar lo que D-26 dejó para más adelante: que un integrante levante el proyecto entero con solo Docker. `API_INTERNAL_URL` hace falta porque dentro de un contenedor `localhost` es el propio contenedor: el navegador llega a la API por `localhost:3000`, pero el servidor de Next no. En producción pasa lo mismo cuando la API está en una red interna.
+- **Descartado:** que la web y el panel dependan de la API en el compose, porque obligaría a levantarla aunque se use `npm run dev`; red del host (`network_mode: host`), porque en Docker Desktop para Windows no es confiable; un perfil por combinación posible, porque los perfiles ya se combinan.
+- **Nota:** complementa a D-26. Las imágenes de producción se definen con el hosting.
