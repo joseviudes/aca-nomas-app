@@ -327,7 +327,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Decisión:**
   - Las dos apps se organizan por módulo, con los mismos nombres que el backend (`auth`, `businesses`, `opening-hours`…), en `src/modules/`.
   - Dentro de cada módulo, las capas son `pages` (arma la pantalla) → `hooks` (estado y lógica) → `api` (llamadas HTTP), más `components` (solo vista, por props), `schemas` (Zod) y `domain` (funciones puras).
-  - Un módulo usa a otro solo por su `index.ts`. Lo que usan dos o más módulos va en `src/shared/`.
+  - Un módulo usa a otro solo por su `index.ts`. ESLint lo verifica con `no-restricted-imports`, como las capas del backend (D-15). Lo que usan dos o más módulos va en `src/shared/`.
   - En la web, `src/app/` solo tiene rutas finas que usan los módulos. Los datos se piden en el servidor y solo lo interactivo lleva `'use client'`.
   - Los componentes de React se nombran en `PascalCase.tsx`; el resto de los archivos, en `kebab-case`.
   - "Abierto ahora" no se recalcula en el frontend: lo devuelve la API.

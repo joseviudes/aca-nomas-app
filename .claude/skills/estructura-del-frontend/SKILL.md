@@ -73,7 +73,7 @@ En la web hay una decisión más por componente: **servidor o cliente**.
 
 1. **Un componente no llama a la API.** Si un componente tiene `fetch` o `http.get`, está mal ubicado: va en `api/` y se usa desde un hook o una página.
 2. **Solo `shared/api/http-client.ts` usa `fetch`.** Las demás llamadas pasan por él, así todas mandan la cookie y lanzan `ApiError` igual.
-3. **Un módulo usa a otro solo por su `index.ts`.** Nunca `../businesses/components/...`.
+3. **Un módulo usa a otro solo por su `index.ts`.** Nunca `../../businesses/components/...` ni `@/modules/businesses/components/...`: ESLint lo marca como error (`no-restricted-imports`).
 4. **`shared/` solo si lo usan al menos dos módulos.** Antes, queda en el módulo.
 5. **"Abierto ahora" no se calcula en el frontend.** Lo devuelve la API (`isOpenNow`). Calcularlo en dos lugares termina dando resultados distintos.
 6. **Los errores se muestran según `error.code`, nunca según `error.message`.** El código es estable; el texto puede cambiar. Todo error del `http-client` es un `ApiError`: los de la API traen su `code` (`BUSINESS_NOT_FOUND`), y además están `NETWORK_ERROR` (sin conexión) e `INVALID_RESPONSE` (la respuesta no tiene la forma esperada).

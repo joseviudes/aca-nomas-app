@@ -88,6 +88,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 - [WEB][S] [PANEL] `http-client` con `fetch`, `ApiError` y la URL de la API validada con Zod en `config/env.ts`, con su `.env.example` (D-30).
 - [WEB][S] Igualar con el panel las versiones de TypeScript, ESLint y los tipos de Node. El chequeo de tipos genera antes los tipos de Next (`next typegen`).
 - [DOC][S] Skill `estructura-del-frontend` (módulos y capas, D-31), URLs en español (D-29) y registro de D-28 a D-32.
+- [WEB][S] [PANEL] Regla de ESLint que impide importar las carpetas internas de otro módulo: solo por su `index.ts` (D-31).
 - [QA][S] Vitest en la web y el panel, con pruebas del `http-client`, `ApiError` y `config/env.ts`, y `npm test` en GitHub Actions.
 - [INFRA][S] `Dockerfile` de desarrollo de la web y el panel, y perfiles `web`, `panel` y `full` en `docker-compose.yml`: levantar todo el proyecto sin instalar Node (D-33).
 
@@ -371,11 +372,11 @@ Se avanza junto con las demás épicas; no se deja para el final.
 
 | Épica | Historias | Tareas aprox. |
 |---|---|---|
-| EP-00 Cimientos | — | 34 |
+| EP-00 Cimientos | — | 35 |
 | EP-01 Exploración | 7 | 19 |
 | EP-02 Ficha de negocio | 4 | 10 |
 | EP-03 Cuentas de dueños | 3 | 11 |
 | EP-04 Gestión de la ficha | 6 | 16 |
 | EP-05 Horarios y estado | 1 técnica + 5 | 18 |
 | EP-06 Calidad y entrega | — | 11 |
-| **Total** | **26** | **~119** |
+| **Total** | **26** | **~120** |
