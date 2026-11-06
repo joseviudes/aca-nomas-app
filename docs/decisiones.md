@@ -22,6 +22,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.14 | 06/11/2026 | Tobias | Resuelve la localidad inicial en D-20: Mantilla, Corrientes |
 | 0.15 | 06/11/2026 | Tobias | Agrega D-34: documentación de la API con OpenAPI y Swagger. Actualiza D-25: el detalle por endpoint pasa a Swagger |
 | 0.16 | 06/11/2026 | Tobias | Agrega D-35 a D-37: Postman para escenarios, el estado de las tareas solo en Trello y las herramientas que no se suman por ahora. Actualiza D-15, D-25, D-30 y D-34 |
+| 0.17 | 06/11/2026 | Tobias | Agrega D-38: estilos con Tailwind y los tokens del mockup. El equipo pasa a ser de 5 (D-37) |
 
 ## Índice
 
@@ -64,6 +65,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-35 | Postman para escenarios, no como catálogo de endpoints | Aceptada |
 | D-36 | El estado de las tareas vive solo en Trello | Aceptada |
 | D-37 | Herramientas que no se suman por ahora | Aceptada |
+| D-38 | Estilos con Tailwind CSS y los tokens del mockup | Aceptada |
 
 ---
 
@@ -393,6 +395,17 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 
 ## D-37 Herramientas que no se suman por ahora
 - **Decisión:** por ahora no se agregan Storybook, monorepo con *workspaces* (un paquete compartido entre las apps), Dependabot ni *pre-commit hooks* (Husky y lint-staged).
-- **Motivo:** somos 4 y el MVP tiene fecha. Cada herramienta suma configuración y mantenimiento sin resolver un problema concreto de hoy. Los errores de lint, formato, tipos y pruebas ya los frena la CI en cada PR, y correr `lint` antes de subir sigue siendo regla (`CONTRIBUTING.md`).
+- **Motivo:** somos 5 y el MVP tiene fecha. Cada herramienta suma configuración y mantenimiento sin resolver un problema concreto de hoy. Los errores de lint, formato, tipos y pruebas ya los frena la CI en cada PR, y correr `lint` antes de subir sigue siendo regla (`CONTRIBUTING.md`).
 - **Descartado:** sumarlas "por las dudas", por el costo de mantenerlas.
 - **Nota:** se revisa cada una si aparece su motivo: *workspaces*, si además del `http-client` hay más código para compartir entre la web y el panel (D-30); Storybook, si hay varios componentes visuales reutilizables; Dependabot, si el proyecto sigue después de la entrega.
+
+## D-38 Estilos con Tailwind CSS y los tokens del mockup
+- **Decisión:**
+  - La web y el panel usan Tailwind CSS 4: `@tailwindcss/postcss` en la web (Next) y `@tailwindcss/vite` en el panel.
+  - Los colores, las tipografías y las sombras del mockup se declaran como **tokens** en el `@theme` de `src/shared/ui/theme.css`, con nombres en inglés (`ink`, `paper`, `cream`, `open`, `brand`, `font-display`, `shadow-hard`…). Hay una copia en cada app, como el `http-client` (D-30): un cambio en una se repite en la otra en el mismo PR.
+  - Las pantallas usan solo esos tokens: nada de colores sueltos (`bg-[#C8372D]`). Si falta uno, se agrega al tema.
+  - Las fuentes se sirven desde la app: `next/font` en la web y `@fontsource` en el panel.
+  - El mockup es una referencia, no un plano: los tokens se respetan siempre; la distribución y los detalles de cada pantalla puede cambiarlos quien la arma, explicándolo en el PR con una captura. El detalle está en `docs/diseno.md`.
+- **Motivo:** con cinco personas armando pantallas a la vez, los tokens evitan que cada uno invente su propio color o botón. Tailwind funciona igual en Next y en Vite, y en la versión 4 el tema se declara en CSS, sin archivo de configuración. El mockup tiene un estilo propio y fuerte (bordes gruesos, sombras duras, fondo crema) que se arma bien con clases utilitarias.
+- **Descartado:** CSS Modules, porque cada pantalla tiene su archivo de estilos y la coherencia depende de que todos usen las mismas variables a mano; una librería de componentes (MUI, shadcn/ui), porque su estética choca con la del mockup y habría que pisarla en cada componente; CSS-in-JS (styled-components), porque corre en el navegador y no se lleva bien con los Server Components de Next.
+- **Nota:** instalar Tailwind, el tema y los componentes base de `shared/ui` es la primera tarea de frontend del sprint 1. El texto `brand` sobre `cream` no llega al contraste mínimo para texto chico (`docs/diseno.md`, sección 6).
