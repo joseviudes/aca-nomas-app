@@ -3,9 +3,17 @@ import { env } from '@/config/env';
 import { ApiError } from './api-error';
 
 // Único lugar que llama a `fetch` (D-30). Los módulos lo usan desde su carpeta api/.
-// Hay una copia en panel/src/shared/api/: un cambio acá se repite allá (D-31).
+// Hay una copia en panel/src/shared/api/: un cambio acá se repite allá (D-31). La única
+// diferencia es `apiBaseUrl`, porque el panel no corre en un servidor.
 // Se usa `fetch` y no Axios porque Next lo extiende con caché: se pueden pasar
 // `next: { revalidate, tags }` en las opciones y llegan tal cual.
+
+// En el navegador, la URL pública. En el servidor de Next, la interna si existe (D-33).
+function apiBaseUrl(): string {
+  const isServer = typeof window === 'undefined';
+  return isServer ? (env.API_INTERNAL_URL ?? env.NEXT_PUBLIC_API_URL) : env.NEXT_PUBLIC_API_URL;
+}
+
 type RequestOptions<T> = Omit<RequestInit, 'body' | 'headers'> & {
   body?: unknown;
   headers?: Record<string, string>;
@@ -18,7 +26,7 @@ async function request<T>(path: string, options: RequestOptions<T> = {}): Promis
 
   let response: Response;
   try {
-    response = await fetch(`${env.NEXT_PUBLIC_API_URL}${path}`, {
+    response = await fetch(`${apiBaseUrl()}${path}`, {
       ...init,
       // En el navegador hace viajar la cookie de sesión (D-10, D-28). En el servidor no tiene efecto.
       credentials: 'include',

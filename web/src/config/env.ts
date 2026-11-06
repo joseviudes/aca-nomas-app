@@ -19,6 +19,14 @@ function createEnvSchema(isProduction: boolean) {
         // Sin "/" final, así las rutas se arman siempre como `${NEXT_PUBLIC_API_URL}/businesses`.
         return value.replace(/\/+$/, '');
       }),
+    // Solo del servidor (sin NEXT_PUBLIC_, no llega al navegador). Es la dirección de la API vista
+    // desde el servidor de Next, cuando no es la misma que ve el navegador: en Docker,
+    // `localhost` es el propio contenedor y la API está en `http://api:3000/api` (D-33).
+    // Si no se define, el servidor usa NEXT_PUBLIC_API_URL.
+    API_INTERNAL_URL: z
+      .url({ protocol: /^https?$/ })
+      .optional()
+      .transform((url) => url?.replace(/\/+$/, '')),
   });
 }
 
@@ -36,6 +44,9 @@ export function parseEnv(source: Record<string, unknown>, isProduction: boolean)
 // Next reemplaza `process.env.NEXT_PUBLIC_API_URL` por su valor al compilar, pero solo si se escribe
 // así, completo. Pasar `process.env` entero dejaría la variable vacía en el navegador.
 export const env = parseEnv(
-  { NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL },
+  {
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    API_INTERNAL_URL: process.env.API_INTERNAL_URL,
+  },
   process.env.NODE_ENV === 'production',
 );
