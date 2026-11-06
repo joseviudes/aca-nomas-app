@@ -10,6 +10,7 @@
 | 0.4 | 05/11/2026 | Tobias | Sincroniza con Trello la tarea de diseño de la API (D-25) y la del `Dockerfile` (D-26) |
 | 0.5 | 05/11/2026 | Josi | Saca el bloqueo de `[PANEL] Inicializar el panel`: el equipo ya tuvo la primera clase de React |
 | 0.6 | 05/11/2026 | Josi | Saca el bloqueo de `[WEB] Inicializar la web pública`: Next.js queda decidido en D-27 |
+| 0.7 | 06/11/2026 | Tobias | Agrega a EP-00 las tareas de la base del frontend (D-28 a D-32) |
 
 ## Cómo leer este documento
 
@@ -79,6 +80,14 @@ Sin historias de usuario. Todo lo demás depende de esto.
 - [DOC][M] Crear la colección base de Postman con ese diseño (permite que el frontend avance con datos simulados).
 - [WEB][M] Inicializar la web pública con Next.js, TypeScript y Zod en `web/` (D-27).
 - [PANEL][M] Inicializar el panel con Vite, React y TypeScript en `panel/` (D-20).
+
+**Base del frontend**
+- [BE][S] CORS en la API con la lista de orígenes en `CORS_ORIGINS` y `credentials: true`, para que la web y el panel puedan llamarla con la cookie (D-28).
+- [INFRA][S] Sumar la web y el panel a GitHub Actions: lint, formato, tipos y build en cada PR.
+- [PANEL][S] React Router con todas las rutas en `src/app/router.tsx`, y TypeScript en modo `strict` (D-32).
+- [WEB][S] [PANEL] `http-client` con `fetch`, `ApiError` y la URL de la API validada con Zod en `config/env.ts`, con su `.env.example` (D-30).
+- [WEB][S] Igualar con el panel las versiones de TypeScript, ESLint y los tipos de Node. El chequeo de tipos genera antes los tipos de Next (`next typegen`).
+- [DOC][S] Skill `estructura-del-frontend` (módulos y capas, D-31), URLs en español (D-29) y registro de D-28 a D-32.
 
 ---
 
