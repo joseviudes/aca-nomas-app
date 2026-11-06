@@ -17,6 +17,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.9 | 05/11/2026 | Tobias | Agrega D-25: diseño de la API en dos niveles y respuesta paginada. Cierra esos dos temas en D-20 |
 | 0.10 | 05/11/2026 | Tobias | Agrega D-26: API en Docker para desarrollo, con perfiles de Docker Compose |
 | 0.11 | 05/11/2026 | Josi | Agrega D-27: frontend con Next.js para la web pública. Cierra ese tema en D-20 |
+| 0.12 | 06/11/2026 | Tobias | Agrega D-28 a D-32: CORS, URLs en español, `fetch` con `http-client`, estructura del frontend y React Router. Suma a D-20 la cookie en producción y TanStack Query |
 
 ## Índice
 
@@ -49,6 +50,11 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-25 | Diseño de la API en dos niveles y respuesta paginada | Aceptada |
 | D-26 | API en Docker para desarrollo, con perfiles de Docker Compose | Aceptada |
 | D-27 | Frontend con Next.js para la web pública | Aceptada |
+| D-28 | CORS con lista de orígenes permitidos | Aceptada |
+| D-29 | URLs del frontend en español | Aceptada |
+| D-30 | `fetch` con un `http-client` propio en los dos frontends | Aceptada |
+| D-31 | Estructura del frontend por módulos y capas | Aceptada |
+| D-32 | React Router en el panel | Aceptada |
 
 ---
 
@@ -220,6 +226,8 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | Rama `develop` | Sin `develop`: las ramas salen de `main` y en EP-00 los PR agrupan varias tareas por bloque | Se evalúa con el primer despliegue |
 | Respuesta paginada | `{ data, page, limit, total }`, con `limit` máximo de 100 | Resuelta en D-25 |
 | Librería de logs | Logger propio mínimo con `console` (una línea por request) | Se evalúa antes del primer despliegue |
+| Cookie de sesión en producción | Un dominio propio con subdominios (`api.`, `panel.`), para que la cookie no sea de terceros (D-28) | Se confirma con el hosting |
+| Estado de servidor en el panel | Hooks propios sobre el `http-client` (D-30). Se evalúa TanStack Query | Con las primeras pantallas con datos |
 
 ## D-21 Sin atribución a IA en commits y PR
 - **Decisión:** los commits y los PR no llevan `Co-Authored-By` ni mencionan a Claude u otra herramienta de IA.
@@ -287,3 +295,44 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Motivo:** las fichas de negocio se comparten por WhatsApp y redes, y necesitan vista previa (título, imagen, descripción) al pegar el enlace. Eso requiere que el HTML llegue armado desde el servidor, algo que una SPA con Vite no da sin trabajo extra. El panel es privado y no necesita SEO ni vista previa, así que una SPA alcanza y es más simple.
 - **Descartado:** Vite + SPA también para la web pública, porque pierde la vista previa al compartir sin agregar una capa de renderizado aparte.
 - **Nota:** el equipo tuvo la primera clase de React del bootcamp el 05/11/2026, lo que desbloquea las dos tareas de inicialización de EP-00 (`[WEB]` y `[PANEL]`).
+
+## D-28 CORS con lista de orígenes permitidos
+- **Decisión:**
+  - El backend usa el paquete `cors` con una lista explícita de orígenes en la variable `CORS_ORIGINS`, separados por comas y validados con Zod. Por defecto, en desarrollo: `http://localhost:3001` (web) y `http://localhost:3002` (panel).
+  - Va con `credentials: true`, para que viaje la cookie de sesión (D-10).
+  - Una request sin encabezado `Origin` (Postman, curl, otro servidor) pasa igual: CORS lo aplica el navegador.
+- **Motivo:** la API, la web y el panel corren como servidores separados. Un origen es protocolo + dominio + puerto, así que el navegador trata a cada uno como otro sitio y bloquea la respuesta si la API no lo permite. Las llamadas que hace Next desde el servidor no pasan por CORS.
+- **Descartado:** `origin: '*'`, porque el navegador lo rechaza cuando viaja una cookie; un proxy de Vite solo en desarrollo, porque en producción las apps también van separadas y el problema volvería; escribir los orígenes en el código, porque cambian en cada entorno.
+- **Nota:** en producción, si la API y los frontends quedan en dominios distintos, la cookie pasa a ser de terceros y los navegadores la bloquean cada vez más. La idea es usar un dominio propio con subdominios; queda en D-20 hasta definir el hosting.
+
+## D-29 URLs del frontend en español
+- **Decisión:** las URLs que ve el usuario en la web y en el panel van en español: `/negocios/[slug]`, `/ingresar`, `/mis-negocios`. Las rutas de la API siguen en inglés (D-08) y el código también.
+- **Motivo:** el vecino lee, comparte y escribe esas URLs. Un enlace como `/negocios/panaderia-la-espiga` se entiende al pegarlo en WhatsApp.
+- **Descartado:** URLs en inglés, porque mezclan idiomas en lo que ve el usuario.
+- **Nota:** el nombre del componente sigue en inglés (`BusinessPage`); solo cambia el texto de la URL.
+
+## D-30 `fetch` con un `http-client` propio en los dos frontends
+- **Decisión:**
+  - Las dos apps llaman a la API con `fetch` a través de `src/shared/api/http-client.ts`, el único archivo que usa `fetch` directamente.
+  - El `http-client` arma la URL desde `config/env.ts`, manda siempre `credentials: 'include'`, convierte el JSON y, si la respuesta no es `ok`, lanza un `ApiError` con el `code`, el `message` y los `details` del formato de errores de la API. Opcionalmente valida la respuesta con un esquema Zod.
+  - La URL base va en `NEXT_PUBLIC_API_URL` (web) y `VITE_API_URL` (panel), con valor por defecto `http://localhost:3000/api` y documentada en el `.env.example` de cada app.
+- **Motivo:** Next extiende `fetch` en el servidor con caché (`next: { revalidate, tags }`) y Axios no la aprovecha. Lo que suma Axios (JSON automático, error en 4xx y 5xx, configuración común) lo cubre un archivo chico. Usar lo mismo en las dos apps hace que las llamadas se escriban igual en todo el proyecto.
+- **Descartado:** Axios en las dos apps, por la caché de Next; Axios en el panel y `fetch` en la web, porque son dos formas de hacer lo mismo.
+
+## D-31 Estructura del frontend por módulos y capas
+- **Decisión:**
+  - Las dos apps se organizan por módulo, con los mismos nombres que el backend (`auth`, `businesses`, `opening-hours`…), en `src/modules/`.
+  - Dentro de cada módulo, las capas son `pages` (arma la pantalla) → `hooks` (estado y lógica) → `api` (llamadas HTTP), más `components` (solo vista, por props), `schemas` (Zod) y `domain` (funciones puras).
+  - Un módulo usa a otro solo por su `index.ts`. Lo que usan dos o más módulos va en `src/shared/`.
+  - En la web, `src/app/` solo tiene rutas finas que usan los módulos. Los datos se piden en el servidor y solo lo interactivo lleva `'use client'`.
+  - Los componentes de React se nombran en `PascalCase.tsx`; el resto de los archivos, en `kebab-case`.
+  - "Abierto ahora" no se recalcula en el frontend: lo devuelve la API.
+  - El detalle está en la skill `estructura-del-frontend`.
+- **Motivo:** es la misma idea que el backend (D-06): separar vista, lógica y acceso a datos, y que cada integrante encuentre las cosas en el mismo lugar en las tres apps.
+- **Descartado:** carpetas por tipo (`components/`, `hooks/` y `services/` globales), porque con varios módulos mezclan todo; un paquete compartido de tipos entre backend y frontend, porque necesita *workspaces* y es demasiado para el tamaño del proyecto.
+
+## D-32 React Router en el panel
+- **Decisión:** el panel usa React Router (paquete `react-router`, modo *data* con `createBrowserRouter`). Todas las rutas se registran en `src/app/router.tsx`.
+- **Motivo:** es el router más usado y documentado para una SPA con React, y el más probable en el curso. Tener todas las rutas en un archivo sigue la idea de D-23 en el backend.
+- **Descartado:** TanStack Router, que tiene mejor tipado pero menos material para aprender; ruteo propio con estado, porque no maneja el historial ni los enlaces.
+- **Nota:** desde la versión 8, `RouterProvider` se importa de `react-router/dom` y todo lo demás de `react-router`. Ya no existe `react-router-dom`.
