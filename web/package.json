@@ -1,0 +1,34 @@
+{
+  "name": "aca-nomas-web",
+  "version": "0.1.0",
+  "description": "Web pública de AcáNomás",
+  "private": true,
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "start": "next start --port 3001",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "next": "16.4.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.5",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.10",
+    "typescript": "^5"
+  }
+}

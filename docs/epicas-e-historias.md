@@ -9,6 +9,7 @@
 | 0.3 | 04/11/2026 | Tobias | Sincroniza con Trello: suma criterios de aceptación, el esqueleto de carpetas y separa `docker-compose.yml` del `Dockerfile` |
 | 0.4 | 05/11/2026 | Tobias | Sincroniza con Trello la tarea de diseño de la API (D-25) y la del `Dockerfile` (D-26) |
 | 0.5 | 05/11/2026 | Josi | Saca el bloqueo de `[PANEL] Inicializar el panel`: el equipo ya tuvo la primera clase de React |
+| 0.6 | 05/11/2026 | Josi | Saca el bloqueo de `[WEB] Inicializar la web pública`: Next.js queda decidido en D-27 |
 
 ## Cómo leer este documento
 
@@ -76,7 +77,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 **API y frontends**
 - [DOC][M] Diseñar la API en `docs/api.md` (D-25): reglas comunes (respuestas, paginación, errores, fechas, códigos HTTP) y lista de endpoints del MVP. El detalle de cada endpoint se escribe al implementar su historia.
 - [DOC][M] Crear la colección base de Postman con ese diseño (permite que el frontend avance con datos simulados).
-- [WEB][M] Inicializar la web pública. *Bloqueada hasta decidir Next.js o Vite y llegar al curso de React.*
+- [WEB][M] Inicializar la web pública con Next.js, TypeScript y Zod en `web/` (D-27).
 - [PANEL][M] Inicializar el panel con Vite, React y TypeScript en `panel/` (D-20).
 
 ---
