@@ -72,7 +72,7 @@ Todo el código del servidor vive en `backend/`. El frontend son dos apps: `web/
 
 ## Pruebas
 
-- Van **en `backend/tests/`**, no al lado del código.
+- Van **en `backend/tests/`**, no al lado del código. En la web y el panel, igual: `web/tests/` y `panel/tests/` (ver `estructura-del-frontend`).
 - Dentro de `unit/` e `integration/` se repite la estructura de `src/modules/`:
   `tests/unit/businesses/business.service.test.ts` prueba `src/modules/businesses/services/business.service.ts`.
 - Los archivos terminan en `.test.ts`.

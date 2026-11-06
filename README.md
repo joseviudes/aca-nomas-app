@@ -104,7 +104,7 @@ Se corren dentro de `backend/`.
 | `npm run db:seed` | Borra los datos y vuelve a cargar los ficticios |
 | `npm run db:generate` | Regenera el cliente de Prisma |
 
-Cada PR corre en GitHub Actions `lint`, `format:check`, `typecheck`, `test` y `build` del backend, y `lint`, `format:check`, `typecheck` y `build` de la web y del panel.
+Cada PR corre en GitHub Actions `lint`, `format:check`, `typecheck`, `test` y `build` del backend, y los mismos pasos para la web y el panel.
 
 ## Web pública
 

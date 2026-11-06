@@ -90,6 +90,13 @@ En la web hay una decisión más por componente: **servidor o cliente**.
 | Resto de los archivos | `kebab-case` + rol | `businesses.api.ts`, `login.schema.ts` |
 | Rutas de Next | carpetas en español | `app/negocios/[slug]/page.tsx` |
 
+## Pruebas
+
+- Van en `tests/` de cada app, replicando la ruta de `src/`, igual que el backend: `panel/tests/unit/shared/api/http-client.test.ts` prueba `panel/src/shared/api/http-client.ts`.
+- Vitest, con `npm test`. Se prueba lo que tiene lógica: `api/`, `hooks/`, `domain/`, `schemas/` y `config/env.ts`.
+- Las llamadas a la API se prueban reemplazando `fetch` con `vi.stubGlobal('fetch', ...)`: no hace falta la API prendida.
+- Los componentes se prueban cuando existan, con un entorno de navegador (jsdom y Testing Library). Los flujos completos, con Playwright (D-15).
+
 ## Un ejemplo: el login del panel
 
 1. `router.tsx` registra `{ path: '/ingresar', Component: LoginPage }`, importada de `modules/auth`.

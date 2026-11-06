@@ -24,4 +24,5 @@ Corre en [http://localhost:3001](http://localhost:3001). El puerto 3000 queda li
 | `npm run start` | Corre el build de producción |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | Chequeo de tipos con TypeScript |
+| `npm test` / `test:watch` | Pruebas con Vitest (en `tests/`) |
 | `npm run format` / `format:check` | Prettier |
