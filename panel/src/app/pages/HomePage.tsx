@@ -1,4 +1,4 @@
-function App() {
+export function HomePage() {
   return (
     <main>
       <h1>AcáNomás</h1>
@@ -6,5 +6,3 @@ function App() {
     </main>
   );
 }
-
-export default App;

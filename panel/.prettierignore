@@ -1,2 +1,4 @@
 dist/
 package-lock.json
+# Los .md siguen el estilo de docs/ (tablas compactas), no el de Prettier.
+*.md
