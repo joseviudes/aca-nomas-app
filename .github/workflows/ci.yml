@@ -42,3 +42,33 @@ jobs:
       # Las pruebas unitarias no usan la base: vitest.config.ts define un DATABASE_URL de prueba.
       - run: npm test
       - run: npm run build
+
+  # La web y el panel tienen los mismos scripts: un solo job que corre una vez por cada app.
+  frontend:
+    name: ${{ matrix.app }} (lint, formato, tipos y build)
+    runs-on: ubuntu-latest
+    strategy:
+      # Si falla una app, la otra sigue: así el PR muestra todos los errores juntos.
+      fail-fast: false
+      matrix:
+        app: [web, panel]
+    defaults:
+      run:
+        working-directory: ${{ matrix.app }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: ${{ matrix.app }}/package-lock.json
+
+      - run: npm ci
+
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+      # Sin variables de entorno: la URL de la API toma el valor por defecto de config/env.ts.
+      - run: npm run build
