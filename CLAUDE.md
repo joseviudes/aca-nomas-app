@@ -1,6 +1,6 @@
 # AcáNomás
 
-Directorio web de negocios locales: los vecinos encuentran negocios y ven si están abiertos ahora. Equipo de 4, Devlights Bootcamp 5.0. Entrega a mediados de diciembre de 2026.
+Directorio web de negocios locales: los vecinos encuentran negocios y ven si están abiertos ahora. Equipo de 5, Devlights Bootcamp 5.0. Entrega a mediados de diciembre de 2026.
 
 Este archivo se lee siempre. Es corto a propósito: tiene las reglas que no se negocian y dice **qué skill usar** para cada tarea. El detalle está en las skills y en `docs/`.
 
@@ -48,7 +48,7 @@ Una tarea suele necesitar más de una skill. Por ejemplo, un endpoint nuevo usa 
 
 ## Documentación del proyecto
 
-Está en `docs/`: `ers.md` (qué hace el sistema), `decisiones.md` (por qué se hizo así) y `epicas-e-historias.md` (el trabajo). Ante la duda técnica, leer `decisiones.md` antes de proponer otra cosa.
+Está en `docs/`: `ers.md` (qué hace el sistema), `decisiones.md` (por qué se hizo así), `epicas-e-historias.md` (el trabajo) y `diseno.md` (el mockup y los tokens visuales). Ante la duda técnica, leer `decisiones.md` antes de proponer otra cosa.
 
 ## Cuando haya dudas
 

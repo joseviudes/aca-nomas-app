@@ -23,8 +23,9 @@ aca-nomas-app/
 │   ├── epicas-e-historias.md
 │   ├── api.md                 reglas comunes de la API y lista de endpoints (D-25)
 │   ├── entorno-local.md       el día a día con la base y el backend
+│   ├── diseno.md              el mockup y los tokens visuales (D-38)
 │   ├── diagramas/             diagrama entidad-relación (Mermaid)
-│   └── postman/               colección exportada
+│   └── postman/               escenarios de Postman (D-35)
 ├── backend/
 │   ├── Dockerfile
 │   ├── .env.example

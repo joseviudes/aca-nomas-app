@@ -8,6 +8,7 @@
 | 0.2 | 03/11/2026 | Equipo AcáNomás | Se actualiza el estado del modelo de datos en la sección 10 |
 | 0.3 | 06/11/2026 | Tobias | La localidad inicial pasa a ser Mantilla, Corrientes. La sección 10 remite a D-20 y marca el modelo de datos como resuelto (D-22) |
 | 0.4 | 06/11/2026 | Tobias | RNF-09: las pruebas de la API son de integración (Supertest); Postman queda para escenarios (D-35) |
+| 0.5 | 06/11/2026 | Tobias | El equipo pasa a ser de cinco personas |
 
 ---
 
@@ -60,7 +61,7 @@ Tres componentes: una **web pública** para visitantes, un **panel** para dueño
 
 ### 2.3 Restricciones
 - Plazo: entrega a mediados de diciembre de 2026.
-- Equipo de cuatro personas.
+- Equipo de cinco personas.
 - Stack: Node.js, Express 5, TypeScript, Zod, Prisma, PostgreSQL.
 - Repositorio público: se usan solo datos ficticios.
 - Código, base de datos y API en inglés; interfaz y documentación en español.

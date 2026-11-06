@@ -39,7 +39,8 @@ panel/src/
 │       └── index.ts         lo único que otros módulos (y router.tsx) importan
 └── shared/
     ├── api/                 http-client.ts y api-error.ts (D-30)
-    ├── ui/                  Button, Input, Modal: genéricos, sin lógica de negocio
+    ├── ui/                  Button, Input, Modal: genéricos, sin lógica de negocio,
+    │                        y theme.css con los tokens de Tailwind (D-38)
     └── hooks/
 ```
 
@@ -60,7 +61,7 @@ web/src/
 │       └── index.ts
 └── shared/
     ├── api/                 http-client.ts y api-error.ts (D-30)
-    └── ui/
+    └── ui/                  componentes genéricos y theme.css (D-38)
 ```
 
 En la web hay una decisión más por componente: **servidor o cliente**.
@@ -79,7 +80,7 @@ En la web hay una decisión más por componente: **servidor o cliente**.
 6. **Los errores se muestran según `error.code`, nunca según `error.message`.** El código es estable; el texto puede cambiar. Todo error del `http-client` es un `ApiError`: los de la API traen su `code` (`BUSINESS_NOT_FOUND`), y además están `NETWORK_ERROR` (sin conexión) e `INVALID_RESPONSE` (la respuesta no tiene la forma esperada).
 7. **Las URLs van en español; el código, en inglés** (D-29): la ruta `/mis-negocios` muestra `MyBusinessesPage`.
 8. **Nada secreto en `config/env.ts`.** Las variables `VITE_` y `NEXT_PUBLIC_` llegan al navegador.
-9. **El `http-client` está copiado en las dos apps.** Si se cambia uno, se cambia el otro en el mismo PR. La única diferencia es que el de la web usa `API_INTERNAL_URL` cuando corre en el servidor (D-33).
+9. **El `http-client` y `shared/ui/theme.css` están copiados en las dos apps.** Si se cambia uno, se cambia el otro en el mismo PR. La única diferencia es que el de la web usa `API_INTERNAL_URL` cuando corre en el servidor (D-33).
 
 ## Nombres
 
@@ -116,4 +117,5 @@ El orden para armar una pantalla completa (esquema, API, hook, componentes, pág
 - ¿Una llamada a un endpoint? → `api/` del módulo, con `http`.
 - ¿Estado de un formulario o "cargando"? → un hook en `hooks/`.
 - ¿Un botón genérico? → `shared/ui/`. ¿Una tarjeta de negocio? → `components/` de `businesses`.
+- ¿Un color, una fuente o una sombra? → token en `shared/ui/theme.css` de las dos apps y en `docs/diseno.md`. Nunca un valor suelto en la pantalla.
 - ¿Una variable de entorno? → `config/env.ts` y el `.env.example` de la app.
