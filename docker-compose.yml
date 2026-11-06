@@ -1,7 +1,9 @@
-# Entorno de DESARROLLO con perfiles (D-26). Se elige qué levantar:
-#   docker compose up -d                      solo la base de datos
-#   docker compose --profile api up --watch   la base y la API, que se reinicia al guardar
-# A futuro, el frontend se suma con su propio perfil.
+# Entorno de DESARROLLO con perfiles (D-26, D-33). Se elige qué levantar:
+#   docker compose up -d                        solo la base de datos
+#   docker compose --profile api up --watch     la base y la API
+#   docker compose --profile full up --watch    todo: base, API, web y panel
+# Los perfiles se combinan: `--profile api --profile panel` levanta la base, la API y el panel.
+# Con --watch, cada archivo guardado se copia al contenedor y el servidor se recarga.
 #
 # PostgreSQL: el major (17) debe coincidir con el de Supabase (D-04). Puerto 5433 en tu máquina
 # para no chocar con un PostgreSQL instalado (D-24). Credenciales de desarrollo: coinciden con
@@ -31,7 +33,7 @@ services:
 
   # API en modo desarrollo. Al arrancar aplica las migraciones pendientes y corre `npm run dev`.
   api:
-    profiles: [api]
+    profiles: [api, full]
     build: ./backend
     container_name: aca-nomas-api
     environment:
@@ -68,6 +70,88 @@ services:
           'node',
           '-e',
           "fetch('http://localhost:3000/api/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Web pública (Next.js) en modo desarrollo. No depende de la API para arrancar: se puede
+  # levantar sola con `--profile web` y apuntar a una API que corra con `npm run dev`.
+  web:
+    profiles: [web, full]
+    build: ./web
+    container_name: aca-nomas-web
+    environment:
+      # El navegador está en tu máquina: llega a la API por localhost:3000.
+      NEXT_PUBLIC_API_URL: http://localhost:3000/api
+      # El servidor de Next está dentro de Docker: ahí `localhost` es este contenedor y la API se
+      # llama "api". Si la API corre con `npm run dev` en tu máquina, usar host.docker.internal.
+      API_INTERNAL_URL: http://api:3000/api
+    ports:
+      - '3001:3001'
+    develop:
+      watch:
+        - action: sync
+          path: ./web/src
+          target: /app/src
+        - action: sync
+          path: ./web/tests
+          target: /app/tests
+        - action: sync+restart
+          path: ./web/next.config.ts
+          target: /app/next.config.ts
+        - action: rebuild
+          path: ./web/package-lock.json
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:3001').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      # La primera compilación de Next tarda: no cuenta como falla durante el primer minuto.
+      start_period: 60s
+
+  # Panel del dueño (Vite + React) en modo desarrollo. Corre solo en el navegador, así que le
+  # alcanza con la URL pública de la API.
+  panel:
+    profiles: [panel, full]
+    build: ./panel
+    container_name: aca-nomas-panel
+    environment:
+      VITE_API_URL: http://localhost:3000/api
+    ports:
+      - '3002:3002'
+    develop:
+      watch:
+        - action: sync
+          path: ./panel/src
+          target: /app/src
+        - action: sync
+          path: ./panel/tests
+          target: /app/tests
+        - action: sync
+          path: ./panel/public
+          target: /app/public
+        - action: sync+restart
+          path: ./panel/index.html
+          target: /app/index.html
+        - action: sync+restart
+          path: ./panel/vite.config.ts
+          target: /app/vite.config.ts
+        - action: rebuild
+          path: ./panel/package-lock.json
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:3002').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
         ]
       interval: 10s
       timeout: 3s
