@@ -14,7 +14,7 @@ aca-nomas-app/
 ├── CLAUDE.md
 ├── CONTRIBUTING.md            ramas, commits, flujo de PR, definición de hecho
 ├── README.md                  cómo levantar el proyecto
-├── docker-compose.yml         PostgreSQL local y la API con el perfil api (D-26)
+├── docker-compose.yml         PostgreSQL local y las apps con los perfiles api, web, panel y full (D-26, D-33)
 ├── .github/                   pull_request_template.md y workflows (GitHub Actions)
 ├── .claude/skills/
 ├── docs/
@@ -59,10 +59,12 @@ aca-nomas-app/
 │       ├── unit/              Vitest: servicios y reglas puras
 │       └── integration/       Supertest: endpoints contra una base de pruebas
 ├── panel/                      Panel del dueño, SPA con Vite y React (D-20), independiente del backend
+│   ├── Dockerfile              imagen de desarrollo (D-33)
 │   ├── src/                    app/ (router), config/, modules/ y shared/ (D-31)
 │   ├── public/                 archivos estáticos
 │   └── package.json            dependencias y scripts propios (puerto 3002 en dev)
 └── web/                        Web pública con Next.js (D-27), independiente del backend
+    ├── Dockerfile              imagen de desarrollo (D-33)
     ├── src/                    app/ (solo rutas), config/, modules/ y shared/ (D-31)
     ├── public/                 archivos estáticos
     └── package.json            dependencias y scripts propios (puerto 3001 en dev)

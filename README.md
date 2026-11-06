@@ -12,7 +12,7 @@ En construcción. Etapa actual: **EP-00 Cimientos** (repositorio, backend inicia
 - **Web pública:** Next.js y TypeScript (D-27)
 - **Panel del dueño:** Vite, React y TypeScript (SPA)
 - **Base de datos:** PostgreSQL 17 con Prisma
-- **Desarrollo local:** Docker para la base de datos y, si se quiere, también para la API (D-26)
+- **Desarrollo local:** Docker para la base de datos y, si se quiere, también para la API, la web y el panel (D-26, D-33)
 - **Validación:** Zod
 - **Pruebas:** Vitest
 
@@ -30,7 +30,7 @@ docs/      ERS, decisiones, épicas e historias, modelo de datos, diseño de la 
 | Herramienta | Versión | Para qué |
 |---|---|---|
 | [Node.js](https://nodejs.org) | 24 (está en `.nvmrc`) | Correr el backend, la web y el panel. Con `nvm` o `fnm`, `nvm use` elige la versión correcta. Cada app instala sus propias dependencias con `npm install`: no hace falta nada global |
-| [Docker](https://www.docker.com) | Docker Desktop, o Docker Engine con Compose v2 o superior | Levantar PostgreSQL (y la API, si no se instala Node). El comando es `docker compose` (con espacio); el viejo `docker-compose` (con guion) no está soportado |
+| [Docker](https://www.docker.com) | Docker Desktop, o Docker Engine con Compose v2 o superior | Levantar PostgreSQL (y las apps, si no se instala Node). El comando es `docker compose` (con espacio); el viejo `docker-compose` (con guion) no está soportado |
 | [Git](https://git-scm.com) | cualquier versión reciente | Clonar el repositorio |
 
 No hace falta instalar PostgreSQL: corre en un contenedor de Docker. Si ya tenés uno instalado, no hay conflicto: el contenedor usa el puerto `5433` (D-24).
@@ -94,7 +94,17 @@ Los comandos funcionan en PowerShell, en Git Bash y en Linux o macOS.
 | Web pública | `web/` | 3001 | `npm run dev` |
 | Panel del dueño | `panel/` | 3002 | `npm run dev` |
 
-**Solo con Docker, sin instalar Node:** después de clonar, `docker compose --profile api up --watch` levanta la base y la API en modo desarrollo, aplica las migraciones y reinicia el servidor al guardar. Los detalles están en [docs/entorno-local.md](docs/entorno-local.md#levantar-la-api-en-docker).
+### Solo con Docker, sin instalar Node
+
+Después de clonar, un solo comando levanta lo que elijas en modo desarrollo. Se recarga al guardar y la API aplica las migraciones al arrancar (D-26, D-33):
+
+| Quiero levantar | Comando |
+|---|---|
+| Todo: base, API, web y panel | `docker compose --profile full up --watch` |
+| La base y la API | `docker compose --profile api up --watch` |
+| Solo la base | `docker compose up -d` |
+
+Los perfiles (`api`, `web`, `panel`, `full`) se combinan, y se puede mezclar Docker con `npm run dev`. La primera vez, cargar los datos con `docker compose exec api npm run db:seed`. Todos los comandos, cómo apagar y qué tener en cuenta están en [docs/entorno-local.md](docs/entorno-local.md#levantar-las-apps-en-docker).
 
 Los pasos 1 a 7, y el `npm install` del paso 9, se hacen una sola vez (o cuando cambian las dependencias). Los datos quedan guardados aunque se apague el contenedor o la computadora. El día a día (apagar, resetear la base, traer migraciones nuevas) está en [docs/entorno-local.md](docs/entorno-local.md).
 

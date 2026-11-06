@@ -79,7 +79,7 @@ En la web hay una decisión más por componente: **servidor o cliente**.
 6. **Los errores se muestran según `error.code`, nunca según `error.message`.** El código es estable; el texto puede cambiar. Todo error del `http-client` es un `ApiError`: los de la API traen su `code` (`BUSINESS_NOT_FOUND`), y además están `NETWORK_ERROR` (sin conexión) e `INVALID_RESPONSE` (la respuesta no tiene la forma esperada).
 7. **Las URLs van en español; el código, en inglés** (D-29): la ruta `/mis-negocios` muestra `MyBusinessesPage`.
 8. **Nada secreto en `config/env.ts`.** Las variables `VITE_` y `NEXT_PUBLIC_` llegan al navegador.
-9. **El `http-client` está copiado en las dos apps.** Si se cambia uno, se cambia el otro en el mismo PR.
+9. **El `http-client` está copiado en las dos apps.** Si se cambia uno, se cambia el otro en el mismo PR. La única diferencia es que el de la web usa `API_INTERNAL_URL` cuando corre en el servidor (D-33).
 
 ## Nombres
 
