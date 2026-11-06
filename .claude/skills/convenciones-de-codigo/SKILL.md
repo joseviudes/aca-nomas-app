@@ -28,6 +28,7 @@ Si falta una palabra, agregarla a esta tabla en el mismo PR.
 | Qué | Formato | Ejemplo |
 |---|---|---|
 | Archivos | `kebab-case` + rol | `business.service.ts` |
+| Componentes de React (`web/`, `panel/`) | `PascalCase.tsx` | `BusinessCard.tsx` (D-31) |
 | Clases | `PascalCase` | `BusinessService` |
 | Variables y funciones | `camelCase` | `findBySlug` |
 | Constantes | `UPPER_SNAKE_CASE` | `MAX_PAGE_SIZE` |

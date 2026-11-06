@@ -59,16 +59,16 @@ aca-nomas-app/
 │       ├── unit/              Vitest: servicios y reglas puras
 │       └── integration/       Supertest: endpoints contra una base de pruebas
 ├── panel/                      Panel del dueño, SPA con Vite y React (D-20), independiente del backend
-│   ├── src/                    App.tsx, main.tsx y los componentes
+│   ├── src/                    app/ (router), config/, modules/ y shared/ (D-31)
 │   ├── public/                 archivos estáticos
 │   └── package.json            dependencias y scripts propios (puerto 3002 en dev)
 └── web/                        Web pública con Next.js (D-27), independiente del backend
-    ├── src/app/                App Router: layout.tsx, page.tsx y una carpeta por ruta
+    ├── src/                    app/ (solo rutas), config/, modules/ y shared/ (D-31)
     ├── public/                 archivos estáticos
     └── package.json            dependencias y scripts propios (puerto 3001 en dev)
 ```
 
-Todo el código del servidor vive en `backend/`. El frontend son dos apps: `web/` (web pública, Next.js) y `panel/` (panel del dueño, SPA con Vite y React). Son carpetas hermanas de `backend/`, con sus propias dependencias, sin mezclarse entre sí.
+Todo el código del servidor vive en `backend/`. El frontend son dos apps: `web/` (web pública, Next.js) y `panel/` (panel del dueño, SPA con Vite y React). Son carpetas hermanas de `backend/`, con sus propias dependencias, sin mezclarse entre sí. **Por dentro, el frontend sigue la skill `estructura-del-frontend`.**
 
 ## Pruebas
 

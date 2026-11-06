@@ -6,9 +6,9 @@ Este archivo se lee siempre. Es corto a propósito: tiene las reglas que no se n
 
 ## Stack
 
-Node.js + Express 5 + TypeScript (ESM) · Prisma · PostgreSQL (Docker local; Supabase solo en staging y producción) · Zod · Vitest · ESLint + Prettier. Frontend más adelante.
+Node.js + Express 5 + TypeScript (ESM) · Prisma · PostgreSQL (Docker local; Supabase solo en staging y producción) · Zod · Vitest · ESLint + Prettier. Frontend: web pública con Next.js (`web/`) y panel con Vite, React y React Router (`panel/`), los dos con `fetch` y Zod.
 
-El código del servidor está en `backend/` y las pruebas en `backend/tests/`. El mapa de carpetas completo está en la skill `estructura-del-proyecto`.
+El código del servidor está en `backend/` y las pruebas en `backend/tests/`. El mapa de carpetas completo está en la skill `estructura-del-proyecto`; la organización interna del frontend, en `estructura-del-frontend`.
 
 ## Reglas que no se negocian
 
@@ -27,6 +27,7 @@ El código del servidor está en `backend/` y las pruebas en `backend/tests/`. E
 |---|---|
 | Crear una rama, hacer un commit o abrir un PR | `git-y-pr` |
 | Crear un archivo o carpeta, o no sabés dónde va algo | `estructura-del-proyecto` |
+| Crear una página, componente, hook o llamada a la API en `web/` o `panel/` | `estructura-del-frontend` |
 | Nombrar algo, validar, manejar errores, escribir un comentario | `convenciones-de-codigo` |
 | Agregar o cambiar un endpoint de la API | `nuevo-endpoint` |
 | Escribir una historia, tomar una tarjeta o mover una tarjeta en Trello | `historias-en-trello` |
