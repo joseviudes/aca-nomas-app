@@ -11,6 +11,7 @@
 | 0.5 | 05/11/2026 | Josi | Saca el bloqueo de `[PANEL] Inicializar el panel`: el equipo ya tuvo la primera clase de React |
 | 0.6 | 05/11/2026 | Josi | Saca el bloqueo de `[WEB] Inicializar la web pública`: Next.js queda decidido en D-27 |
 | 0.7 | 06/11/2026 | Tobias | Agrega a EP-00 las tareas de la base del frontend (D-28 a D-32) y las pruebas con Vitest |
+| 0.8 | 06/11/2026 | Tobias | Suma la regla de ESLint de las fronteras entre módulos (D-31). La localidad del seed pasa a ser Mantilla |
 
 ## Cómo leer este documento
 
@@ -67,7 +68,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 - [DB][S] Dibujar el diagrama entidad-relación en Mermaid y guardarlo en `docs/diagramas/`.
 - [INFRA][S] `docker-compose.yml` con PostgreSQL local, en el puerto 5433 para no chocar con un PostgreSQL instalado en la máquina. Va antes del schema porque la migración necesita la base levantada.
 - [DB][M] Escribir `schema.prisma` y la primera migración.
-- [DB][M] Seed con datos ficticios: una localidad (Corrientes Capital), rubros, dueños y entre 8 y 12 negocios con horarios variados, incluido uno con turno que cruza la medianoche y uno pausado.
+- [DB][M] Seed con datos ficticios: una localidad (Mantilla, Corrientes), rubros, dueños y entre 8 y 12 negocios con horarios variados, incluido uno con turno que cruza la medianoche y uno pausado.
 
 **Infraestructura**
 - [INFRA][S] `Dockerfile` de desarrollo de la API y perfil `api` en `docker-compose.yml`: levantar solo la base o la base y la API, sin instalar Node (D-26). La imagen de producción se define con el hosting.

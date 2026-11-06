@@ -10,6 +10,7 @@ Este documento muestra cómo se organiza la base de datos de AcáNomás: qué ta
 | 0.2 | 03/11/2026 | Equipo AcáNomás | Se aclara que el visitante no tiene cuenta y los roles de `users` |
 | 0.3 | 04/11/2026 | Tobias | Aplica la revisión: enums en lugar de texto libre, `photo_key` en lugar de `photo_url`, restricciones `CHECK`, comportamiento al borrar, índices, `slug` en rubros, UUID v7 y fechas de auditoría en todas las tablas |
 | 1.0 | 05/11/2026 | Tobias | El equipo aprueba el modelo: D-22 pasa a `Aceptada` |
+| 1.1 | 06/11/2026 | Tobias | La localidad del MVP pasa a ser Mantilla, Corrientes |
 
 ## Índice
 
@@ -104,7 +105,7 @@ erDiagram
 
 | Tabla | Qué guarda | Requisitos que cubre |
 |---|---|---|
-| `localities` | Ciudad o pueblo y su zona horaria. El MVP tiene una sola (Corrientes Capital) | D-12, RN-01 |
+| `localities` | Ciudad o pueblo y su zona horaria. El MVP tiene una sola (Mantilla, Corrientes) | D-12, RN-01 |
 | `categories` | Rubros con su `slug`. Lista fija cargada por seed | RF-03 |
 | `users` | Cuentas con email, contraseña con hash y rol (`owner` o `admin`) | RF-13, RF-14, D-10 |
 | `businesses` | La ficha del negocio: datos básicos, ubicación, foto, medios de pago, entregas, pausa y "hoy no abro" | RF-08, RF-16, RF-18, RF-19, RF-20, RF-24, RF-25 |

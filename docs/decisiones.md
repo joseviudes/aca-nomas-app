@@ -19,6 +19,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.11 | 05/11/2026 | Josi | Agrega D-27: frontend con Next.js para la web pública. Cierra ese tema en D-20 |
 | 0.12 | 06/11/2026 | Tobias | Agrega D-28 a D-32: CORS, URLs en español, `fetch` con `http-client`, estructura del frontend y React Router. Suma a D-20 la cookie en producción y TanStack Query |
 | 0.13 | 06/11/2026 | Tobias | Agrega D-33: la web y el panel en Docker para desarrollo, y `API_INTERNAL_URL` |
+| 0.14 | 06/11/2026 | Tobias | Resuelve la localidad inicial en D-20: Mantilla, Corrientes |
 
 ## Índice
 
@@ -217,7 +218,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 
 | Tema | Valor por defecto | Estado |
 |---|---|---|
-| Localidad inicial | Corrientes Capital | A confirmar (Capital o Mantilla) |
+| Localidad inicial | Mantilla, Corrientes. El seed la usa con centro en la plaza | Resuelta |
 | Aprobación de fichas nuevas | Se publican de inmediato | A confirmar |
 | Un dueño con varios negocios | El modelo lo permite; la interfaz del MVP muestra uno | A confirmar |
 | Rubros | Lista fija chica por seed; administración en otra fase | A definir |

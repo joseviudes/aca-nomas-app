@@ -6,6 +6,7 @@
 |---|---|---|---|
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Borrador inicial |
 | 0.2 | 03/11/2026 | Equipo AcáNomás | Se actualiza el estado del modelo de datos en la sección 10 |
+| 0.3 | 06/11/2026 | Tobias | La localidad inicial pasa a ser Mantilla, Corrientes |
 
 ---
 
@@ -15,7 +16,7 @@
 Este documento describe qué es AcáNomás, para quién es y qué debe hacer el sistema en su primera versión (MVP). Sirve de referencia común para el equipo y como documentación del proyecto.
 
 ### 1.2 Alcance
-AcáNomás es un directorio web de los negocios y emprendimientos de una localidad (inicialmente Corrientes Capital). Permite a los vecinos encontrar lo que necesitan cerca, saber si está **abierto ahora** y contactar al negocio por WhatsApp o Instagram. Permite a los dueños cargar y mantener su propia ficha y sus horarios.
+AcáNomás es un directorio web de los negocios y emprendimientos de una localidad (inicialmente Mantilla, Corrientes). Permite a los vecinos encontrar lo que necesitan cerca, saber si está **abierto ahora** y contactar al negocio por WhatsApp o Instagram. Permite a los dueños cargar y mantener su propia ficha y sus horarios.
 
 **Incluye (MVP):** exploración y búsqueda, ficha de negocio, mapa, cuentas de dueños, gestión de ficha y fotos, gestión de horarios.
 **No incluye:** ver sección 9.
@@ -256,7 +257,7 @@ Cartel con QR para compartir, métricas para el dueño, ferias y eventos, cuenta
 
 | Tema | Valor por defecto | Estado |
 |---|---|---|
-| Localidad inicial | Corrientes Capital | A confirmar (Capital o Mantilla) |
+| Localidad inicial | Mantilla, Corrientes | Resuelta |
 | Aprobación de fichas nuevas | Se publican de inmediato | A confirmar |
 | Un dueño con varios negocios | El modelo lo permite; la interfaz del MVP muestra uno | A confirmar |
 | Rubros disponibles | Lista fija chica cargada por seed | A definir |
