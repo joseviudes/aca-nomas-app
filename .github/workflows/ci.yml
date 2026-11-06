@@ -70,5 +70,9 @@ jobs:
       - run: npm run lint
       - run: npm run format:check
       - run: npm run typecheck
-      # Sin variables de entorno: la URL de la API toma el valor por defecto de config/env.ts.
+      # El build es de producción, así que config/env.ts exige la URL de la API. Acá basta con una
+      # de muestra: la CI solo compila, no llama a la API.
       - run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3000/api
+          VITE_API_URL: http://localhost:3000/api
