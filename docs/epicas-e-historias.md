@@ -13,6 +13,7 @@
 | 0.7 | 06/11/2026 | Tobias | Agrega a EP-00 las tareas de la base del frontend (D-28 a D-32) y las pruebas con Vitest |
 | 0.8 | 06/11/2026 | Tobias | Suma la regla de ESLint de las fronteras entre módulos (D-31). La localidad del seed pasa a ser Mantilla |
 | 0.9 | 06/11/2026 | Tobias | Suma Swagger con OpenAPI generado desde Zod (D-34) |
+| 0.10 | 06/11/2026 | Tobias | Suma la skill `nueva-pantalla` |
 
 ## Cómo leer este documento
 
@@ -92,6 +93,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 - [DOC][S] Skill `estructura-del-frontend` (módulos y capas, D-31), URLs en español (D-29) y registro de D-28 a D-32.
 - [WEB][S] [PANEL] Regla de ESLint que impide importar las carpetas internas de otro módulo: solo por su `index.ts` (D-31).
 - [BE][S] Swagger en `/api/docs` y OpenAPI en `/api/openapi.json`, generados desde los esquemas Zod con `zod-openapi` (D-34). Postman queda para las pruebas en conjunto.
+- [DOC][S] Skill `nueva-pantalla`: los pasos para armar una pantalla de la web o del panel, como `nuevo-endpoint` en el backend. Reglas del frontend en `CLAUDE.md` y `convenciones-de-codigo`.
 - [QA][S] Vitest en la web y el panel, con pruebas del `http-client`, `ApiError` y `config/env.ts`, y `npm test` en GitHub Actions.
 - [INFRA][S] `Dockerfile` de desarrollo de la web y el panel, y perfiles `web`, `panel` y `full` en `docker-compose.yml`: levantar todo el proyecto sin instalar Node (D-33).
 
@@ -375,11 +377,11 @@ Se avanza junto con las demás épicas; no se deja para el final.
 
 | Épica | Historias | Tareas aprox. |
 |---|---|---|
-| EP-00 Cimientos | — | 36 |
+| EP-00 Cimientos | — | 37 |
 | EP-01 Exploración | 7 | 19 |
 | EP-02 Ficha de negocio | 4 | 10 |
 | EP-03 Cuentas de dueños | 3 | 11 |
 | EP-04 Gestión de la ficha | 6 | 16 |
 | EP-05 Horarios y estado | 1 técnica + 5 | 18 |
 | EP-06 Calidad y entrega | — | 11 |
-| **Total** | **26** | **~121** |
+| **Total** | **26** | **~122** |
