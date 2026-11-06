@@ -21,7 +21,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.13 | 06/11/2026 | Tobias | Agrega D-33: la web y el panel en Docker para desarrollo, y `API_INTERNAL_URL` |
 | 0.14 | 06/11/2026 | Tobias | Resuelve la localidad inicial en D-20: Mantilla, Corrientes |
 | 0.15 | 06/11/2026 | Tobias | Agrega D-34: documentación de la API con OpenAPI y Swagger. Actualiza D-25: el detalle por endpoint pasa a Swagger |
-| 0.16 | 06/11/2026 | Tobias | Agrega D-35 a D-37: Postman para escenarios, el estado de las tareas solo en Trello y las herramientas que no se suman por ahora. Actualiza D-15, D-30 y D-34 |
+| 0.16 | 06/11/2026 | Tobias | Agrega D-35 a D-37: Postman para escenarios, el estado de las tareas solo en Trello y las herramientas que no se suman por ahora. Actualiza D-15, D-25, D-30 y D-34 |
 
 ## Índice
 
@@ -283,7 +283,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
   - Un negocio se identifica por su `slug` en todas las rutas, públicas y del panel.
 - **Motivo:** especificar cada campo de todos los módulos antes de programar lleva a un documento que se desactualiza al implementar. Con las reglas comunes definidas, cada integrante diseña los endpoints de su historia sin coordinar cada detalle, y la revisión del PR verifica que las respete. El slug nunca cambia (RN-05), así que sirve como único identificador del negocio.
 - **Descartado:** diseñar el detalle de todos los endpoints antes de empezar; envolver también los recursos sueltos en `{ data }`; usar el `id` en las rutas del panel y el `slug` en las públicas, porque habría dos identificadores para lo mismo.
-- **Nota:** complementa a D-11. La colección de Postman (`docs/postman/`) sigue a `docs/api.md`.
+- **Nota:** complementa a D-11. La colección de Postman (`docs/postman/`) sigue a `docs/api.md`. Actualizada por D-34 (el detalle por endpoint pasa a Swagger) y D-35 (Postman guarda escenarios).
 - **Actualización (06/11/2026):** el detalle de cada endpoint ya no se escribe en `docs/api.md`: se genera con OpenAPI desde los esquemas Zod y se ve en Swagger (D-34). Las reglas comunes y la lista de endpoints siguen en `docs/api.md`.
 
 ## D-26 API en Docker para desarrollo, con perfiles de Docker Compose
