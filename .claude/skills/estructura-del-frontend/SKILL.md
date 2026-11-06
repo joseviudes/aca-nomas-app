@@ -76,9 +76,10 @@ En la web hay una decisión más por componente: **servidor o cliente**.
 3. **Un módulo usa a otro solo por su `index.ts`.** Nunca `../businesses/components/...`.
 4. **`shared/` solo si lo usan al menos dos módulos.** Antes, queda en el módulo.
 5. **"Abierto ahora" no se calcula en el frontend.** Lo devuelve la API (`isOpenNow`). Calcularlo en dos lugares termina dando resultados distintos.
-6. **Los errores se muestran según `error.code`, nunca según `error.message`.** El código es estable; el texto puede cambiar.
+6. **Los errores se muestran según `error.code`, nunca según `error.message`.** El código es estable; el texto puede cambiar. Todo error del `http-client` es un `ApiError`: los de la API traen su `code` (`BUSINESS_NOT_FOUND`), y además están `NETWORK_ERROR` (sin conexión) e `INVALID_RESPONSE` (la respuesta no tiene la forma esperada).
 7. **Las URLs van en español; el código, en inglés** (D-29): la ruta `/mis-negocios` muestra `MyBusinessesPage`.
 8. **Nada secreto en `config/env.ts`.** Las variables `VITE_` y `NEXT_PUBLIC_` llegan al navegador.
+9. **El `http-client` está copiado en las dos apps.** Si se cambia uno, se cambia el otro en el mismo PR.
 
 ## Nombres
 

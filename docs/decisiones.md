@@ -298,7 +298,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 
 ## D-28 CORS con lista de orígenes permitidos
 - **Decisión:**
-  - El backend usa el paquete `cors` con una lista explícita de orígenes en la variable `CORS_ORIGINS`, separados por comas y validados con Zod. Por defecto, en desarrollo: `http://localhost:3001` (web) y `http://localhost:3002` (panel).
+  - El backend usa el paquete `cors` con una lista explícita de orígenes en la variable `CORS_ORIGINS`, separados por comas y validados con Zod. Fuera de producción, por defecto: `http://localhost:3001` (web) y `http://localhost:3002` (panel). En producción es obligatoria: si falta, la API no arranca.
   - Va con `credentials: true`, para que viaje la cookie de sesión (D-10).
   - Una request sin encabezado `Origin` (Postman, curl, otro servidor) pasa igual: CORS lo aplica el navegador.
 - **Motivo:** la API, la web y el panel corren como servidores separados. Un origen es protocolo + dominio + puerto, así que el navegador trata a cada uno como otro sitio y bloquea la respuesta si la API no lo permite. Las llamadas que hace Next desde el servidor no pasan por CORS.
@@ -315,9 +315,11 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Decisión:**
   - Las dos apps llaman a la API con `fetch` a través de `src/shared/api/http-client.ts`, el único archivo que usa `fetch` directamente.
   - El `http-client` arma la URL desde `config/env.ts`, manda siempre `credentials: 'include'`, convierte el JSON y, si la respuesta no es `ok`, lanza un `ApiError` con el `code`, el `message` y los `details` del formato de errores de la API. Opcionalmente valida la respuesta con un esquema Zod.
-  - La URL base va en `NEXT_PUBLIC_API_URL` (web) y `VITE_API_URL` (panel), con valor por defecto `http://localhost:3000/api` y documentada en el `.env.example` de cada app.
+  - Todo error sale como `ApiError`: sin conexión (`NETWORK_ERROR`), respuesta que no es JSON o no coincide con el esquema (`INVALID_RESPONSE`) y errores de la API con su propio `code`. Las pantallas nunca reciben un `ZodError` ni un `TypeError`.
+  - La URL base va en `NEXT_PUBLIC_API_URL` (web) y `VITE_API_URL` (panel), documentada en el `.env.example` de cada app. En desarrollo vale por defecto `http://localhost:3000/api`; en producción es obligatoria.
+  - Hay una copia del `http-client` en cada app (D-31). Un cambio en una se repite en la otra.
 - **Motivo:** Next extiende `fetch` en el servidor con caché (`next: { revalidate, tags }`) y Axios no la aprovecha. Lo que suma Axios (JSON automático, error en 4xx y 5xx, configuración común) lo cubre un archivo chico. Usar lo mismo en las dos apps hace que las llamadas se escriban igual en todo el proyecto.
-- **Descartado:** Axios en las dos apps, por la caché de Next; Axios en el panel y `fetch` en la web, porque son dos formas de hacer lo mismo.
+- **Descartado:** Axios en las dos apps, por la caché de Next; Axios en el panel y `fetch` en la web, porque son dos formas de hacer lo mismo; un valor por defecto también en producción, porque si se olvida la variable la app compila, apunta a `localhost` y ninguna llamada funciona sin que nada lo avise.
 
 ## D-31 Estructura del frontend por módulos y capas
 - **Decisión:**
