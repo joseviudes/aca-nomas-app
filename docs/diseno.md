@@ -7,6 +7,7 @@ La referencia visual de la web y el panel: dónde está el mockup, qué hay que 
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 06/11/2026 | Tobias | Versión inicial: mockup, tokens y reglas de uso (D-38) |
+| 0.2 | 06/11/2026 | Tobias | Agrega qué hacer con una pantalla que no está en el mockup |
 
 ## Índice
 
@@ -30,7 +31,7 @@ Está en Claude, como un lienzo de diseño: [Emprendimientos Local](https://clau
 | Panel del emprendedor — escritorio | Panel del dueño: mi ficha, horarios y compartir |
 | Panel del emprendedor — celular | El panel a 390 px de ancho |
 
-El mockup tiene datos de ejemplo (por ejemplo, la localidad Goya). Los datos reales salen de la API y del seed (Mantilla, D-20).
+El mockup se está actualizando: cuando cambie, se reemplaza el enlace y se revisan los tokens de las secciones 3 a 5. Tiene datos de ejemplo (por ejemplo, la localidad Goya). Los datos reales salen de la API y del seed (Mantilla, D-20).
 
 ## 2. Qué se respeta y qué puede cambiar
 
@@ -44,7 +45,11 @@ El mockup es una **referencia, no un plano**.
 - la distribución, el orden de los bloques, los textos y los tamaños;
 - un componente que en el mockup no queda claro o no funciona bien en el celular.
 
-El cambio se explica en el PR, con una captura. Si hace falta un color o un tamaño que no está en los tokens, **no se inventa en la pantalla**: se agrega al token en las dos apps y a este documento, en el mismo PR.
+El cambio se explica en el PR, con una captura.
+
+**Si la pantalla no está en el mockup**, la plantea quien la arma: con los tokens y los componentes de `shared/ui`, siguiendo el tono de las pantallas que sí están. En el PR va una captura en escritorio y otra a 390 px, para que el equipo la vea antes de aprobarla.
+
+En los dos casos, si hace falta un color o un tamaño que no está en los tokens, **no se inventa en la pantalla**: se agrega al token en las dos apps y a este documento, en el mismo PR.
 
 ## 3. Colores
 

@@ -10,7 +10,7 @@ Seguir los pasos en orden. Es el equivalente de `nuevo-endpoint` para el fronten
 ## Antes de escribir código
 
 - **Leer los criterios de aceptación** de la historia en Trello.
-- **Mirar la pantalla en el mockup** (enlace en `docs/diseno.md`). Es una referencia: los tokens (colores, fuentes, bordes, sombras) se respetan siempre; la distribución puede cambiar si queda mejor, y se explica en el PR (D-38).
+- **Mirar la pantalla en el mockup** (enlace en `docs/diseno.md`). Es una referencia: los tokens (colores, fuentes, bordes, sombras) se respetan siempre; la distribución puede cambiar si queda mejor, y se explica en el PR (D-38). Si la pantalla no está en el mockup, la plantea quien la arma con los tokens y los componentes de `shared/ui`, y muestra capturas en escritorio y a 390 px en el PR.
 - **¿El endpoint existe?** Mirarlo en Swagger (`http://localhost:3000/api/docs`): ahí están los campos, las respuestas y los errores. Si todavía no existe, trabajar con el diseño de `docs/api.md` (y la request `[Pendiente]` de Postman, si la hay) y con datos de ejemplo, sin inventar campos que no estén en `docs/api.md`.
 - **¿El módulo ya existe** en `src/modules/`? Si no, crearlo con el mismo nombre que en el backend (`businesses`, `auth`, `opening-hours`).
 - **¿Es de la web o del panel?** La web pide los datos en el servidor (vista previa al compartir, D-27); el panel corre todo en el navegador.
