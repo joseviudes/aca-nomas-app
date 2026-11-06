@@ -36,4 +36,9 @@ export class ApiError extends Error {
   static network(): ApiError {
     return new ApiError(0, 'NETWORK_ERROR', 'No se pudo conectar con el servidor');
   }
+
+  // La respuesta no es JSON o no tiene la forma esperada: el frontend y la API no coinciden.
+  static invalidResponse(status: number): ApiError {
+    return new ApiError(status, 'INVALID_RESPONSE', 'La respuesta del servidor no es válida');
+  }
 }

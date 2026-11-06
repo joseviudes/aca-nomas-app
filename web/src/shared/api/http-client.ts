@@ -3,6 +3,7 @@ import { env } from '@/config/env';
 import { ApiError } from './api-error';
 
 // Único lugar que llama a `fetch` (D-30). Los módulos lo usan desde su carpeta api/.
+// Hay una copia en panel/src/shared/api/: un cambio acá se repite allá (D-31).
 // Se usa `fetch` y no Axios porque Next lo extiende con caché: se pueden pasar
 // `next: { revalidate, tags }` en las opciones y llegan tal cual.
 type RequestOptions<T> = Omit<RequestInit, 'body' | 'headers'> & {
@@ -33,13 +34,26 @@ async function request<T>(path: string, options: RequestOptions<T> = {}): Promis
   }
 
   // 204 No Content (por ejemplo, un DELETE): no hay cuerpo para leer.
-  const data: unknown =
-    response.status === 204 ? undefined : await response.json().catch(() => null);
+  let data: unknown;
+  if (response.status !== 204) {
+    try {
+      data = await response.json();
+    } catch {
+      // Una respuesta exitosa sin JSON válido es un error: no se puede tratar como un dato.
+      if (response.ok) throw ApiError.invalidResponse(response.status);
+      data = null;
+    }
+  }
 
   if (!response.ok) {
     throw ApiError.fromResponse(response.status, data);
   }
-  return schema ? schema.parse(data) : (data as T);
+  if (!schema) return data as T;
+
+  // Siempre ApiError: las pantallas manejan un solo tipo de error, nunca un ZodError.
+  const parsed = schema.safeParse(data);
+  if (!parsed.success) throw ApiError.invalidResponse(response.status);
+  return parsed.data;
 }
 
 export const http = {
