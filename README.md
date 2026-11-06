@@ -29,7 +29,7 @@ docs/      ERS, decisiones, épicas e historias, modelo de datos, diseño de la 
 
 | Herramienta | Versión | Para qué |
 |---|---|---|
-| [Node.js](https://nodejs.org) | 24 (está en `.nvmrc`) | Correr el backend. Con `nvm` o `fnm`, `nvm use` elige la versión correcta |
+| [Node.js](https://nodejs.org) | 24 (está en `.nvmrc`) | Correr el backend, la web y el panel. Con `nvm` o `fnm`, `nvm use` elige la versión correcta. Cada app instala sus propias dependencias con `npm install`: no hace falta nada global |
 | [Docker](https://www.docker.com) | Docker Desktop, o Docker Engine con Compose v2 o superior | Levantar PostgreSQL (y la API, si no se instala Node). El comando es `docker compose` (con espacio); el viejo `docker-compose` (con guion) no está soportado |
 | [Git](https://git-scm.com) | cualquier versión reciente | Clonar el repositorio |
 
@@ -74,10 +74,29 @@ Los comandos funcionan en PowerShell, en Git Bash y en Linux o macOS.
    npm run dev
    ```
    Para comprobar que anda, abrir `http://localhost:3000/api/health`. Tiene que responder `{"status":"ok"}`.
+9. Levantar la web y el panel, cada uno en otra terminal y desde la raíz del repositorio. No necesitan configuración: ya apuntan a la API del paso 8.
+   ```
+   cd web
+   npm install
+   npm run dev
+   ```
+   ```
+   cd panel
+   npm install
+   npm run dev
+   ```
+   La web queda en `http://localhost:3001` y el panel en `http://localhost:3002`. Si solo vas a trabajar en el backend, este paso no hace falta.
+
+| App | Carpeta | Puerto | Comando |
+|---|---|---|---|
+| Base de datos | — | 5433 | `docker compose up -d` |
+| API | `backend/` | 3000 | `npm run dev` |
+| Web pública | `web/` | 3001 | `npm run dev` |
+| Panel del dueño | `panel/` | 3002 | `npm run dev` |
 
 **Solo con Docker, sin instalar Node:** después de clonar, `docker compose --profile api up --watch` levanta la base y la API en modo desarrollo, aplica las migraciones y reinicia el servidor al guardar. Los detalles están en [docs/entorno-local.md](docs/entorno-local.md#levantar-la-api-en-docker).
 
-Los pasos 1 a 7 se hacen una sola vez. Los datos quedan guardados aunque se apague el contenedor o la computadora. El día a día (apagar, resetear la base, traer migraciones nuevas) está en [docs/entorno-local.md](docs/entorno-local.md).
+Los pasos 1 a 7, y el `npm install` del paso 9, se hacen una sola vez (o cuando cambian las dependencias). Los datos quedan guardados aunque se apague el contenedor o la computadora. El día a día (apagar, resetear la base, traer migraciones nuevas) está en [docs/entorno-local.md](docs/entorno-local.md).
 
 ### Cuentas del seed
 
