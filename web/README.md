@@ -1,6 +1,6 @@
 # AcáNomás — Web pública
 
-Web pública de AcáNomás, hecha con [Next.js](https://nextjs.org) (App Router, TypeScript). Ver [D-27](../docs/decisiones.md#d-27-frontend-con-nextjs-para-la-web-pública).
+Web pública de AcáNomás, hecha con [Next.js](https://nextjs.org) (App Router, TypeScript). Ver [D-27](../docs/decisiones.md#d-27-frontend-con-nextjs-para-la-web-pública). La organización de carpetas está en la skill `estructura-del-frontend`.
 
 ## Cómo levantarla
 
@@ -12,6 +12,8 @@ npm run dev
 ```
 
 Corre en [http://localhost:3001](http://localhost:3001). El puerto 3000 queda libre para la API.
+
+**URL de la API:** por defecto llama a `http://localhost:3000/api`. Para cambiarla, crear `.env.local` con `NEXT_PUBLIC_API_URL=<url>` (ver `.env.example`). La API ya permite este origen en desarrollo (CORS, D-28).
 
 ## Scripts
 

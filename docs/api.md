@@ -7,6 +7,7 @@ Las reglas comunes a todos los endpoints y la lista de endpoints del MVP. El det
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 05/11/2026 | Tobias | Versión inicial: convenciones, lista de endpoints y errores comunes |
+| 0.2 | 06/11/2026 | Tobias | Agrega CORS (D-28) y el `http-client` del frontend (D-30) a la autenticación |
 
 ## Índice
 
@@ -85,7 +86,8 @@ La lista de la sección 4 es una guía sacada de las historias. Si al implementa
 ### Autenticación
 
 - Sesión con un JWT en una cookie `httpOnly` (D-10). El frontend no lee el token: el navegador lo manda solo.
-- El frontend tiene que hacer las peticiones con `credentials: 'include'` para que viaje la cookie.
+- El frontend tiene que hacer las peticiones con `credentials: 'include'` para que viaje la cookie. El `http-client` de cada app ya lo hace (D-30).
+- La API solo acepta llamadas del navegador desde los orígenes de `CORS_ORIGINS` (D-28). En desarrollo, la web (`localhost:3001`) y el panel (`localhost:3002`).
 - Los endpoints del panel usan el middleware `requireAuth`: sin sesión responden `401`; sobre un negocio ajeno, `403` (US-14).
 
 ---

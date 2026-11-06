@@ -1,6 +1,6 @@
 # AcáNomás — Panel del dueño
 
-Panel del dueño de AcáNomás, hecho como SPA con [Vite](https://vite.dev) y React (TypeScript). Ver [D-20](../docs/decisiones.md#d-20-decisiones-diferidas).
+Panel del dueño de AcáNomás, hecho como SPA con [Vite](https://vite.dev), React (TypeScript) y [React Router](https://reactrouter.com). Ver [D-20](../docs/decisiones.md#d-20-decisiones-diferidas) y [D-32](../docs/decisiones.md#d-32-react-router-en-el-panel). La organización de carpetas está en la skill `estructura-del-frontend`.
 
 ## Cómo levantarlo
 
@@ -12,6 +12,8 @@ npm run dev
 ```
 
 Corre en [http://localhost:3002](http://localhost:3002). Los puertos 3000 y 3001 quedan libres para la API y la web pública.
+
+**URL de la API:** por defecto llama a `http://localhost:3000/api`. Para cambiarla, copiar `.env.example` a `.env.local` y editar `VITE_API_URL`. La API ya permite este origen en desarrollo (CORS, D-28).
 
 ## Scripts
 

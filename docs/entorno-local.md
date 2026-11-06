@@ -10,6 +10,7 @@ Qué hacer con la base de datos y el backend después de levantar el proyecto po
 | 0.2 | 05/11/2026 | Tobias | Aclara que el backend en contenedor todavía no existe |
 | 0.3 | 05/11/2026 | Tobias | La instalación pasa al README. Esta guía queda para el día a día: apagar, resetear, migraciones, ver los datos y problemas comunes |
 | 0.4 | 05/11/2026 | Tobias | Agrega cómo levantar la API en Docker con el perfil `api` (D-26) |
+| 0.5 | 06/11/2026 | Tobias | Agrega el error de CORS a los problemas comunes (D-28) |
 
 ## Índice
 
@@ -112,4 +113,5 @@ También se puede usar un cliente como DBeaver o pgAdmin. Los datos de conexión
 | `failed to connect to the docker API` | Docker Desktop está cerrado | Abrir Docker Desktop y esperar a que diga que está corriendo |
 | `Variables de entorno inválidas` al levantar el backend | Falta `backend/.env` | `cp backend/.env.example backend/.env` |
 | `port is already allocated` al levantar la base | Otro programa usa el puerto `5433` | Cerrar ese programa, o cambiar el puerto en `docker-compose.yml` y en `DATABASE_URL` de tu `.env` |
+| `blocked by CORS policy` en la consola del navegador | El origen de la página no está en `CORS_ORIGINS` (D-28) | Usar los puertos 3001 (web) o 3002 (panel), o agregar el origen a `CORS_ORIGINS` en `backend/.env` y reiniciar la API |
 | Prisma pide resetear la base al migrar | La base y el historial de migraciones no coinciden | Si los datos no importan: `npx prisma migrate reset` (borra todo, migra y corre el seed) |

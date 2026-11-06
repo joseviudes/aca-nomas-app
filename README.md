@@ -104,7 +104,7 @@ Se corren dentro de `backend/`.
 | `npm run db:seed` | Borra los datos y vuelve a cargar los ficticios |
 | `npm run db:generate` | Regenera el cliente de Prisma |
 
-Cada PR corre `lint`, `format:check`, `typecheck`, `test` y `build` en GitHub Actions.
+Cada PR corre en GitHub Actions `lint`, `format:check`, `typecheck`, `test` y `build` del backend, y `lint`, `format:check`, `typecheck` y `build` de la web y del panel.
 
 ## Web pública
 
@@ -113,6 +113,8 @@ Corre en `web/` y es independiente del backend (dependencias y scripts propios).
 ## Panel del dueño
 
 Corre en `panel/` y es independiente del backend (dependencias y scripts propios). Pasos para levantarlo en [panel/README.md](panel/README.md).
+
+Las dos apps llaman a la API en `http://localhost:3000/api` sin configurar nada. La API solo acepta esos orígenes (`localhost:3001` y `localhost:3002`) por CORS (D-28).
 
 ## Documentación
 
