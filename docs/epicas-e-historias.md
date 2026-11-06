@@ -83,7 +83,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 
 **Base del frontend**
 - [BE][S] CORS en la API con la lista de orígenes en `CORS_ORIGINS` y `credentials: true`, para que la web y el panel puedan llamarla con la cookie (D-28).
-- [INFRA][S] Sumar la web y el panel a GitHub Actions: lint, formato, tipos y build en cada PR.
+- [INFRA][S] Sumar la web y el panel a GitHub Actions: lint, formato, tipos, pruebas y build en cada PR.
 - [PANEL][S] React Router con todas las rutas en `src/app/router.tsx`, y TypeScript en modo `strict` (D-32).
 - [WEB][S] [PANEL] `http-client` con `fetch`, `ApiError` y la URL de la API validada con Zod en `config/env.ts`, con su `.env.example` (D-30).
 - [WEB][S] Igualar con el panel las versiones de TypeScript, ESLint y los tipos de Node. El chequeo de tipos genera antes los tipos de Next (`next typegen`).
@@ -371,11 +371,11 @@ Se avanza junto con las demás épicas; no se deja para el final.
 
 | Épica | Historias | Tareas aprox. |
 |---|---|---|
-| EP-00 Cimientos | — | 26 |
+| EP-00 Cimientos | — | 34 |
 | EP-01 Exploración | 7 | 19 |
 | EP-02 Ficha de negocio | 4 | 10 |
 | EP-03 Cuentas de dueños | 3 | 11 |
 | EP-04 Gestión de la ficha | 6 | 16 |
 | EP-05 Horarios y estado | 1 técnica + 5 | 18 |
 | EP-06 Calidad y entrega | — | 11 |
-| **Total** | **26** | **~111** |
+| **Total** | **26** | **~119** |
