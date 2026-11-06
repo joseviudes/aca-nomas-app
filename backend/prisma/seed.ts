@@ -65,14 +65,25 @@ interface SeedBusiness {
   contactChannels: Prisma.ContactChannelCreateWithoutBusinessInput[];
 }
 
-// Coordenadas alrededor del centro de Corrientes Capital.
+// Plaza de Mantilla, Corrientes (Plus Code 68XW+CQ). Cambiar acá si cambia la localidad del seed.
+const LOCALITY_CENTER = { latitude: -28.7514, longitude: -58.6531 };
+
+// Ubica un negocio a pocas cuadras de la plaza: cada 0.001 grados son unos 110 metros.
+function near(dLatitude: number, dLongitude: number): [latitude: number, longitude: number] {
+  const round = (value: number) => Math.round(value * 10000) / 10000;
+  return [
+    round(LOCALITY_CENTER.latitude + dLatitude),
+    round(LOCALITY_CENTER.longitude + dLongitude),
+  ];
+}
+
 const BUSINESSES: SeedBusiness[] = [
   {
     name: 'Panadería La Espiga',
     slug: 'panaderia-la-espiga',
     category: 'panaderia',
     description: 'Pan casero, facturas y tortas por encargo.',
-    coordinates: [-27.4692, -58.8306],
+    coordinates: near(0.0008, -0.0006),
     paymentMethods: ['cash', 'transfer'],
     // Caso: turno partido (mañana y tarde) y horario distinto el domingo.
     openingHours: [
@@ -89,7 +100,7 @@ const BUSINESSES: SeedBusiness[] = [
     slug: 'almacen-don-pedro',
     category: 'almacen',
     description: 'Almacén de barrio con fiambrería y bebidas.',
-    coordinates: [-27.4731, -58.8352],
+    coordinates: near(-0.0031, -0.0052),
     paymentMethods: ['cash', 'transfer', 'card', 'mercado_pago'],
     offersDelivery: true,
     // Caso: horario corrido todos los días.
@@ -101,7 +112,7 @@ const BUSINESSES: SeedBusiness[] = [
     slug: 'farmacia-del-centro',
     category: 'farmacia',
     description: 'Medicamentos, perfumería y obras sociales.',
-    coordinates: [-27.4668, -58.8297],
+    coordinates: near(0.0032, 0.0003),
     paymentMethods: ['cash', 'card', 'mercado_pago'],
     offersDelivery: true,
     // Caso: el sábado abre solo a la mañana y el domingo no abre.
@@ -116,7 +127,7 @@ const BUSINESSES: SeedBusiness[] = [
     slug: 'rotiseria-el-fogon',
     category: 'rotiseria',
     description: 'Empanadas, pizzas y minutas para llevar.',
-    coordinates: [-27.4755, -58.8271],
+    coordinates: near(-0.0055, 0.0029),
     paymentMethods: ['cash', 'mercado_pago'],
     offersDelivery: true,
     // Caso: turno que cruza la medianoche (19:00 a 01:00) y el lunes cerrado.
@@ -130,7 +141,7 @@ const BUSINESSES: SeedBusiness[] = [
     name: 'Kiosco La Esquina',
     slug: 'kiosco-la-esquina',
     category: 'kiosco',
-    coordinates: [-27.4709, -58.8389],
+    coordinates: near(-0.0009, -0.0089),
     paymentMethods: ['cash', 'transfer'],
     // Caso: sin descripción y cierre con minutos (23:30).
     openingHours: shifts(EVERY_DAY, ['07:00', '23:30']),
@@ -141,7 +152,7 @@ const BUSINESSES: SeedBusiness[] = [
     slug: 'ferreteria-el-tornillo',
     category: 'ferreteria',
     description: 'Herramientas, pinturas y materiales eléctricos.',
-    coordinates: [-27.4783, -58.8324],
+    coordinates: near(-0.0083, -0.0024),
     paymentMethods: ['cash', 'card'],
     // Caso: pausado por vacaciones (RN-01). Tiene horarios, pero se muestra cerrado.
     isPaused: true,
@@ -156,7 +167,7 @@ const BUSINESSES: SeedBusiness[] = [
     slug: 'verduleria-los-naranjos',
     category: 'verduleria',
     description: 'Frutas y verduras frescas de productores de la zona.',
-    coordinates: [-27.4647, -58.8361],
+    coordinates: near(0.0053, -0.0061),
     paymentMethods: ['cash', 'transfer', 'mercado_pago'],
     offersDelivery: true,
     openingHours: shifts(MON_TO_SAT, ['07:30', '13:00'], ['17:00', '20:30']),
@@ -171,7 +182,7 @@ const BUSINESSES: SeedBusiness[] = [
     slug: 'peluqueria-estilo',
     category: 'peluqueria',
     description: 'Cortes, color y peinados. Atención con turno.',
-    coordinates: [-27.4721, -58.8258],
+    coordinates: near(-0.0021, 0.0042),
     paymentMethods: ['cash', 'transfer'],
     openingHours: shifts([2, 3, 4, 5, 6], ['09:00', '19:00']),
     // Caso: solo Instagram, sin WhatsApp.
@@ -182,7 +193,7 @@ const BUSINESSES: SeedBusiness[] = [
     slug: 'cafe-del-puerto',
     category: 'cafeteria',
     description: 'Café de especialidad frente a la costanera.',
-    coordinates: [-27.4612, -58.8329],
+    coordinates: near(0.0088, -0.0029),
     paymentMethods: ['cash', 'card', 'mercado_pago'],
     // Casos: cierre justo a la medianoche (00:00) de lunes a jueves, y pasada la medianoche
     // los viernes y sábados.
@@ -223,7 +234,7 @@ async function main(): Promise<void> {
     await tx.locality.deleteMany();
 
     const locality = await tx.locality.create({
-      data: { name: 'Corrientes Capital', timezone: 'America/Argentina/Buenos_Aires' },
+      data: { name: 'Mantilla', timezone: 'America/Argentina/Buenos_Aires' },
     });
 
     const categoryIds = new Map<string, string>();
