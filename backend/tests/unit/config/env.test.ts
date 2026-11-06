@@ -21,6 +21,19 @@ describe('parseEnv', () => {
     ]);
   });
 
+  it('requires CORS_ORIGINS in production', () => {
+    expect(() => parseEnv({ DATABASE_URL, NODE_ENV: 'production' })).toThrow(/CORS_ORIGINS/);
+  });
+
+  it('accepts CORS_ORIGINS in production when it is set', () => {
+    const env = parseEnv({
+      DATABASE_URL,
+      NODE_ENV: 'production',
+      CORS_ORIGINS: 'https://acanomas.com',
+    });
+    expect(env.CORS_ORIGINS).toEqual(['https://acanomas.com']);
+  });
+
   it.each(['', ' , ', 'not-a-url', 'ftp://acanomas.com'])('rejects CORS_ORIGINS=%j', (origins) => {
     expect(() => parseEnv({ DATABASE_URL, CORS_ORIGINS: origins })).toThrow(EnvValidationError);
   });
