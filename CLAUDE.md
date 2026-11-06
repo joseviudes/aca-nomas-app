@@ -30,12 +30,13 @@ El código del servidor está en `backend/` y las pruebas en `backend/tests/`. E
 | Crear una página, componente, hook o llamada a la API en `web/` o `panel/` | `estructura-del-frontend` |
 | Nombrar algo, validar, manejar errores, escribir un comentario | `convenciones-de-codigo` |
 | Agregar o cambiar un endpoint de la API | `nuevo-endpoint` |
+| Agregar o cambiar una pantalla de la web o del panel | `nueva-pantalla` |
 | Escribir una historia, tomar una tarjeta o mover una tarjeta en Trello | `historias-en-trello` |
 | Escribir o editar documentación (`docs/`, README, decisiones) | `estilo-de-docs` |
 
 Para levantar el proyecto (con Node o con Docker), las variables de entorno y los comandos del día a día: `README.md` y `docs/entorno-local.md`. Los endpoints se ven y se prueban en Swagger: `http://localhost:3000/api/docs`.
 
-Una tarea suele necesitar más de una skill. Por ejemplo, un endpoint nuevo usa `nuevo-endpoint`, y al final `git-y-pr`. Al empezar, decí qué skills vas a usar.
+Una tarea suele necesitar más de una skill. Por ejemplo, un endpoint nuevo usa `nuevo-endpoint`, y al final `git-y-pr`; una pantalla nueva usa `nueva-pantalla` y `estructura-del-frontend`. Al empezar, decí qué skills vas a usar.
 
 ## Flujo de una historia
 

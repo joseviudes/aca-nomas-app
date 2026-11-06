@@ -109,6 +109,9 @@ Si mañana cambia el endpoint, se toca solo `auth.api.ts`.
 
 ## Dónde va…
 
+El orden para armar una pantalla completa (esquema, API, hook, componentes, página, ruta y prueba) está en la skill `nueva-pantalla`.
+
+
 - ¿Una pantalla nueva? → `pages/` del módulo y su ruta en `router.tsx` (panel) o una carpeta en `app/` (web).
 - ¿Una llamada a un endpoint? → `api/` del módulo, con `http`.
 - ¿Estado de un formulario o "cargando"? → un hook en `hooks/`.
