@@ -12,10 +12,10 @@ El código del servidor está en `backend/` y las pruebas en `backend/tests/`. E
 
 ## Reglas que no se negocian
 
-1. **Capas:** `controllers → services → repositories`. No se saltean capas. Los módulos se hablan por servicios, nunca por repositorios ni tablas ajenas.
-2. **Todo lo externo (base, fotos, mails) va detrás de un puerto** en `shared/ports/`. El dominio no importa Express ni Prisma.
-3. **Idioma:** código, base de datos y rutas de la API en inglés. Interfaz, documentación, commits y PR en español.
-4. **Validación con Zod** en el borde (middleware `validate`). Nada llega al servicio sin validar.
+1. **Capas:** en el backend, `controllers → services → repositories`; en la web y el panel, `pages → hooks → api` (D-31). No se saltean capas. Un módulo usa a otro solo por su servicio (backend) o su `index.ts` (frontend), nunca por dentro. ESLint lo verifica.
+2. **Todo lo externo (base, fotos, mails) va detrás de un puerto** en `shared/ports/`. El dominio no importa Express ni Prisma. En el frontend, solo `shared/api/http-client.ts` llama a `fetch` (D-30).
+3. **Idioma:** código, base de datos y rutas de la API en inglés. Interfaz, documentación, commits, PR y **URLs del frontend** (`/negocios/[slug]`) en español (D-29).
+4. **Validación con Zod** en el borde (middleware `validate` en el backend, formularios y respuestas en el frontend). Nada llega al servicio sin validar. Cada endpoint se documenta en Swagger con esos mismos esquemas (D-34).
 5. **Sin secretos en el repo.** El repositorio es público. `.env` ignorado, `.env.example` de muestra, datos ficticios.
 6. **`main` está protegida.** Todo entra por PR con una revisión de un compañero.
 7. **Hecho = funciona, tiene prueba, el PR fue revisado y está mergeado.**
@@ -32,6 +32,8 @@ El código del servidor está en `backend/` y las pruebas en `backend/tests/`. E
 | Agregar o cambiar un endpoint de la API | `nuevo-endpoint` |
 | Escribir una historia, tomar una tarjeta o mover una tarjeta en Trello | `historias-en-trello` |
 | Escribir o editar documentación (`docs/`, README, decisiones) | `estilo-de-docs` |
+
+Para levantar el proyecto (con Node o con Docker), las variables de entorno y los comandos del día a día: `README.md` y `docs/entorno-local.md`. Los endpoints se ven y se prueban en Swagger: `http://localhost:3000/api/docs`.
 
 Una tarea suele necesitar más de una skill. Por ejemplo, un endpoint nuevo usa `nuevo-endpoint`, y al final `git-y-pr`. Al empezar, decí qué skills vas a usar.
 

@@ -7,7 +7,9 @@ description: Convenciones de código de AcáNomás. Usar al nombrar archivos, cl
 
 ## Idioma
 
-Código, base de datos y rutas en **inglés**. Interfaz, documentación, commits y PR en **español**. Los comentarios, en español.
+Código, base de datos y rutas de la API en **inglés**. Interfaz, documentación, commits y PR en **español**. Los comentarios, en español.
+
+Las **URLs que ve el usuario** en la web y el panel van en español (`/negocios/[slug]`, `/mis-negocios`), pero el código que las atiende sigue en inglés (`BusinessPage`, `MyBusinessesPage`) (D-29).
 
 | Español | Inglés |
 |---|---|
@@ -46,7 +48,9 @@ Si falta una palabra, agregarla a esta tabla en el mismo PR.
 
 - Los esquemas de Zod hacen de DTO y viven en `schemas/` del módulo.
 - El middleware `validate(schema)` valida cuerpo, parámetros y consulta.
-- Las variables de entorno también se validan con Zod al arrancar.
+- Las variables de entorno también se validan con Zod al arrancar, en las tres apps (`config/env.ts`). Fuera de producción tienen un valor por defecto; en producción son obligatorias.
+- Los mismos esquemas documentan el endpoint en Swagger (D-34): no se escribe la forma de los datos dos veces.
+- En el frontend, los formularios se validan con un esquema Zod del módulo, y la respuesta de la API se puede validar pasando `schema` al `http-client`.
 - DAO y DTO son cosas distintas: el repositorio accede a datos; el DTO describe cómo viajan.
 
 ## Errores
@@ -61,6 +65,8 @@ Si falta una palabra, agregarla a esta tabla en el mismo PR.
 
 El `code` es `UPPER_SNAKE_CASE` y estable. El `message` va en español.
 
+**En el frontend**, todo error del `http-client` llega como `ApiError` (D-30): con el `code` de la API, o `NETWORK_ERROR` (sin conexión) o `INVALID_RESPONSE` (respuesta inesperada). La pantalla decide qué mostrar según `error.code`, nunca comparando el texto de `error.message`.
+
 ## API
 
 - Prefijo `/api` sin número de versión: `/api/businesses`.
@@ -71,7 +77,8 @@ El `code` es `UPPER_SNAKE_CASE` y estable. El `message` va en español.
 
 ## Pruebas
 
-- Las pruebas van en `backend/tests/` (ver `estructura-del-proyecto`), en archivos `.test.ts`.
+- Las pruebas van en `backend/tests/`, `web/tests/` y `panel/tests/` (ver `estructura-del-proyecto` y `estructura-del-frontend`), en archivos `.test.ts`.
+- En el frontend, las llamadas a la API se prueban reemplazando `fetch` con `vi.stubGlobal`: no hace falta la API prendida.
 - Vitest para lógica (`isOpenNow`, servicios). Se prueba **comportamiento**, no detalles internos.
 - `isOpenNow` recibe la hora como parámetro: se prueba con cualquier fecha.
 - Casos obligatorios de horarios: turno partido, cierre pasada la medianoche, día sin turnos, "hoy no abro", pausa.
