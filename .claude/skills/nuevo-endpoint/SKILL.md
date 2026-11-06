@@ -23,7 +23,7 @@ Seguir los pasos en orden. Antes de empezar, leer los criterios de aceptación d
 6. **Ruta** en `routes/`: sustantivo en plural bajo `/api`, con `validate(schema)` y, si es del panel, `requireAuth`.
 7. **Conexión** en `container.ts` y registro del router del módulo en `src/routes.ts`, sin el prefijo `/api` (D-23). `app.ts` no se toca.
 8. **Pruebas** en `backend/tests/unit/<módulo>/` con Vitest sobre el servicio: el caso feliz, cada error y los bordes. Cuando existan los endpoints principales, también una prueba con Supertest en `backend/tests/integration/<módulo>/`. Si el endpoint es del panel, probar 401 (sin sesión) y 403 (negocio ajeno).
-9. **Documentación:** escribir el detalle del endpoint en la sección 5 de `docs/api.md` (petición, respuesta con un ejemplo y errores propios) y actualizar la lista de la sección 4 si la ruta cambió. Después, agregar o actualizar la request en la colección de Postman y exportarla a `docs/postman/` (en la raíz del repo).
+9. **Documentación (D-34):** declarar el endpoint en `routes/<módulo>.openapi.ts` con los **mismos esquemas Zod** del paso 2 (`summary`, `tags`, petición, respuesta y errores propios con `errorResponse`) y registrar esos paths en `src/openapi.ts`. Verlo y probarlo en `http://localhost:3000/api/docs`. Actualizar la lista de la sección 4 de `docs/api.md` si la ruta cambió. Después, agregar o actualizar la request en la colección de Postman y exportarla a `docs/postman/` (en la raíz del repo): Postman es para correr las pruebas en conjunto.
 10. **Cierre:** `lint` y `test` en verde, tildar la tarea en el checklist de la historia y abrir el PR (`git-y-pr`).
 
 ## Controles de calidad

@@ -73,7 +73,7 @@ Los comandos funcionan en PowerShell, en Git Bash y en Linux o macOS.
    ```
    npm run dev
    ```
-   Para comprobar que anda, abrir `http://localhost:3000/api/health`. Tiene que responder `{"status":"ok"}`.
+   Para comprobar que anda, abrir `http://localhost:3000/api/health`. Tiene que responder `{"status":"ok"}`. Todos los endpoints, para verlos y probarlos, están en **Swagger**: `http://localhost:3000/api/docs` (D-34).
 9. Levantar la web y el panel, cada uno en otra terminal y desde la raíz del repositorio. No necesitan configuración: ya apuntan a la API del paso 8.
    ```
    cd web

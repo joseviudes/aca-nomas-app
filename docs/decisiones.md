@@ -20,6 +20,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.12 | 06/11/2026 | Tobias | Agrega D-28 a D-32: CORS, URLs en español, `fetch` con `http-client`, estructura del frontend y React Router. Suma a D-20 la cookie en producción y TanStack Query |
 | 0.13 | 06/11/2026 | Tobias | Agrega D-33: la web y el panel en Docker para desarrollo, y `API_INTERNAL_URL` |
 | 0.14 | 06/11/2026 | Tobias | Resuelve la localidad inicial en D-20: Mantilla, Corrientes |
+| 0.15 | 06/11/2026 | Tobias | Agrega D-34: documentación de la API con OpenAPI y Swagger. Actualiza D-25: el detalle por endpoint pasa a Swagger |
 
 ## Índice
 
@@ -49,7 +50,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-22 | Modelo de datos | Aceptada |
 | D-23 | Registro central de rutas en `routes.ts` | Aceptada |
 | D-24 | PostgreSQL local en el puerto 5433 | Aceptada |
-| D-25 | Diseño de la API en dos niveles y respuesta paginada | Aceptada |
+| D-25 | Diseño de la API en dos niveles y respuesta paginada | Aceptada (el detalle por endpoint pasa a D-34) |
 | D-26 | API en Docker para desarrollo, con perfiles de Docker Compose | Aceptada |
 | D-27 | Frontend con Next.js para la web pública | Aceptada |
 | D-28 | CORS con lista de orígenes permitidos | Aceptada |
@@ -58,6 +59,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-31 | Estructura del frontend por módulos y capas | Aceptada |
 | D-32 | React Router en el panel | Aceptada |
 | D-33 | Web y panel en Docker para desarrollo | Aceptada |
+| D-34 | Documentación de la API con OpenAPI y Swagger, generada desde Zod | Aceptada |
 
 ---
 
@@ -278,6 +280,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Motivo:** especificar cada campo de todos los módulos antes de programar lleva a un documento que se desactualiza al implementar. Con las reglas comunes definidas, cada integrante diseña los endpoints de su historia sin coordinar cada detalle, y la revisión del PR verifica que las respete. El slug nunca cambia (RN-05), así que sirve como único identificador del negocio.
 - **Descartado:** diseñar el detalle de todos los endpoints antes de empezar; envolver también los recursos sueltos en `{ data }`; usar el `id` en las rutas del panel y el `slug` en las públicas, porque habría dos identificadores para lo mismo.
 - **Nota:** complementa a D-11. La colección de Postman (`docs/postman/`) sigue a `docs/api.md`.
+- **Actualización (06/11/2026):** el detalle de cada endpoint ya no se escribe en `docs/api.md`: se genera con OpenAPI desde los esquemas Zod y se ve en Swagger (D-34). Las reglas comunes y la lista de endpoints siguen en `docs/api.md`.
 
 ## D-26 API en Docker para desarrollo, con perfiles de Docker Compose
 - **Decisión:**
@@ -352,3 +355,14 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Motivo:** completar lo que D-26 dejó para más adelante: que un integrante levante el proyecto entero con solo Docker. `API_INTERNAL_URL` hace falta porque dentro de un contenedor `localhost` es el propio contenedor: el navegador llega a la API por `localhost:3000`, pero el servidor de Next no. En producción pasa lo mismo cuando la API está en una red interna.
 - **Descartado:** que la web y el panel dependan de la API en el compose, porque obligaría a levantarla aunque se use `npm run dev`; red del host (`network_mode: host`), porque en Docker Desktop para Windows no es confiable; un perfil por combinación posible, porque los perfiles ya se combinan.
 - **Nota:** complementa a D-26. Las imágenes de producción se definen con el hosting.
+
+## D-34 Documentación de la API con OpenAPI y Swagger, generada desde Zod
+- **Decisión:**
+  - El detalle de cada endpoint se documenta con OpenAPI 3.1, generado con `zod-openapi` desde los **mismos esquemas Zod** que validan la ruta.
+  - Cada módulo declara sus endpoints en `routes/<módulo>.openapi.ts` y se registran en `src/openapi.ts`, igual que las rutas en `src/routes.ts` (D-23). El formato de error común está en `shared/openapi/` (`ErrorResponse`).
+  - Swagger UI se sirve en `/api/docs` y la especificación en `/api/openapi.json`. Están activos en todos los entornos menos producción.
+  - Roles: **Swagger** para ver y probar un endpoint mientras se programa; **Postman** (`docs/postman/`) para correr colecciones enteras de pruebas de una vez y guardar escenarios. Postman puede importar `/api/openapi.json` para armar las requests.
+  - `docs/api.md` sigue teniendo las reglas comunes y la lista de endpoints del MVP (D-25).
+- **Motivo:** escribir el detalle a mano en `docs/api.md` se desactualiza apenas cambia un campo. Generado desde Zod, la documentación es el mismo código que valida: si cambia el esquema, cambia la documentación. Swagger además deja probar cada endpoint desde el navegador y, como se sirve desde la misma API, manda la cookie de sesión sin configurar nada.
+- **Descartado:** escribir el YAML de OpenAPI a mano, porque es otra copia que se desactualiza; `@asteasolutions/zod-to-openapi`, que obliga a registrar cada esquema por separado, mientras que `zod-openapi` usa `.meta()` nativo de Zod 4; Swagger también en producción, porque expone la forma de toda la API sin aportar a los usuarios; reemplazar Postman, porque Swagger no corre colecciones ni guarda escenarios.
+- **Nota:** actualiza a D-25, que dejaba el detalle por endpoint en `docs/api.md`.

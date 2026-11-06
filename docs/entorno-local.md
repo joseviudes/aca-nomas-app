@@ -12,6 +12,7 @@ Qué hacer con la base de datos, el backend y el frontend después de levantar e
 | 0.4 | 05/11/2026 | Tobias | Agrega cómo levantar la API en Docker con el perfil `api` (D-26) |
 | 0.5 | 06/11/2026 | Tobias | Agrega el error de CORS a los problemas comunes (D-28) |
 | 0.6 | 06/11/2026 | Tobias | La sección de Docker cubre las tres apps: perfiles `web`, `panel` y `full`, qué pasa al guardar y cómo apagarlas (D-33) |
+| 0.7 | 06/11/2026 | Tobias | Agrega la dirección de Swagger (D-34) |
 
 ## Índice
 
@@ -51,6 +52,7 @@ Los perfiles son `api`, `web`, `panel` y `full`, y se combinan repitiendo `--pro
 | App | Dirección |
 |---|---|
 | API | `http://localhost:3000/api/health` responde `{"status":"ok"}` |
+| Swagger (todos los endpoints) | `http://localhost:3000/api/docs` |
 | Web pública | `http://localhost:3001` |
 | Panel | `http://localhost:3002` |
 

@@ -1,6 +1,6 @@
 # AcáNomás — Diseño de la API
 
-Las reglas comunes a todos los endpoints y la lista de endpoints del MVP. El detalle de cada endpoint (campos exactos, ejemplos y errores propios) se escribe cuando se implementa su historia (D-25).
+Las reglas comunes a todos los endpoints y la lista de endpoints del MVP. El detalle de cada endpoint (campos exactos, ejemplos y errores propios) está en Swagger, en `http://localhost:3000/api/docs`, generado desde el código (D-34).
 
 ## Historial de versiones
 
@@ -8,6 +8,7 @@ Las reglas comunes a todos los endpoints y la lista de endpoints del MVP. El det
 |---|---|---|---|
 | 0.1 | 05/11/2026 | Tobias | Versión inicial: convenciones, lista de endpoints y errores comunes |
 | 0.2 | 06/11/2026 | Tobias | Agrega CORS (D-28) y el `http-client` del frontend (D-30) a la autenticación |
+| 0.3 | 06/11/2026 | Tobias | El detalle de cada endpoint pasa a Swagger, generado desde los esquemas Zod (D-34) |
 
 ## Índice
 
@@ -26,7 +27,7 @@ La API se diseña en dos niveles (D-25):
 | Nivel | Qué tiene | Cuándo se escribe |
 |---|---|---|
 | **Reglas comunes** (secciones 2 y 3) | Forma de las respuestas, paginación, errores, nombres, fechas y códigos HTTP | Ya está. Vale para todos los módulos |
-| **Detalle de cada endpoint** (sección 5) | Campos de la petición y la respuesta, un ejemplo y los errores propios | Lo escribe quien implementa la historia, en el mismo PR |
+| **Detalle de cada endpoint** (Swagger, ver sección 5) | Campos de la petición y la respuesta, un ejemplo y los errores propios | Lo declara quien implementa la historia, en el mismo PR, en `routes/<módulo>.openapi.ts` (D-34) |
 
 Así, cada integrante diseña los endpoints de su historia sin coordinar cada campo con el resto: si respeta las reglas comunes, todos los módulos quedan iguales. En la revisión del PR se verifica que las respete.
 
@@ -180,22 +181,19 @@ Todos responden `401` sin sesión y `403` si el negocio es de otro dueño.
 
 ## 5. Detalle de los endpoints
 
-Se completa a medida que se implementa cada historia. Cada endpoint lleva:
+Está en **Swagger** (D-34), generado desde los mismos esquemas Zod que validan cada ruta. Por eso no se desactualiza: si cambia el esquema, cambia la documentación.
 
-- **Qué hace**, en una frase, y la historia.
-- **Petición:** parámetros, consulta y cuerpo, con sus validaciones.
-- **Respuesta correcta:** código HTTP y un ejemplo.
-- **Errores propios:** los `code` que no están en la tabla de errores comunes.
+| Qué | Dónde |
+|---|---|
+| Ver y probar los endpoints | `http://localhost:3000/api/docs` (con la API levantada) |
+| La especificación OpenAPI en JSON | `http://localhost:3000/api/openapi.json` |
+| Dónde se declara cada endpoint | `backend/src/modules/<módulo>/routes/<módulo>.openapi.ts`, registrado en `backend/src/openapi.ts` |
 
-La colección de Postman en `docs/postman/` tiene las mismas peticiones, listas para probar.
+Cada endpoint declara:
 
-### `GET /api/health`
+- **Qué hace** (`summary`) y su grupo (`tags`, uno por módulo).
+- **Petición:** parámetros, consulta y cuerpo, con los esquemas Zod de `schemas/`.
+- **Respuesta correcta:** código HTTP y esquema. Un ejemplo con `.meta({ example })`.
+- **Errores propios:** con `errorResponse('...')` de `shared/openapi/`, que usa el formato de la sección 3.
 
-Comprueba que la API responde. No usa la base de datos.
-
-- **Petición:** sin parámetros.
-- **Respuesta correcta:** `200`
-  ```json
-  { "status": "ok" }
-  ```
-- **Errores propios:** ninguno.
+**Swagger o Postman:** Swagger sirve para ver y probar un endpoint mientras se programa. La colección de Postman en `docs/postman/` sirve para correr muchas pruebas juntas y guardar escenarios. Postman puede importar `/api/openapi.json` para crear las requests.

@@ -34,13 +34,14 @@ aca-nomas-app/
 │   │   ├── generated/         cliente de Prisma generado por npm install (no se sube ni se edita)
 │   │   ├── app.ts             arma Express (cadena de middlewares) y monta las rutas bajo /api
 │   │   ├── routes.ts          registro central: suma el router de cada módulo (D-23)
+│   │   ├── openapi.ts         registro central de la documentación: suma los paths de cada módulo (D-34)
 │   │   ├── server.ts          abre el puerto
 │   │   ├── container.ts       conecta las dependencias
 │   │   ├── config/
 │   │   │   └── env.ts         variables de entorno validadas con Zod
 │   │   ├── modules/
 │   │   │   └── businesses/    un módulo = una carpeta (auth, businesses, categories…)
-│   │   │       ├── routes/
+│   │   │       ├── routes/         el router y su documentación (businesses.openapi.ts)
 │   │   │       ├── controllers/
 │   │   │       ├── services/
 │   │   │       ├── repositories/   PrismaBusinessRepository
@@ -50,6 +51,7 @@ aca-nomas-app/
 │   │   │   ├── ports/         contratos (interfaces) de todo lo externo
 │   │   │   ├── errors/        AppError, subclases y formato estándar de error
 │   │   │   ├── middlewares/   validate, requireAuth, errores, logs, 404
+│   │   │   ├── openapi/       piezas comunes de la documentación (ErrorResponse) (D-34)
 │   │   │   └── pagination/    esquema de page y limit, y armado de la respuesta paginada
 │   │   └── infrastructure/
 │   │       ├── database/      solo el cliente único de Prisma (prisma.ts)
