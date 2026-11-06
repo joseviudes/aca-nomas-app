@@ -14,6 +14,7 @@
 | 0.8 | 06/11/2026 | Tobias | Suma la regla de ESLint de las fronteras entre módulos (D-31). La localidad del seed pasa a ser Mantilla |
 | 0.9 | 06/11/2026 | Tobias | Suma Swagger con OpenAPI generado desde Zod (D-34) |
 | 0.10 | 06/11/2026 | Tobias | Suma la skill `nueva-pantalla` |
+| 0.11 | 06/11/2026 | Tobias | Aclara que el estado de las tareas vive en Trello (D-36). Las tareas de Postman pasan a Swagger y a escenarios (D-35) |
 
 ## Cómo leer este documento
 
@@ -27,6 +28,8 @@
 **Tamaño:** `S` hasta medio día · `M` un día · `L` dos días. Una tarea más grande se divide.
 
 **Prioridad:** la del ERS. Indica el orden de construcción y qué se recorta último.
+
+**Plan, no tablero (D-36):** este documento es el plan. El estado de cada tarea (hecha, en curso, pendiente) se ve solo en Trello. Cuando la tarjeta de una historia ya existe, sus tareas se cambian en Trello y este documento no se vuelve a sincronizar; solo se actualiza si cambian la historia o sus criterios.
 
 ## Resumen
 
@@ -92,7 +95,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 - [WEB][S] Igualar con el panel las versiones de TypeScript, ESLint y los tipos de Node. El chequeo de tipos genera antes los tipos de Next (`next typegen`).
 - [DOC][S] Skill `estructura-del-frontend` (módulos y capas, D-31), URLs en español (D-29) y registro de D-28 a D-32.
 - [WEB][S] [PANEL] Regla de ESLint que impide importar las carpetas internas de otro módulo: solo por su `index.ts` (D-31).
-- [BE][S] Swagger en `/api/docs` y OpenAPI en `/api/openapi.json`, generados desde los esquemas Zod con `zod-openapi` (D-34). Postman queda para las pruebas en conjunto.
+- [BE][S] Swagger en `/api/docs` y OpenAPI en `/api/openapi.json`, generados desde los esquemas Zod con `zod-openapi` (D-34). Postman queda para los escenarios de varios pasos (D-35).
 - [DOC][S] Skill `nueva-pantalla`: los pasos para armar una pantalla de la web o del panel, como `nuevo-endpoint` en el backend. Reglas del frontend en `CLAUDE.md` y `convenciones-de-codigo`.
 - [QA][S] Vitest en la web y el panel, con pruebas del `http-client`, `ApiError` y `config/env.ts`, y `npm test` en GitHub Actions.
 - [INFRA][S] `Dockerfile` de desarrollo de la web y el panel, y perfiles `web`, `panel` y `full` en `docker-compose.yml`: levantar todo el proyecto sin instalar Node (D-33).
@@ -110,7 +113,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
   - [BE][S] Esquema Zod de los parámetros de consulta.
   - [BE][S] Pruebas del servicio con un repositorio falso.
   - [WEB][M] Pantalla de listado con tarjetas.
-  - [DOC][S] Agregar el endpoint a Postman.
+  - [DOC][S] Documentar el endpoint en Swagger (D-34).
 
 ### US-02 Buscar por texto
 **Como** visitante **quiero** escribir lo que busco **para** encontrarlo sin recorrer toda la lista.
@@ -355,7 +358,7 @@ Función pura que decide el estado de un negocio. La usan el listado, la ficha y
 Se avanza junto con las demás épicas; no se deja para el final.
 
 **Pruebas**
-- [QA][M] Completar la colección de Postman con pruebas automáticas.
+- [QA][M] Escenarios de Postman con pruebas automáticas: los flujos de varios pasos con sesión, como iniciar sesión y editar la ficha (D-35).
 - [QA][M] Pruebas de integración de la API con Supertest contra una base de pruebas (listado, ficha, login, edición).
 - [QA][L] Playwright: flujo del visitante (buscar → abrir ficha → botón de WhatsApp).
 - [QA][L] Playwright: flujo del dueño (login → cargar horarios → ver el cambio en la ficha).

@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "AcáNomás API",
-    "description": "Colección de la API de AcáNomás. Sigue la lista de endpoints de docs/api.md (D-25). Sirve para correr las pruebas en conjunto (Run collection) y guardar escenarios; para ver el detalle de cada endpoint y probarlo de a uno está Swagger en http://localhost:3000/api/docs (D-34).\n\nCómo usarla:\n1. Levantar la base y el backend (ver README).\n2. Importar este archivo en Postman (Import > File).\n3. Para los pedidos del panel, correr primero Cuenta > Iniciar sesión: Postman guarda la cookie de sesión y la manda sola en los pedidos siguientes.\n\nLos pedidos marcados como [Pendiente] todavía no tienen endpoint: se completan (cuerpo y ejemplo de respuesta) en el PR de su historia.",
+    "description": "Colección de escenarios de la API de AcáNomás (D-35): flujos de varios pasos con sesión, como iniciar sesión y editar la ficha. No es el catálogo de endpoints: el detalle de cada uno y la prueba de a uno están en Swagger, en http://localhost:3000/api/docs (D-34). Para probar un endpoint suelto en Postman, importar http://localhost:3000/api/openapi.json (Import > Link).\n\nCómo usarla:\n1. Levantar la base y el backend (ver README).\n2. Importar este archivo en Postman (Import > File).\n3. Para los pedidos del panel, correr primero Cuenta > Iniciar sesión: Postman guarda la cookie de sesión y la manda sola en los pedidos siguientes.\n\nLos pedidos marcados como [Pendiente] todavía no tienen endpoint. Cuando el endpoint está en Swagger, se sacan de acá, salvo que formen parte de un escenario.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [

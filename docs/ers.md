@@ -7,6 +7,7 @@
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Borrador inicial |
 | 0.2 | 03/11/2026 | Equipo AcáNomás | Se actualiza el estado del modelo de datos en la sección 10 |
 | 0.3 | 06/11/2026 | Tobias | La localidad inicial pasa a ser Mantilla, Corrientes. La sección 10 remite a D-20 y marca el modelo de datos como resuelto (D-22) |
+| 0.4 | 06/11/2026 | Tobias | RNF-09: las pruebas de la API son de integración (Supertest); Postman queda para escenarios (D-35) |
 
 ---
 
@@ -158,7 +159,7 @@ Todos los requisitos listados pertenecen al MVP. La prioridad (Alta, Media) indi
 | RNF-06 | Datos | Solo datos ficticios en el repositorio y el seed |
 | RNF-07 | Mantenibilidad | Arquitectura por capas, organizada en módulos, con puertos y adaptadores en los bordes |
 | RNF-08 | Mantenibilidad | ESLint, Prettier, commits convencionales y revisión de PR obligatoria |
-| RNF-09 | Calidad | Pruebas unitarias de las reglas de negocio (Vitest), pruebas de la API (Postman) y flujos principales end-to-end (Playwright) |
+| RNF-09 | Calidad | Pruebas unitarias de las reglas de negocio (Vitest), pruebas de integración de la API (Supertest), escenarios de la API en Postman y flujos principales end-to-end (Playwright) |
 | RNF-10 | Portabilidad | Entorno de desarrollo reproducible con Docker |
 | RNF-11 | Interoperabilidad | Errores con formato `{ error: { code, message, details } }`; paginación con `page` y `limit`; fechas en ISO 8601 UTC |
 | RNF-12 | Idioma | Interfaz solo en español |
@@ -182,7 +183,7 @@ Todos los requisitos listados pertenecen al MVP. La prioridad (Alta, Media) indi
 
 - **Backend:** Node.js, Express 5, TypeScript, Zod, Prisma.
 - **Base de datos:** PostgreSQL. Local con Docker en desarrollo y pruebas; Supabase en staging y producción, usado solo como base de datos.
-- **Calidad:** Vitest, Postman, Playwright, ESLint, Prettier, GitHub Actions.
+- **Calidad:** Vitest, Supertest, Postman, Playwright, ESLint, Prettier, GitHub Actions.
 - **Arquitectura:** monolito modular con arquitectura en capas (controllers → services → repositories), con inversión de dependencias en los bordes mediante puertos (`shared/ports`) y adaptadores (`infrastructure`).
 - Detalle y motivos: ver `docs/decisiones.md`.
 

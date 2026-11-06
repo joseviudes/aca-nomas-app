@@ -9,6 +9,7 @@ Las reglas comunes a todos los endpoints y la lista de endpoints del MVP. El det
 | 0.1 | 05/11/2026 | Tobias | Versión inicial: convenciones, lista de endpoints y errores comunes |
 | 0.2 | 06/11/2026 | Tobias | Agrega CORS (D-28) y el `http-client` del frontend (D-30) a la autenticación |
 | 0.3 | 06/11/2026 | Tobias | El detalle de cada endpoint pasa a Swagger, generado desde los esquemas Zod (D-34) |
+| 0.4 | 06/11/2026 | Tobias | Postman queda para escenarios de varios pasos (D-35) |
 
 ## Índice
 
@@ -196,4 +197,4 @@ Cada endpoint declara:
 - **Respuesta correcta:** código HTTP y esquema. Un ejemplo con `.meta({ example })`.
 - **Errores propios:** con `errorResponse('...')` de `shared/openapi/`, que usa el formato de la sección 3.
 
-**Swagger o Postman:** Swagger sirve para ver y probar un endpoint mientras se programa. La colección de Postman en `docs/postman/` sirve para correr muchas pruebas juntas y guardar escenarios. Postman puede importar `/api/openapi.json` para crear las requests.
+**Swagger o Postman (D-35):** Swagger es el catálogo: sirve para ver y probar un endpoint mientras se programa. La colección de Postman en `docs/postman/` guarda **escenarios**, flujos de varios pasos con sesión (iniciar sesión → editar la ficha). Para probar un endpoint suelto en Postman, se importa `/api/openapi.json` en lugar de escribir la request. Las pruebas automáticas de la API son con Supertest y corren en la CI.
