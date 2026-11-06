@@ -6,7 +6,7 @@
 |---|---|---|---|
 | 0.1 | 30/10/2026 | Equipo AcáNomás | Borrador inicial |
 | 0.2 | 03/11/2026 | Equipo AcáNomás | Se actualiza el estado del modelo de datos en la sección 10 |
-| 0.3 | 06/11/2026 | Tobias | La localidad inicial pasa a ser Mantilla, Corrientes |
+| 0.3 | 06/11/2026 | Tobias | La localidad inicial pasa a ser Mantilla, Corrientes. La sección 10 remite a D-20 y marca el modelo de datos como resuelto (D-22) |
 
 ---
 
@@ -255,11 +255,14 @@ Cartel con QR para compartir, métricas para el dueño, ferias y eventos, cuenta
 
 ## 10. Decisiones pendientes de confirmar
 
+La lista al día, con el valor por defecto y el estado de cada tema, está en **D-20** de [`docs/decisiones.md`](decisiones.md#d-20-decisiones-diferidas). Se mantiene en un solo lugar para que no haya dos versiones distintas.
+
+Las que afectan a los requisitos de este documento:
+
 | Tema | Valor por defecto | Estado |
 |---|---|---|
-| Localidad inicial | Mantilla, Corrientes | Resuelta |
 | Aprobación de fichas nuevas | Se publican de inmediato | A confirmar |
 | Un dueño con varios negocios | El modelo lo permite; la interfaz del MVP muestra uno | A confirmar |
 | Rubros disponibles | Lista fija chica cargada por seed | A definir |
-| Hosting del primer despliegue | Sin definir | Pendiente |
-| Modelo de datos detallado | Propuesto en D-22 y en `docs/diagramas/modelo-de-datos.md` | En revisión del equipo |
+
+Ya resueltas: la localidad inicial (Mantilla, Corrientes) y el modelo de datos (D-22).
