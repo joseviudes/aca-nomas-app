@@ -9,7 +9,20 @@ describe('parseEnv', () => {
       NODE_ENV: 'development',
       PORT: 3000,
       DATABASE_URL,
+      CORS_ORIGINS: ['http://localhost:3001', 'http://localhost:3002'],
     });
+  });
+
+  it('splits CORS_ORIGINS, trims spaces and drops the trailing slash', () => {
+    const CORS_ORIGINS = ' https://acanomas.com/ , https://panel.acanomas.com ';
+    expect(parseEnv({ DATABASE_URL, CORS_ORIGINS }).CORS_ORIGINS).toEqual([
+      'https://acanomas.com',
+      'https://panel.acanomas.com',
+    ]);
+  });
+
+  it.each(['', ' , ', 'not-a-url', 'ftp://acanomas.com'])('rejects CORS_ORIGINS=%j', (origins) => {
+    expect(() => parseEnv({ DATABASE_URL, CORS_ORIGINS: origins })).toThrow(EnvValidationError);
   });
 
   it('converts PORT from string to number', () => {

@@ -1,5 +1,7 @@
 import express, { type Express } from 'express';
+import { env } from './config/env.js';
 import { createApiRouter } from './routes.js';
+import { createCors } from './shared/middlewares/cors.js';
 import { errorHandler } from './shared/middlewares/error-handler.js';
 import { notFound } from './shared/middlewares/not-found.js';
 import { requestLogger } from './shared/middlewares/request-logger.js';
@@ -8,6 +10,8 @@ export function createApp(): Express {
   const app = express();
 
   app.use(requestLogger);
+  // Antes de las rutas: responde las preflight (OPTIONS) sin que lleguen al 404.
+  app.use(createCors(env.CORS_ORIGINS));
   app.use(express.json());
 
   app.use('/api', createApiRouter());
