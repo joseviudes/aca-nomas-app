@@ -9,6 +9,7 @@
 | 0.3 | 06/11/2026 | Tobias | La localidad inicial pasa a ser Mantilla, Corrientes. La sección 10 remite a D-20 y marca el modelo de datos como resuelto (D-22) |
 | 0.4 | 06/11/2026 | Tobias | RNF-09: las pruebas de la API son de integración (Supertest); Postman queda para escenarios (D-35) |
 | 0.5 | 06/11/2026 | Tobias | El equipo pasa a ser de cinco personas |
+| 0.6 | 06/11/2026 | Tobias | RF-08: la ficha pública está en `/negocios/[slug]` y la API en `/api/businesses/:slug` (D-29) |
 
 ---
 
@@ -94,7 +95,7 @@ Todos los requisitos listados pertenecen al MVP. La prioridad (Alta, Media) indi
 
 | ID | Requisito | Prioridad | Criterio de aceptación |
 |---|---|---|---|
-| RF-08 | Cada negocio tendrá una página propia accesible por su slug | Alta | `/businesses/:slug` devuelve la ficha o error 404 |
+| RF-08 | Cada negocio tendrá una página propia accesible por su slug | Alta | `/negocios/[slug]` muestra la ficha; la API (`/api/businesses/:slug`) devuelve la ficha o error 404 |
 | RF-09 | La ficha mostrará el estado actual, el horario de hoy y el horario semanal | Alta | Coincide con el resultado de la regla RN-01 |
 | RF-10 | La ficha ofrecerá botones de WhatsApp, Instagram y "Cómo llegar" | Alta | Solo aparecen los canales que el dueño activó (RN-06) |
 | RF-11 | La ficha mostrará la foto del negocio si existe | Media | Sin foto se muestra un marcador por defecto |

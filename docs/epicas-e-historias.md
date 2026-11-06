@@ -15,6 +15,7 @@
 | 0.9 | 06/11/2026 | Tobias | Suma Swagger con OpenAPI generado desde Zod (D-34) |
 | 0.10 | 06/11/2026 | Tobias | Suma la skill `nueva-pantalla` |
 | 0.11 | 06/11/2026 | Tobias | Aclara que el estado de las tareas vive en Trello (D-36). Las tareas de Postman pasan a Swagger y a escenarios (D-35) |
+| 0.12 | 06/11/2026 | Tobias | Agrega HT-02, la base visual del frontend (D-38). US-08: la ficha pública está en `/negocios/[slug]` (D-29) |
 
 ## Cómo leer este documento
 
@@ -100,6 +101,17 @@ Sin historias de usuario. Todo lo demás depende de esto.
 - [QA][S] Vitest en la web y el panel, con pruebas del `http-client`, `ApiError` y `config/env.ts`, y `npm test` en GitHub Actions.
 - [INFRA][S] `Dockerfile` de desarrollo de la web y el panel, y perfiles `web`, `panel` y `full` en `docker-compose.yml`: levantar todo el proyecto sin instalar Node (D-33).
 
+### HT-02 Base visual del frontend
+Tailwind, los tokens del mockup y los componentes genéricos en la web y el panel, para que todas las pantallas se armen con las mismas piezas (D-38). Las pantallas de las historias dependen de esta.
+- **Depende de:** el mockup (`docs/diseno.md`) · Prioridad Alta
+- **Criterios:** la web y el panel usan Tailwind 4 con el mismo `shared/ui/theme.css`; los colores, fuentes y sombras de `docs/diseno.md` están como tokens y ninguna pantalla usa valores sueltos; Button, Input y Card se ven igual en las dos apps y cumplen el contraste mínimo; las fuentes se sirven desde la app.
+- **Tareas:**
+  - [WEB][S] Instalar Tailwind 4 con `@tailwindcss/postcss` y crear `shared/ui/theme.css` con los tokens.
+  - [PANEL][S] Instalar Tailwind 4 con `@tailwindcss/vite` y la misma copia de `shared/ui/theme.css`.
+  - [WEB][S] [PANEL] Fuentes servidas desde la app: `next/font` en la web y `@fontsource` en el panel.
+  - [WEB][M] [PANEL] Componentes base en `shared/ui`: Button, Input y Card.
+  - [WEB][M] [PANEL] Layout común: encabezado y pie en la web, y estructura del panel, que funcionen a 390 px de ancho.
+
 ---
 
 ## EP-01 Exploración
@@ -175,7 +187,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-08 Abrir la ficha de un negocio con su propio enlace
 **Como** visitante **quiero** abrir la página de un negocio **para** ver todos sus datos y compartirla.
 - **RF-08, RF-12** · Prioridad Alta
-- **Criterios:** `/businesses/:slug` devuelve la ficha o 404; el enlace funciona sin sesión en una pestaña nueva; hay un botón para copiar el enlace.
+- **Criterios:** `/negocios/[slug]` muestra la ficha y, si el negocio no existe, la página 404 (la API responde 404 en `/api/businesses/:slug`); el enlace funciona sin sesión en una pestaña nueva; hay un botón para copiar el enlace.
 - **Tareas:**
   - [BE][M] Endpoint `GET /api/businesses/:slug` con error 404 estándar.
   - [BE][S] Generación de slug único a partir del nombre, con pruebas.
