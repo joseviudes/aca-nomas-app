@@ -15,6 +15,8 @@
 | 0.9 | 06/11/2026 | Tobias | Suma Swagger con OpenAPI generado desde Zod (D-34) |
 | 0.10 | 06/11/2026 | Tobias | Suma la skill `nueva-pantalla` |
 | 0.11 | 06/11/2026 | Tobias | Aclara que el estado de las tareas vive en Trello (D-36). Las tareas de Postman pasan a Swagger y a escenarios (D-35) |
+| 0.12 | 06/11/2026 | Tobias | Agrega HT-02, la base visual del frontend (D-38). US-08: la ficha pública está en `/negocios/[slug]` (D-29) |
+| 0.13 | 07/11/2026 | Tobias | "Etiquetas de área" pasa a "Tipos de tarea". Suma el área del código y el orden contrato → conexión (D-40) |
 
 ## Cómo leer este documento
 
@@ -23,7 +25,9 @@
 - **Historia técnica (HT):** trabajo necesario que no es una acción de un usuario.
 - **Tarea:** unidad de trabajo para una persona, de uno a dos días como máximo.
 
-**Etiquetas de área:** `BE` backend · `WEB` web pública · `PANEL` panel del dueño · `DB` base de datos · `INFRA` infraestructura · `QA` pruebas · `DOC` documentación
+**Tipos de tarea:** `BE` backend · `WEB` web pública · `PANEL` panel del dueño · `DB` base de datos · `INFRA` infraestructura · `QA` pruebas · `DOC` documentación
+
+**Área del código y orden (D-40):** cada historia la toman los dueños de las áreas que toca (un módulo del backend y una app). Si tiene pantalla, su primera tarea es `[BE] Contrato` y la última, `[WEB]` o `[PANEL] Conectar con la API`. Esas dos tareas se agregan en la tarjeta de Trello, no en este documento (D-36).
 
 **Tamaño:** `S` hasta medio día · `M` un día · `L` dos días. Una tarea más grande se divide.
 
@@ -35,7 +39,7 @@
 
 | Épica | Nombre | Historias | Requiere |
 |---|---|---|---|
-| EP-00 | Cimientos | — | Nada. Se hace primero |
+| EP-00 | Cimientos | HT-02 | Nada. Se hace primero |
 | EP-01 | Exploración | US-01 a US-07 | EP-00, HT-01 |
 | EP-02 | Ficha de negocio | US-08 a US-11 | EP-00, HT-01 |
 | EP-03 | Cuentas de dueños | US-12 a US-14 | EP-00 |
@@ -99,6 +103,17 @@ Sin historias de usuario. Todo lo demás depende de esto.
 - [DOC][S] Skill `nueva-pantalla`: los pasos para armar una pantalla de la web o del panel, como `nuevo-endpoint` en el backend. Reglas del frontend en `CLAUDE.md` y `convenciones-de-codigo`.
 - [QA][S] Vitest en la web y el panel, con pruebas del `http-client`, `ApiError` y `config/env.ts`, y `npm test` en GitHub Actions.
 - [INFRA][S] `Dockerfile` de desarrollo de la web y el panel, y perfiles `web`, `panel` y `full` en `docker-compose.yml`: levantar todo el proyecto sin instalar Node (D-33).
+
+### HT-02 Base visual del frontend
+Tailwind, los tokens del mockup y los componentes genéricos en la web y el panel, para que todas las pantallas se armen con las mismas piezas (D-38). Las pantallas de las historias dependen de esta.
+- **Depende de:** el mockup (`docs/diseno.md`) · Prioridad Alta
+- **Criterios:** la web y el panel usan Tailwind 4 con el mismo `shared/ui/theme.css`; los colores, fuentes y formas de `docs/diseno.md` están como tokens y ninguna pantalla usa valores sueltos; Button, Input y Card se ven igual en las dos apps y cumplen el contraste mínimo; las fuentes se sirven desde la app.
+- **Tareas:**
+  - [WEB][S] Instalar Tailwind 4 con `@tailwindcss/postcss` y crear `shared/ui/theme.css` con los tokens.
+  - [PANEL][S] Instalar Tailwind 4 con `@tailwindcss/vite` y la misma copia de `shared/ui/theme.css`.
+  - [WEB][S] [PANEL] Fuentes servidas desde la app: `next/font` en la web y `@fontsource` en el panel.
+  - [WEB][M] [PANEL] Componentes base en `shared/ui`: Button, Input y Card.
+  - [WEB][M] [PANEL] Layout común: encabezado y pie en la web, y estructura del panel, que funcionen a 390 px de ancho.
 
 ---
 
@@ -175,7 +190,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### US-08 Abrir la ficha de un negocio con su propio enlace
 **Como** visitante **quiero** abrir la página de un negocio **para** ver todos sus datos y compartirla.
 - **RF-08, RF-12** · Prioridad Alta
-- **Criterios:** `/businesses/:slug` devuelve la ficha o 404; el enlace funciona sin sesión en una pestaña nueva; hay un botón para copiar el enlace.
+- **Criterios:** `/negocios/[slug]` muestra la ficha y, si el negocio no existe, la página 404 (la API responde 404 en `/api/businesses/:slug`); el enlace funciona sin sesión en una pestaña nueva; hay un botón para copiar el enlace.
 - **Tareas:**
   - [BE][M] Endpoint `GET /api/businesses/:slug` con error 404 estándar.
   - [BE][S] Generación de slug único a partir del nombre, con pruebas.

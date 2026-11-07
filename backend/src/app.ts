@@ -19,6 +19,14 @@ export function createApp({ apiDocs = env.NODE_ENV !== 'production' }: AppOption
   app.use(createCors(env.CORS_ORIGINS));
   app.use(express.json());
 
+  // Quien abre localhost:3000 en el navegador busca Swagger: lo lleva a /api/docs. Solo donde
+  // Swagger está activo; en producción, `/` sigue siendo un 404 como cualquier otra ruta.
+  if (apiDocs) {
+    app.get('/', (_req, res) => {
+      res.redirect('/api/docs/');
+    });
+  }
+
   app.use('/api', createApiRouter({ apiDocs }));
 
   // Siempre al final: primero el 404 y después el manejador de errores.

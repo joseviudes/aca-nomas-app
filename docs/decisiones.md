@@ -22,6 +22,9 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.14 | 06/11/2026 | Tobias | Resuelve la localidad inicial en D-20: Mantilla, Corrientes |
 | 0.15 | 06/11/2026 | Tobias | Agrega D-34: documentación de la API con OpenAPI y Swagger. Actualiza D-25: el detalle por endpoint pasa a Swagger |
 | 0.16 | 06/11/2026 | Tobias | Agrega D-35 a D-37: Postman para escenarios, el estado de las tareas solo en Trello y las herramientas que no se suman por ahora. Actualiza D-15, D-25, D-30 y D-34 |
+| 0.17 | 06/11/2026 | Tobias | Agrega D-38: estilos con Tailwind y los tokens del mockup (06/11/2026). El equipo pasa a ser de 5 (D-37) |
+| 0.18 | 07/11/2026 | Tobias | Agrega D-39 (ramas `develop` y `main`, una rama y un PR por historia) y D-40 (reparto por área y frontend con datos de ejemplo). Actualiza D-16 y D-17. Cierra la rama `develop` en D-20 |
+| 0.19 | 07/11/2026 | Tobias | D-39 suma las protecciones de las ramas en GitHub (`develop` sin aprobaciones, CI no obligatoria). D-16 remite a D-39 |
 
 ## Índice
 
@@ -42,8 +45,8 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-13 | Mapas con Leaflet y OpenStreetMap | Aceptada |
 | D-14 | Fotos mediante un puerto de almacenamiento | Aceptada |
 | D-15 | Herramientas de calidad y pruebas | Aceptada |
-| D-16 | Reglas de Git y repositorio público | Aceptada |
-| D-17 | Organización del trabajo | Aceptada |
+| D-16 | Reglas de Git y repositorio público | Aceptada (ramas y aprobación de PR actualizadas por D-39) |
+| D-17 | Organización del trabajo | Aceptada (reparto y etiquetas actualizados por D-40) |
 | D-18 | Un único MVP | Aceptada |
 | D-19 | Patrones de diseño | Aceptada |
 | D-20 | Decisiones diferidas | Pendiente |
@@ -64,6 +67,9 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-35 | Postman para escenarios, no como catálogo de endpoints | Aceptada |
 | D-36 | El estado de las tareas vive solo en Trello | Aceptada |
 | D-37 | Herramientas que no se suman por ahora | Aceptada |
+| D-38 | Estilos con Tailwind CSS y los tokens del mockup | Aceptada |
+| D-39 | Ramas `develop` y `main`, con una rama y un PR por historia | Aceptada |
+| D-40 | Reparto por área y frontend en paralelo con datos de ejemplo | Aceptada |
 
 ---
 
@@ -184,11 +190,12 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 ## D-16 Reglas de Git y repositorio público
 - **Decisión:**
   - Repositorio público con datos ficticios y sin secretos (`.env` ignorado, `.env.example` de muestra, análisis de secretos de GitHub activo).
-  - `main` protegida: PR obligatorio y aprobación final del responsable del repositorio.
+  - `main` protegida: PR obligatorio y aprobación final del responsable del repositorio. (D-39 lo precisa: `main` exige 1 aprobación de un compañero.)
   - Ramas: `feat/`, `fix/`, `docs/`, `chore/` + descripción corta en inglés (`feat/business-search`).
   - Commits convencionales: tipo en inglés y descripción en español (`feat(businesses): agrega búsqueda por texto`).
   - Plantilla de PR con lista de verificación y revisión cruzada entre compañeros.
 - **Nombres:** `aca-nomas-app` en carpetas y repositorio; "AcáNomás" en la interfaz.
+- **Nota:** D-39 actualiza dos puntos: las ramas salen de `develop` (no de `main`) y un PR a `develop` lo aprueba cualquier compañero, no solo el responsable del repositorio.
 
 ## D-17 Organización del trabajo
 - **Decisión:** tablero Kanban en Trello con tareas técnicas chicas (de uno a dos días). Cada integrante toma tareas y se las asigna. Máximo dos tarjetas en curso por persona.
@@ -196,6 +203,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Etiquetas:** una por épica, una por área (backend, panel, web).
 - **Primera semana:** la base (esqueleto, `tsconfig`, Docker, esquema, seed, CI) la arman dos personas; el resto prepara historias y la colección de Postman.
 - **Ritmo:** sprints semanales hasta la entrega de mediados de diciembre.
+- **Nota:** D-40 actualiza el reparto y las etiquetas: cada persona es dueña de un área del código, y el área va en la descripción de la historia (línea "Área del código") en lugar de una etiqueta.
 - **Definición de hecho:** funciona, tiene prueba, pasó revisión de PR y está mergeado.
 
 ## D-18 Un único MVP
@@ -232,7 +240,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | Hosting del primer despliegue | Sin definir | Pendiente |
 | Modelo de datos | Definido en D-22 | Resuelta |
 | Diseño de la API | Definido en D-25 (`docs/api.md`) | Resuelta |
-| Rama `develop` | Sin `develop`: las ramas salen de `main` y en EP-00 los PR agrupan varias tareas por bloque | Se evalúa con el primer despliegue |
+| Rama `develop` | `develop` para el sprint y `main` para lo entregado | Resuelta en D-39 |
 | Respuesta paginada | `{ data, page, limit, total }`, con `limit` máximo de 100 | Resuelta en D-25 |
 | Librería de logs | Logger propio mínimo con `console` (una línea por request) | Se evalúa antes del primer despliegue |
 | Cookie de sesión en producción | Un dominio propio con subdominios (`api.`, `panel.`), para que la cookie no sea de terceros (D-28) | Se confirma con el hosting |
@@ -393,6 +401,43 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 
 ## D-37 Herramientas que no se suman por ahora
 - **Decisión:** por ahora no se agregan Storybook, monorepo con *workspaces* (un paquete compartido entre las apps), Dependabot ni *pre-commit hooks* (Husky y lint-staged).
-- **Motivo:** somos 4 y el MVP tiene fecha. Cada herramienta suma configuración y mantenimiento sin resolver un problema concreto de hoy. Los errores de lint, formato, tipos y pruebas ya los frena la CI en cada PR, y correr `lint` antes de subir sigue siendo regla (`CONTRIBUTING.md`).
+- **Motivo:** somos 5 y el MVP tiene fecha. Cada herramienta suma configuración y mantenimiento sin resolver un problema concreto de hoy. Los errores de lint, formato, tipos y pruebas ya los frena la CI en cada PR, y correr `lint` antes de subir sigue siendo regla (`CONTRIBUTING.md`).
 - **Descartado:** sumarlas "por las dudas", por el costo de mantenerlas.
 - **Nota:** se revisa cada una si aparece su motivo: *workspaces*, si además del `http-client` hay más código para compartir entre la web y el panel (D-30); Storybook, si hay varios componentes visuales reutilizables; Dependabot, si el proyecto sigue después de la entrega.
+
+## D-38 Estilos con Tailwind CSS y los tokens del mockup
+- **Decisión:**
+  - La web y el panel usan Tailwind CSS 4: `@tailwindcss/postcss` en la web (Next) y `@tailwindcss/vite` en el panel.
+  - Los colores, las tipografías y las formas del mockup se declaran como **tokens** en el `@theme` de `src/shared/ui/theme.css`, con nombres en inglés (`ink`, `paper`, `brand`, `accent`, `alert`, `font-display`…). Hay una copia en cada app, como el `http-client` (D-30): un cambio en una se repite en la otra en el mismo PR.
+  - Las pantallas usan solo esos tokens: nada de colores sueltos (`bg-[#00473C]`). Si falta uno, se agrega al tema.
+  - Las fuentes se sirven desde la app: `next/font` en la web y `@fontsource` en el panel.
+  - El mockup es una referencia, no un plano: los tokens se respetan siempre; la distribución y los detalles de cada pantalla puede cambiarlos quien la arma, explicándolo en el PR con una captura. El detalle está en `docs/diseno.md`.
+- **Motivo:** con cinco personas armando pantallas a la vez, los tokens evitan que cada uno invente su propio color o botón. Tailwind funciona igual en Next y en Vite, y en la versión 4 el tema se declara en CSS, sin archivo de configuración. El mockup tiene un estilo propio (verde oscuro y verde lima, formas de píldora, sin sombras) que se arma bien con clases utilitarias.
+- **Descartado:** CSS Modules, porque cada pantalla tiene su archivo de estilos y la coherencia depende de que todos usen las mismas variables a mano; una librería de componentes (MUI, shadcn/ui), porque su estética choca con la del mockup y habría que pisarla en cada componente; CSS-in-JS (styled-components), porque corre en el navegador y no se lleva bien con los Server Components de Next.
+- **Nota:** Tailwind, el tema y los componentes base de `shared/ui` se instalaron con HT-02. Los tokens salen del mockup del 06/11/2026; si el mockup cambia, se actualizan el tema y `docs/diseno.md` en el mismo PR.
+
+## D-39 Ramas `develop` y `main`, con una rama y un PR por historia
+- **Decisión:**
+  - Dos ramas fijas y protegidas: `develop` tiene el trabajo del sprint y `main` tiene lo entregado. `develop` es la rama por defecto del repositorio.
+  - **Protecciones en GitHub:** PR obligatorio en las dos ramas, sin `push --force` y sin poder borrarlas. `main` exige 1 aprobación; `develop` exige 0, y que lo mire un compañero es un acuerdo del equipo. La CI **no** es obligatoria en ninguna: quien acepta el PR mira que esté en verde. El detalle, con los demás ajustes, está en `CONTRIBUTING.md` ("Configuración de GitHub").
+  - **Una rama por historia**, desde `develop` actualizada, con el código de la historia: `feat/us-01-business-list`. Si la historia tiene backend y pantalla, las dos personas trabajan en la **misma rama**: una en `backend/` y la otra en `web/` o `panel/`.
+  - En una rama compartida, antes de cada `push` se hace `git pull --rebase`, y nunca `push --force`.
+  - **Un PR por historia**, contra `develop`, cuando la historia está completa. Lo aprueba **cualquier compañero** que no la haya hecho.
+  - Al cerrar el sprint, después de la demo, se abre un PR de `develop` a `main`. Se mergea con *merge commit*, nunca con *squash*, para que las dos ramas no se separen.
+  - **Arreglo urgente:** una rama `hotfix/` desde `main`, con PR directo a `main`. Después, un PR de `main` a `develop` para que el arreglo no se pierda. Las ramas de historias en curso se actualizan desde `develop` cuando lo necesitan (`git merge develop`).
+  - La CI corre en los PR contra `develop` y contra `main`.
+- **Motivo:** somos pocos para revisar PR. Un PR chico por cada parte de una historia (el contrato, el backend, la pantalla) deja trabajo esperando revisión y obliga a revisar cambios mínimos. Con un PR por historia, cada PR es una historia terminada y se revisa una sola vez. `develop` deja trabajar el sprint sin tocar lo que se muestra: `main` siempre tiene una versión que pasó por la demo, y encaja con staging (`develop`) y producción (`main`).
+- **Descartado:** seguir solo con `main` y ramas cortas (GitHub Flow), porque `main` tendría trabajo a medias del sprint; Git Flow completo, con ramas `release`, porque es para productos con versiones numeradas; un PR chico para el contrato antes del resto, por la espera de revisión; una rama por persona en lugar de por historia, porque el frontend no vería el contrato hasta que se mergee.
+- **Nota:** el PR de una historia supera muchas veces los 400 renglones: ese límite de `CONTRIBUTING.md` pasa a ser solo una recomendación para PR que no son de una historia. Resuelve la fila de `develop` de D-20 y actualiza D-16.
+
+## D-40 Reparto por área y frontend en paralelo con datos de ejemplo
+- **Decisión:**
+  - **Reparto por área.** Cada persona es dueña de un área del código y toma las historias que la tocan. En el backend, un dueño por módulo: `businesses` (con `categories`), `auth` y `opening-hours`. En el frontend, un dueño por app: `web` y `panel`, cada uno con todos los módulos de su app. Ser dueño es tomar primero esas historias, conocer ese código y revisar los PR que lo tocan; no es exclusivo.
+  - La épica dice **qué** ve el usuario (planificar y demo); el área dice **quién** la hace. Cada historia lo indica en su descripción: `**Área del código:** businesses (backend) · web`.
+  - **El contrato primero.** El primer commit del backend en la rama de la historia es el contrato: el esquema de Zod de la respuesta en `schemas/` y su documentación en `routes/<módulo>.openapi.ts` (D-34), sin la lógica. Quien lo sube tilda la tarea "Contrato" y lo avisa en un comentario de la tarjeta.
+  - **El frontend no espera al backend.** Con el contrato, arma la pantalla con **datos de ejemplo**: la función de `api/` del módulo devuelve los datos de `api/<módulo>.fixtures.ts`, validados con el mismo esquema de Zod. La página y el hook no se enteran.
+  - **La última tarea del frontend es conectar con la API:** la función de `api/` pasa a usar el `http-client` (D-30). La historia no está terminada sin esa tarea.
+  - El checklist de una historia con pantalla sigue este orden: `[BE] Contrato` → tareas de backend → tareas de pantalla con datos de ejemplo → `[WEB]` o `[PANEL] Conectar con la API`.
+- **Motivo:** la épica y el código no coinciden (EP-01, EP-02 y EP-04 usan `businesses`), así que repartir por épica hace que dos personas toquen la misma carpeta. Repartir por área evita pisarse. Con el contrato acordado el primer día, el frontend avanza en paralelo, y conectar es un cambio chico en un solo archivo porque los datos de ejemplo ya tienen la forma real.
+- **Descartado:** repartir por épica, por lo anterior; un dueño por módulo de punta a punta, porque `businesses` tiene casi la mitad de las historias y `categories` una sola, y porque obliga a cada uno a manejar Next y Vite; MSW para simular la API, porque suma una herramienta (D-37); que el frontend espere al backend terminado, porque frena a dos personas.
+- **Nota:** el área va en la descripción y no como etiqueta, para que se lea junto a la épica al abrir la tarjeta. Actualiza las etiquetas por área de D-17.

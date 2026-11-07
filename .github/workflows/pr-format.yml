@@ -4,7 +4,7 @@ name: Formato del PR
 
 on:
   pull_request:
-    branches: [main]
+    branches: [develop, main]
     # edited: vuelve a correr si se corrige el título del PR.
     types: [opened, edited, synchronize, reopened]
 

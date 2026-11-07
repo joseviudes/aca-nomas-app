@@ -1,0 +1,63 @@
+/*
+ * Tokens visuales de AcáNomás, sacados del mockup (D-38 y docs/diseno.md).
+ * Hay una copia idéntica en web/ y en panel/: un cambio en una se repite en la otra en el mismo PR.
+ * Las pruebas de tests/unit/shared/ui/ verifican que las copias sean iguales y que los contrastes cumplan.
+ */
+
+@theme {
+  /* Sin la paleta de Tailwind: solo existen los colores del mockup (bg-brand, text-ink…). */
+  --color-*: initial;
+  --color-ink: #0e150e;
+  --color-paper: #f4f3e7;
+  --color-surface: #ffffff;
+  --color-brand: #00473c;
+  --color-accent: #e6ff55;
+  --color-mint: #d8e5d6;
+  --color-sand: #e8dcc6;
+  --color-alert: #f2b8a0;
+  --color-muted: #555555;
+  --color-muted-strong: #3d4a3d;
+  --color-line: #8c8c82;
+
+  /* Esquinas: campos e ítems del menú (8 a 12 px) y tarjetas o bloques (20 a 28 px). */
+  --radius-field: 10px;
+  --radius-card: 24px;
+
+  /* Ancho máximo del contenido: max-w-page. */
+  --container-page: 70rem;
+
+  --font-*: initial;
+  --default-font-family: var(--font-body);
+}
+
+/*
+ * Las fuentes se sirven desde la app (D-38). La web las carga con next/font, que define
+ * --typeface-display y --typeface-body; el panel, con @fontsource, que usa el nombre de la fuente.
+ */
+@theme inline {
+  --font-display: var(--typeface-display, 'Urbanist'), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--typeface-body, 'Figtree'), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Etiquetas cortas: secciones, estados y botones del encabezado (docs/diseno.md, sección 5). */
+@utility caps-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+  }
+}
