@@ -1,6 +1,6 @@
 # AcáNomás — Diseño visual
 
-La referencia visual de la web y el panel: dónde está el mockup, qué hay que respetar siempre y qué puede cambiar quien arma la pantalla. La decisión técnica (Tailwind y los tokens) es D-38.
+La referencia visual de la web y el panel: dónde está el mockup, qué hay que respetar siempre, qué puede cambiar quien arma la pantalla y qué partes del mockup no entran en el MVP. La decisión técnica (Tailwind y los tokens) es D-38.
 
 ## Historial de versiones
 
@@ -8,38 +8,79 @@ La referencia visual de la web y el panel: dónde está el mockup, qué hay que 
 |---|---|---|---|
 | 0.1 | 06/11/2026 | Tobias | Versión inicial: mockup, tokens y reglas de uso (D-38) |
 | 0.2 | 06/11/2026 | Tobias | Agrega qué hacer con una pantalla que no está en el mockup |
+| 0.3 | 07/11/2026 | Tobias | Mockup nuevo: cambian los colores, las fuentes y las formas. Agrega lo que el mockup muestra pero no entra en el MVP |
 
 ## Índice
 
 1. El mockup
-2. Qué se respeta y qué puede cambiar
-3. Colores
-4. Tipografía
-5. Bordes, sombras y formas
-6. Accesibilidad
+2. Qué entra del mockup y qué no
+3. Qué se respeta y qué puede cambiar
+4. Colores
+5. Tipografía
+6. Formas y medidas
+7. Estados de un negocio
+8. Accesibilidad
 
 ---
 
 ## 1. El mockup
 
-Está en Claude, como un lienzo de diseño: [Emprendimientos Local](https://claude.ai/artifact/6gESHph9FjVXA9qPt9N5r6). Se abre con el enlace, sin cuenta especial.
+Está en Claude, como un lienzo de diseño: [AcáNomás — Mockup](https://claude.ai/artifact/XbXNuhzCf3bs7SycUqCXim). Reemplaza al mockup anterior ("Emprendimientos Local").
 
-| Pantalla | Para qué sirve |
+| Pantalla | App | Historias |
+|---|---|---|
+| Inicio y listado | Web | US-01 a US-06, US-11 |
+| Listado en celular | Web | Las mismas, a 390 px |
+| Panel de filtros | Web | US-03 y US-04 (ver la sección 2) |
+| Nada abierto ahora | Web | US-04: el estado vacío del filtro |
+| Ficha del negocio | Web | US-08 a US-11, US-17 |
+| Ingreso | Panel | US-12 y US-13 |
+| Inicio del panel | Panel | US-23 a US-25 |
+| Mi ficha | Panel | US-15 a US-20 |
+| Horarios | Panel | US-21 a US-24 |
+
+El mockup tiene datos de ejemplo. Donde dice "Corrientes Capital" o "Corrientes", la localidad del MVP es **Mantilla** (D-20). Los datos reales salen de la API y del seed.
+
+## 2. Qué entra del mockup y qué no
+
+**Se construye todo lo que muestra el mockup, pero solo dentro del MVP.** El MVP son los requisitos del ERS (RF-01 a RF-26) y las historias de `epicas-e-historias.md`. Lo que no tiene requisito no se construye, aunque esté dibujado.
+
+**Pantallas que no entran** (fase 2, ERS sección 9):
+
+| Pantalla | Por qué |
 |---|---|
-| Barrio web — escritorio | Web pública: buscador, filtros, listado y ficha |
-| Barrio web — celular | La misma página a 390 px de ancho |
-| Panel del emprendedor — escritorio | Panel del dueño: mi ficha, horarios y compartir |
-| Panel del emprendedor — celular | El panel a 390 px de ancho |
+| Explorar — Oficios | Changas y oficios están fuera del MVP |
+| Explorar — Eventos | Ferias y eventos están fuera del MVP |
+| Admin — Negocios y Admin — Rubros | El panel de administración y la administración de rubros están fuera del MVP. Los rubros se cargan con el seed |
 
-El mockup se está actualizando: cuando cambie, se reemplaza el enlace y se revisan los tokens de las secciones 3 a 5. Tiene datos de ejemplo (por ejemplo, la localidad Goya). Los datos reales salen de la API y del seed (Mantilla, D-20).
+Por eso el encabezado de la web **no lleva** los enlaces a Oficios ni a Eventos.
 
-## 2. Qué se respeta y qué puede cambiar
+**Partes de pantallas del MVP que no entran:**
+
+| Qué | Dónde aparece | Por qué |
+|---|---|---|
+| "Horario confirmado hace X días" y el botón "Sí, confirmo mi horario" | Inicio y Horarios del panel, ficha | Ningún requisito lo pide; necesitaría un campo y un endpoint nuevos |
+| "¿Es tu negocio? Reclamá la ficha" | Pie de la ficha | Supone fichas sin dueño, que el modelo no contempla |
+| Filtros de entregas y medios de pago | Panel de filtros | RF-18 solo muestra pagos y entregas como etiquetas en la ficha |
+| Elegir el orden ("Por nombre A–Z") | Panel de filtros | RF-05 fija un solo orden: abiertos primero y por cercanía; el nombre es solo el desempate |
+| "Estos abren en la próxima hora" | Nada abierto ahora | Necesitaría una consulta nueva. El estado vacío sí entra, con el botón "Ver todos, aunque estén cerrados" |
+| "Mi cuenta" | Menú del panel | No hay historia para editar la cuenta |
+| "Compartir por WhatsApp" | Ficha | RF-12 pide un enlace compartible; alcanza con el botón de copiarlo (US-08) |
+| El mapa dentro de la ficha | Ficha | El mapa está en el listado (RF-07); en la ficha está el botón "Cómo llegar" (RF-10) |
+
+**Sí entra**, aunque no tenga una historia propia: el carrusel "Abiertos ahora cerca tuyo" del inicio. No agrega funcionalidad: muestra los primeros resultados del listado (RF-01, RF-04 y RF-05) con su foto.
+
+**Lo que el MVP pide y el mockup no muestra** lo plantea quien arma la pantalla (sección 3): el mapa del listado (US-07), el formulario de registro (US-12; el mockup solo tiene la pestaña "Crear cuenta") y la página 404 de una ficha que no existe (US-08).
+
+Si algo de la lista de "no entra" se quiere sumar, primero se agrega como requisito al ERS y como historia, con el acuerdo del equipo. No se construye directo desde el mockup.
+
+## 3. Qué se respeta y qué puede cambiar
 
 El mockup es una **referencia, no un plano**.
 
 **Se respeta siempre** (son los tokens de `src/shared/ui/theme.css`):
-- los colores, las tipografías, los bordes y las sombras de las secciones 3 a 5;
-- el tono: fondo crema, bordes oscuros gruesos y sombras duras, sin degradados.
+- los colores, las tipografías y las formas de las secciones 4 a 7;
+- el tono: fondo claro, verde oscuro como color principal, verde lima para lo que está abierto y las acciones, esquinas redondeadas y sin sombras.
 
 **Puede cambiar** quien arma la pantalla, si lo ve mejor de otra manera:
 - la distribución, el orden de los bloques, los textos y los tamaños;
@@ -51,40 +92,69 @@ El cambio se explica en el PR, con una captura.
 
 En los dos casos, si hace falta un color o un tamaño que no está en los tokens, **no se inventa en la pantalla**: se agrega al token en las dos apps y a este documento, en el mismo PR.
 
-## 3. Colores
+## 4. Colores
 
 | Token | Color | Uso |
 |---|---|---|
-| `ink` | `#2B2118` | Texto principal, bordes y sombras |
-| `paper` | `#FFF9EC` | Tarjetas, campos y texto sobre fondos de color |
-| `cream` | `#F1E6CF` | Fondo de la página |
-| `sand` | `#E8D9BA` | Fondos secundarios y separadores |
-| `muted` | `#6B5B49` | Texto secundario y enlaces menores |
-| `open` | `#2F7A4F` | "Abierto ahora" y la acción principal (WhatsApp, guardar) |
-| `brand` | `#C8372D` | Acento de la marca y "Cerrado" |
-| `highlight` | `#E9A93A` | Resaltados y botones secundarios |
-| `pin` | `#2B6FB4` | La ubicación del visitante en el mapa |
+| `ink` | `#0E150E` | Texto principal |
+| `paper` | `#F4F3E7` | Fondo de la página y texto sobre `brand` |
+| `surface` | `#FFFFFF` | Tarjetas, tablas y campos |
+| `brand` | `#00473C` | Color principal: logo, encabezado destacado, botones principales del panel, pie |
+| `accent` | `#E6FF55` | Etiqueta "Abierto", botón principal de la web y resaltados sobre `brand` |
+| `mint` | `#D8E5D6` | Fondos secundarios: foto que falta, encabezados de tabla, bloques de formulario |
+| `sand` | `#E8DCC6` | Bandas de sección y el selector de pestañas |
+| `alert` | `#F2B8A0` | "Hoy no abre", "Pausado" y mensajes de error |
+| `muted` | `#555555` | Texto secundario y textos de ayuda |
+| `muted-strong` | `#3D4A3D` | Texto secundario sobre fondos de color |
+| `line` | `#8C8C82` | Bordes de campos y líneas separadoras |
 
-## 4. Tipografía
+## 5. Tipografía
 
 | Token | Fuente | Uso |
 |---|---|---|
-| `font-display` | Alfa Slab One | Títulos y el logo |
-| `font-body` | Libre Franklin (400 a 800) | Todo el texto |
-| `font-hand` | Kalam | Detalles a mano, con moderación |
+| `font-display` | Urbanist (400 y 500) | Títulos grandes y nombres de rubros |
+| `font-body` | Figtree (400 y 700) | Todo el texto, botones y etiquetas |
 
-Las fuentes se sirven desde la propia app, no desde Google: `next/font` en la web y `@fontsource` en el panel (D-38).
+- Las etiquetas cortas (secciones, botones del encabezado, estados) van en mayúsculas, a 11–13 px, en negrita y con `letter-spacing: 0.05em`.
+- El texto común va a 14–16 px.
+- Las fuentes se sirven desde la propia app, no desde Google: `next/font` en la web y `@fontsource` en el panel (D-38).
 
-## 5. Bordes, sombras y formas
+## 6. Formas y medidas
 
-- **Bordes:** `ink`, de 2 a 3 px. Las tarjetas y los botones siempre llevan borde.
-- **Sombras duras**, sin desenfoque: `shadow-hard-sm` (`3px 3px 0`), `shadow-hard` (`4px 4px 0`) y `shadow-hard-lg` (`5px 5px 0`), en `ink`.
-- **Esquinas:** casi rectas (4 a 6 px). Redondas solo las etiquetas de estado y los avatares.
-- **Ancho máximo del contenido:** alrededor de 1000 px en la web y 1060 px en el panel.
+- **Botones y etiquetas:** de forma de píldora (`rounded-full`).
+- **Tarjetas y bloques:** esquinas de 20 a 28 px. **Campos e ítems del menú:** 8 a 12 px.
+- **Sin sombras.** Los bloques se separan por color de fondo, no por sombra.
+- **Bordes:** 1 px `line` en los campos; 2 px `brand` en los botones secundarios.
+- **Ancho máximo del contenido:** 1120 px.
+- **Botones y enlaces:** al menos 44 px de alto.
 
-## 6. Accesibilidad
+## 7. Estados de un negocio
 
-- El texto `brand` sobre `cream` **no llega al contraste mínimo** (4,2 a 1, y hace falta 4,5). Para texto chico, usar `brand` como fondo con texto `paper`; como texto, solo en títulos de 24 px o más.
-- El resto de las combinaciones del mockup pasan: `ink` sobre `cream` 12,7; `muted` sobre `cream` 5,3; `paper` sobre `open` 5,0; `paper` sobre `brand` 5,0; `ink` sobre `highlight` 7,7.
-- Los botones y enlaces miden al menos 44 px de alto, como en el mockup.
+El estado lo devuelve la API (`isOpenNow`); el frontend solo lo muestra.
+
+| Estado | Etiqueta |
+|---|---|
+| Abierto | Fondo `accent`, texto `ink` |
+| Cerrado | Fondo `paper`, borde de 1 px `ink` |
+| Hoy no abre | Fondo `alert`, borde punteado de 1 px `ink` |
+| Pausado | Fondo `alert`, borde punteado de 1 px `ink` |
+
+Siempre con el texto del estado, nunca solo el color.
+
+## 8. Accesibilidad
+
+Todas las combinaciones del mockup cumplen el contraste mínimo (4,5 a 1 para texto):
+
+| Combinación | Contraste |
+|---|---|
+| `ink` sobre `paper` | 16,6 |
+| `paper` sobre `brand` | 9,6 |
+| `ink` sobre `accent` | 16,6 |
+| `accent` sobre `brand` | 9,6 |
+| `muted` sobre `paper` | 6,7 |
+| `ink` sobre `alert` | 10,7 |
+| `brand` sobre `mint` | 8,2 |
+
+- `line` sobre `paper` da 3,0: sirve para **bordes** (el mínimo para elementos que no son texto es 3 a 1), **no para texto**.
 - El estado "abierto" o "cerrado" no se indica solo con color: siempre lleva el texto.
+- Los campos llevan su `<label>`, aunque esté oculto a la vista.

@@ -104,7 +104,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 ### HT-02 Base visual del frontend
 Tailwind, los tokens del mockup y los componentes genéricos en la web y el panel, para que todas las pantallas se armen con las mismas piezas (D-38). Las pantallas de las historias dependen de esta.
 - **Depende de:** el mockup (`docs/diseno.md`) · Prioridad Alta
-- **Criterios:** la web y el panel usan Tailwind 4 con el mismo `shared/ui/theme.css`; los colores, fuentes y sombras de `docs/diseno.md` están como tokens y ninguna pantalla usa valores sueltos; Button, Input y Card se ven igual en las dos apps y cumplen el contraste mínimo; las fuentes se sirven desde la app.
+- **Criterios:** la web y el panel usan Tailwind 4 con el mismo `shared/ui/theme.css`; los colores, fuentes y formas de `docs/diseno.md` están como tokens y ninguna pantalla usa valores sueltos; Button, Input y Card se ven igual en las dos apps y cumplen el contraste mínimo; las fuentes se sirven desde la app.
 - **Tareas:**
   - [WEB][S] Instalar Tailwind 4 con `@tailwindcss/postcss` y crear `shared/ui/theme.css` con los tokens.
   - [PANEL][S] Instalar Tailwind 4 con `@tailwindcss/vite` y la misma copia de `shared/ui/theme.css`.

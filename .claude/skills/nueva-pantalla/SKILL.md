@@ -10,7 +10,7 @@ Seguir los pasos en orden. Es el equivalente de `nuevo-endpoint` para el fronten
 ## Antes de escribir código
 
 - **Leer los criterios de aceptación** de la historia en Trello.
-- **Mirar la pantalla en el mockup** (enlace en `docs/diseno.md`). Es una referencia: los tokens (colores, fuentes, bordes, sombras) se respetan siempre; la distribución puede cambiar si queda mejor, y se explica en el PR (D-38). Si la pantalla no está en el mockup, la plantea quien la arma con los tokens y los componentes de `shared/ui`, y muestra capturas en escritorio y a 390 px en el PR.
+- **Mirar la pantalla en el mockup** (enlace en `docs/diseno.md`). Se construye **solo lo que entra en el MVP**: la sección 2 de `docs/diseno.md` lista lo que el mockup muestra pero no se hace. Es una referencia: los tokens (colores, fuentes, formas) se respetan siempre; la distribución puede cambiar si queda mejor, y se explica en el PR (D-38). Si la pantalla no está en el mockup, la plantea quien la arma con los tokens y los componentes de `shared/ui`, y muestra capturas en escritorio y a 390 px en el PR.
 - **¿El endpoint existe?** Mirarlo en Swagger (`http://localhost:3000/api/docs`): ahí están los campos, las respuestas y los errores. Si todavía no existe, trabajar con el diseño de `docs/api.md` (y la request `[Pendiente]` de Postman, si la hay) y con datos de ejemplo, sin inventar campos que no estén en `docs/api.md`.
 - **¿El módulo ya existe** en `src/modules/`? Si no, crearlo con el mismo nombre que en el backend (`businesses`, `auth`, `opening-hours`).
 - **¿Es de la web o del panel?** La web pide los datos en el servidor (vista previa al compartir, D-27); el panel corre todo en el navegador.
@@ -39,7 +39,8 @@ Seguir los pasos en orden. Es el equivalente de `nuevo-endpoint` para el fronten
 - [ ] Ningún import entra a las carpetas internas de otro módulo (ESLint lo marca).
 - [ ] La pantalla trata los errores por `error.code` y muestra un mensaje en español, nunca el texto técnico.
 - [ ] Hay estado de carga, de error y de lista vacía.
-- [ ] Usa solo los tokens de `shared/ui/theme.css`: ningún color ni sombra escrito a mano (D-38).
+- [ ] Usa solo los tokens de `shared/ui/theme.css`: ningún color ni medida escrita a mano (D-38).
+- [ ] No construye nada de la lista "no entra" de `docs/diseno.md` (sección 2).
 - [ ] "Abierto ahora" sale de la API (`isOpenNow`): no se calcula en el frontend.
 - [ ] Un canal de contacto oculto no se muestra en la web pública.
 - [ ] Los botones y campos tienen texto o `label` (se usan con teclado y lector de pantalla).
