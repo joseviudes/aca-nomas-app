@@ -1,15 +1,23 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Figtree, Urbanist } from 'next/font/google';
+import { SiteFooter } from '@/shared/ui/SiteFooter';
+import { SiteHeader } from '@/shared/ui/SiteHeader';
 import './globals.css';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+// next/font descarga las fuentes al compilar y las sirve desde la propia web: el navegador no le
+// pide nada a Google (D-38). Las variables las usa theme.css (--font-display y --font-body).
+const urbanist = Urbanist({
+  variable: '--typeface-display',
   subsets: ['latin'],
+  weight: ['400', '500'],
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const figtree = Figtree({
+  variable: '--typeface-body',
   subsets: ['latin'],
+  weight: ['400', '700'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -19,8 +27,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="es" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body>{children}</body>
+    <html lang="es" className={`${urbanist.variable} ${figtree.variable}`}>
+      <body className="flex min-h-dvh flex-col">
+        <SiteHeader />
+        <div className="flex-1">{children}</div>
+        <SiteFooter />
+      </body>
     </html>
   );
 }
