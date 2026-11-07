@@ -8,8 +8,8 @@ La referencia visual de la web y el panel: dónde está el mockup, qué hay que 
 |---|---|---|---|
 | 0.1 | 06/11/2026 | Tobias | Versión inicial: mockup, tokens y reglas de uso (D-38) |
 | 0.2 | 06/11/2026 | Tobias | Agrega qué hacer con una pantalla que no está en el mockup |
-| 0.3 | 07/11/2026 | Tobias | Mockup nuevo: cambian los colores, las fuentes y las formas. Agrega lo que el mockup muestra pero no entra en el MVP |
-| 0.4 | 07/11/2026 | Tobias | El mockup se ajusta al MVP y suma las pantallas de celular y el listado sin ubicación. Agrega "Celular primero" |
+| 0.3 | 06/11/2026 | Tobias | Mockup nuevo: cambian los colores, las fuentes y las formas. Agrega lo que el mockup muestra pero no entra en el MVP |
+| 0.4 | 06/11/2026 | Tobias | El mockup se ajusta al MVP y suma las pantallas de celular y el listado sin ubicación. Agrega "Celular primero" |
 
 ## Índice
 

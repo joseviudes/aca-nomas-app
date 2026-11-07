@@ -22,7 +22,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.14 | 06/11/2026 | Tobias | Resuelve la localidad inicial en D-20: Mantilla, Corrientes |
 | 0.15 | 06/11/2026 | Tobias | Agrega D-34: documentación de la API con OpenAPI y Swagger. Actualiza D-25: el detalle por endpoint pasa a Swagger |
 | 0.16 | 06/11/2026 | Tobias | Agrega D-35 a D-37: Postman para escenarios, el estado de las tareas solo en Trello y las herramientas que no se suman por ahora. Actualiza D-15, D-25, D-30 y D-34 |
-| 0.17 | 06/11/2026 | Tobias | Agrega D-38: estilos con Tailwind y los tokens del mockup (07/11/2026). El equipo pasa a ser de 5 (D-37) |
+| 0.17 | 06/11/2026 | Tobias | Agrega D-38: estilos con Tailwind y los tokens del mockup (06/11/2026). El equipo pasa a ser de 5 (D-37) |
 
 ## Índice
 
@@ -408,4 +408,4 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
   - El mockup es una referencia, no un plano: los tokens se respetan siempre; la distribución y los detalles de cada pantalla puede cambiarlos quien la arma, explicándolo en el PR con una captura. El detalle está en `docs/diseno.md`.
 - **Motivo:** con cinco personas armando pantallas a la vez, los tokens evitan que cada uno invente su propio color o botón. Tailwind funciona igual en Next y en Vite, y en la versión 4 el tema se declara en CSS, sin archivo de configuración. El mockup tiene un estilo propio (verde oscuro y verde lima, formas de píldora, sin sombras) que se arma bien con clases utilitarias.
 - **Descartado:** CSS Modules, porque cada pantalla tiene su archivo de estilos y la coherencia depende de que todos usen las mismas variables a mano; una librería de componentes (MUI, shadcn/ui), porque su estética choca con la del mockup y habría que pisarla en cada componente; CSS-in-JS (styled-components), porque corre en el navegador y no se lleva bien con los Server Components de Next.
-- **Nota:** instalar Tailwind, el tema y los componentes base de `shared/ui` es la primera tarea de frontend del sprint 1. Los tokens salen del mockup del 07/11/2026; si el mockup cambia, se actualizan el tema y `docs/diseno.md` en el mismo PR.
+- **Nota:** instalar Tailwind, el tema y los componentes base de `shared/ui` es la primera tarea de frontend del sprint 1. Los tokens salen del mockup del 06/11/2026; si el mockup cambia, se actualizan el tema y `docs/diseno.md` en el mismo PR.

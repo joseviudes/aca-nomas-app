@@ -36,7 +36,7 @@
 
 | Épica | Nombre | Historias | Requiere |
 |---|---|---|---|
-| EP-00 | Cimientos | — | Nada. Se hace primero |
+| EP-00 | Cimientos | HT-02 | Nada. Se hace primero |
 | EP-01 | Exploración | US-01 a US-07 | EP-00, HT-01 |
 | EP-02 | Ficha de negocio | US-08 a US-11 | EP-00, HT-01 |
 | EP-03 | Cuentas de dueños | US-12 a US-14 | EP-00 |
