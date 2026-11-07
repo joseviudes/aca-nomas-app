@@ -9,6 +9,7 @@ export default defineConfig({
   },
   test: {
     include: ['tests/**/*.test.{ts,tsx}'],
+    setupFiles: ['tests/setup.ts'],
     // Por ahora solo se prueba lógica sin pantalla (http-client, env). Cuando haya componentes,
     // se suma un entorno de navegador (jsdom) para esas pruebas.
     environment: 'node',
