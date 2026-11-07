@@ -9,6 +9,7 @@ Reglas para trabajar en el repositorio: ramas, commits, pull requests y cuándo 
 | 0.1 | 03/11/2026 | Tobias | Versión inicial |
 | 0.2 | 06/11/2026 | Tobias | Agrega "Tu primer día". Los secretos van en el `.env` de cada app |
 | 0.3 | 07/11/2026 | Tobias | Ramas `develop` y `main`, una rama y un PR por historia, y arreglos urgentes (D-39). El contrato primero y el frontend con datos de ejemplo (D-40) |
+| 0.4 | 07/11/2026 | Tobias | Agrega "Configuración de GitHub": protecciones de cada rama, rama por defecto, borrado automático y métodos de merge. `develop` no exige aprobaciones ni la CI |
 
 ## Índice
 
@@ -21,6 +22,7 @@ Reglas para trabajar en el repositorio: ramas, commits, pull requests y cuándo 
 7. [Revisar el PR de un compañero](#revisar-el-pr-de-un-compañero)
 8. [Definición de hecho](#definición-de-hecho)
 9. [Nunca](#nunca)
+10. [Configuración de GitHub](#configuración-de-github)
 
 ## Tu primer día
 
@@ -41,7 +43,7 @@ El recorrido para alguien que se suma al proyecto, en orden. Cada paso remite a 
 ## Reglas básicas
 
 - El repositorio es **público**. Todo lo que se sube lo puede leer cualquiera.
-- `develop` y `main` están **protegidas**. Nadie sube directo a ninguna de las dos: todo entra por pull request (PR) con la aprobación de un compañero. `develop` tiene el trabajo del sprint; `main`, lo entregado (D-39).
+- `develop` y `main` están **protegidas**. Nadie sube directo a ninguna de las dos: todo entra por pull request (PR). `main` pide la aprobación de un compañero; en `develop`, que lo mire un compañero es un acuerdo del equipo. `develop` tiene el trabajo del sprint; `main`, lo entregado (D-39). Los ajustes de GitHub están en [Configuración de GitHub](#configuración-de-github).
 - Los datos de prueba son **ficticios**. Nunca se suben datos reales de personas.
 - Los secretos (claves, contraseñas, tokens) van en el `.env` de cada app (`backend/`, `web/` y `panel/`), que está ignorado por Git. Cada `.env.example` muestra qué variables hacen falta, sin valores reales.
 
@@ -160,3 +162,26 @@ Si falta una, la tarea no está hecha.
 - Agregar `Co-Authored-By` o cualquier atribución a una IA en commits o PR.
 
 Si se sube un secreto por error, avisar al equipo y **cambiarlo de inmediato**. Borrarlo del repositorio no alcanza: queda en el historial de Git.
+
+## Configuración de GitHub
+
+Lo que tiene que estar configurado en el repositorio para que este flujo funcione. Lo cambia quien administra el repositorio, en *Settings*. Si GitHub no coincide con esta tabla, se ajusta GitHub: el flujo no cambia (D-39).
+
+### Ramas protegidas
+
+| Ajuste | `develop` | `main` |
+|---|---|---|
+| PR obligatorio antes de mergear | Sí | Sí |
+| Aprobaciones requeridas | **0**: GitHub no las pide. Que lo mire un compañero que no hizo la historia es un acuerdo del equipo | **1** |
+| CI en verde obligatoria | No | No |
+| Bloquear `push --force` | Sí | Sí |
+| Impedir que se borre la rama | Sí | Sí |
+
+- **La CI no es obligatoria**, pero quien acepta un PR mira en la pestaña *Checks* que esté en verde antes de mergear.
+- Con estas reglas nadie sube directo a `develop` ni a `main`: todo pasa por un PR.
+
+### Ajustes generales
+
+- **Rama por defecto:** `develop`. Así los PR nuevos apuntan ahí solos y quien clona arranca en `develop`.
+- **Borrado automático de ramas al mergear:** activado. Es un ajuste de **todo el repositorio**, no de una rama: GitHub borra la rama de origen de cada PR cuando se mergea, y así las ramas de las historias no se acumulan. Se activa **después** de proteger `develop` con "Impedir que se borre la rama": el PR de cierre de sprint tiene a `develop` como rama de origen, y esa protección evita que el borrado automático la alcance.
+- **Métodos de merge:** están permitidos los tres. En los PR de historias a `develop` se puede usar cualquiera. En el de `develop` a `main` se usa siempre **merge commit**, nunca *squash* ni *rebase* (D-39).

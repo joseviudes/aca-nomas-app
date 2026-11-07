@@ -24,6 +24,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.16 | 06/11/2026 | Tobias | Agrega D-35 a D-37: Postman para escenarios, el estado de las tareas solo en Trello y las herramientas que no se suman por ahora. Actualiza D-15, D-25, D-30 y D-34 |
 | 0.17 | 06/11/2026 | Tobias | Agrega D-38: estilos con Tailwind y los tokens del mockup (06/11/2026). El equipo pasa a ser de 5 (D-37) |
 | 0.18 | 07/11/2026 | Tobias | Agrega D-39 (ramas `develop` y `main`, una rama y un PR por historia) y D-40 (reparto por área y frontend con datos de ejemplo). Actualiza D-16 y D-17. Cierra la rama `develop` en D-20 |
+| 0.19 | 07/11/2026 | Tobias | D-39 suma las protecciones de las ramas en GitHub (`develop` sin aprobaciones, CI no obligatoria). D-16 remite a D-39 |
 
 ## Índice
 
@@ -189,7 +190,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 ## D-16 Reglas de Git y repositorio público
 - **Decisión:**
   - Repositorio público con datos ficticios y sin secretos (`.env` ignorado, `.env.example` de muestra, análisis de secretos de GitHub activo).
-  - `main` protegida: PR obligatorio y aprobación final del responsable del repositorio.
+  - `main` protegida: PR obligatorio y aprobación final del responsable del repositorio. (D-39 lo precisa: `main` exige 1 aprobación de un compañero.)
   - Ramas: `feat/`, `fix/`, `docs/`, `chore/` + descripción corta en inglés (`feat/business-search`).
   - Commits convencionales: tipo en inglés y descripción en español (`feat(businesses): agrega búsqueda por texto`).
   - Plantilla de PR con lista de verificación y revisión cruzada entre compañeros.
@@ -418,6 +419,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 ## D-39 Ramas `develop` y `main`, con una rama y un PR por historia
 - **Decisión:**
   - Dos ramas fijas y protegidas: `develop` tiene el trabajo del sprint y `main` tiene lo entregado. `develop` es la rama por defecto del repositorio.
+  - **Protecciones en GitHub:** PR obligatorio en las dos ramas, sin `push --force` y sin poder borrarlas. `main` exige 1 aprobación; `develop` exige 0, y que lo mire un compañero es un acuerdo del equipo. La CI **no** es obligatoria en ninguna: quien acepta el PR mira que esté en verde. El detalle, con los demás ajustes, está en `CONTRIBUTING.md` ("Configuración de GitHub").
   - **Una rama por historia**, desde `develop` actualizada, con el código de la historia: `feat/us-01-business-list`. Si la historia tiene backend y pantalla, las dos personas trabajan en la **misma rama**: una en `backend/` y la otra en `web/` o `panel/`.
   - En una rama compartida, antes de cada `push` se hace `git pull --rebase`, y nunca `push --force`.
   - **Un PR por historia**, contra `develop`, cuando la historia está completa. Lo aprueba **cualquier compañero** que no la haya hecho.
