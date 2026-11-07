@@ -13,6 +13,9 @@ Qué hacer con la base de datos, el backend y el frontend después de levantar e
 | 0.5 | 06/11/2026 | Tobias | Agrega el error de CORS a los problemas comunes (D-28) |
 | 0.6 | 06/11/2026 | Tobias | La sección de Docker cubre las tres apps: perfiles `web`, `panel` y `full`, qué pasa al guardar y cómo apagarlas (D-33) |
 | 0.7 | 06/11/2026 | Tobias | Agrega la dirección de Swagger (D-34) |
+| 0.8 | 07/11/2026 | Tobias | Una migración no se edita desde que está en `develop` (D-39) |
+| 0.9 | 07/11/2026 | Tobias | Agrega cuándo instalar dependencias después de un `pull`. `postcss.config.mjs` reinicia la web en Docker (D-38) |
+| 0.10 | 07/11/2026 | Tobias | `http://localhost:3000` redirige a Swagger en desarrollo. Agrega el problema de `localhost:3001` que muestra otra app |
 
 ## Índice
 
@@ -52,7 +55,7 @@ Los perfiles son `api`, `web`, `panel` y `full`, y se combinan repitiendo `--pro
 | App | Dirección |
 |---|---|
 | API | `http://localhost:3000/api/health` responde `{"status":"ok"}` |
-| Swagger (todos los endpoints) | `http://localhost:3000/api/docs` |
+| Swagger (todos los endpoints) | `http://localhost:3000/api/docs`. También abre desde `http://localhost:3000`, que redirige ahí (solo en desarrollo) |
 | Web pública | `http://localhost:3001` |
 | Panel | `http://localhost:3002` |
 
@@ -71,7 +74,7 @@ Con `--watch`, Docker copia cada archivo guardado al contenedor y la app se reca
 | App | Se copia al guardar | Reinicia el contenedor | Reconstruye la imagen |
 |---|---|---|---|
 | API | `backend/src/`, `backend/tests/` | — | `package-lock.json` o `backend/prisma/` (y vuelve a migrar) |
-| Web | `web/src/`, `web/tests/` | `next.config.ts` | `package-lock.json` |
+| Web | `web/src/`, `web/tests/` | `next.config.ts`, `postcss.config.mjs` | `package-lock.json` |
 | Panel | `panel/src/`, `panel/tests/`, `panel/public/` | `index.html`, `vite.config.ts` | `package-lock.json` |
 
 Si algo queda raro, `--build` fuerza a reconstruir las imágenes: `docker compose --profile full up --watch --build`.
@@ -127,13 +130,25 @@ No hace falta correrlos cada vez que se prende la base: los datos quedan guardad
 | Querés volver a los datos iniciales | `npm run db:seed` |
 | Borraste el volumen o es la primera vez | `npm run db:migrate` y después `npm run db:seed` |
 
+## Cuándo instalar dependencias
+
+Si hiciste `pull` y cambió el `package-lock.json` de una app (por ejemplo, alguien sumó una librería):
+
+| Cómo levantás el proyecto | Qué hacer |
+|---|---|
+| Docker con `--watch` | Nada: Docker reconstruye la imagen de esa app solo |
+| Docker sin `--watch` | `docker compose --profile full up --build` |
+| Sin Docker | `npm install` dentro de esa app (`backend/`, `web/` o `panel/`) |
+
+Para saber si cambió: `git diff --stat HEAD@{1} -- '*/package-lock.json'` justo después del `pull`. Si la app no arranca con un error del tipo `Cannot find module`, casi siempre es esto.
+
 Para saber si falta aplicar alguna migración:
 
 ```
 npx prisma migrate status
 ```
 
-**Una migración que ya está en `main` no se edita.** Si algo cambia, se agrega una migración nueva. Editar una ya aplicada hace que Prisma detecte diferencias y pida resetear la base.
+**Una migración que ya está en `develop` no se edita.** Si algo cambia, se agrega una migración nueva. Editar una ya aplicada hace que Prisma detecte diferencias y pida resetear la base.
 
 ## Ver los datos
 
@@ -155,4 +170,5 @@ También se puede usar un cliente como DBeaver o pgAdmin. Los datos de conexión
 | `Variables de entorno inválidas` al levantar el backend | Falta `backend/.env` | `cp backend/.env.example backend/.env` |
 | `port is already allocated` al levantar la base | Otro programa usa el puerto `5433` | Cerrar ese programa, o cambiar el puerto en `docker-compose.yml` y en `DATABASE_URL` de tu `.env` |
 | `blocked by CORS policy` en la consola del navegador | El origen de la página no está en `CORS_ORIGINS` (D-28) | Usar los puertos 3001 (web) o 3002 (panel), o agregar el origen a `CORS_ORIGINS` en `backend/.env` y reiniciar la API |
+| `localhost:3001` o `3002` muestra otra página (de otro proyecto tuyo) | El navegador guardó una página de otro proyecto que corrió en ese puerto, por su caché o su *service worker*. El servidor responde bien: con `127.0.0.1` en lugar de `localhost` se ve la correcta | En Chrome: F12 > Application > Service workers > Unregister, y Storage > Clear site data (con ese sitio abierto) |
 | Prisma pide resetear la base al migrar | La base y el historial de migraciones no coinciden | Si los datos no importan: `npx prisma migrate reset` (borra todo, migra y corre el seed) |

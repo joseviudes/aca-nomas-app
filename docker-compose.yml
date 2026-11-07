@@ -100,6 +100,10 @@ services:
         - action: sync+restart
           path: ./web/next.config.ts
           target: /app/next.config.ts
+        # Tailwind (D-38): un cambio en la configuración de PostCSS reinicia Next.
+        - action: sync+restart
+          path: ./web/postcss.config.mjs
+          target: /app/postcss.config.mjs
         - action: rebuild
           path: ./web/package-lock.json
     healthcheck:

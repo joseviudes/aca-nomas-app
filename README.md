@@ -22,7 +22,7 @@ En construcción. Etapa actual: **EP-00 Cimientos** (repositorio, backend inicia
 backend/   API REST (código en src/, pruebas en tests/, base de datos en prisma/)
 web/       Web pública con Next.js (D-27)
 panel/     Panel del dueño, SPA con Vite y React
-docs/      ERS, decisiones, épicas e historias, modelo de datos, diseño de la API y escenarios de Postman (D-35)
+docs/      ERS, decisiones, épicas e historias, modelo de datos, diseño de la API, diseño visual (mockup y tokens) y escenarios de Postman (D-35)
 ```
 
 ## Requisitos

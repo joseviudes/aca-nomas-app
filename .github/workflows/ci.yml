@@ -1,11 +1,12 @@
 # Verifica cada PR antes de mergear: si algo falla, GitHub lo marca en el PR (D-15).
+# Corre en develop (el trabajo del sprint) y en main (lo entregado) (D-39).
 name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches: [develop, main]
   push:
-    branches: [main]
+    branches: [develop, main]
 
 # Solo lee el código: no necesita permisos de escritura.
 permissions:

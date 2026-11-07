@@ -9,12 +9,15 @@ description: Cómo se trabaja el tablero de Trello de AcáNomás (épicas, histo
 
 | Concepto | En Trello | Qué es |
 |---|---|---|
-| **Épica** | Color + código en el título (🟩 EP-01) | Un módulo del sistema |
+| **Épica** | Color + código en el título (🟩 EP-01) | Un área de la app, como la ve el usuario. Sirve para planificar y para la demo |
+| **Área del código** | Línea "Área del código" en la descripción | Las carpetas que toca la historia: `businesses`, `auth`, `opening-hours`, `web`, `panel`. Dice quién la toma |
 | **Historia de usuario** | Una tarjeta | Una funcionalidad, con descripción y criterios de aceptación |
 | **Tarea técnica** | Un ítem del checklist "Tareas técnicas" | Un trabajo de 1 a 2 días dentro de la historia |
 | **Sprint** | Las columnas | Una semana de trabajo |
 
-El avance de una historia se ve como `3/5` en el checklist. Cada épica tiene un dueño, que responde por sus historias. Los PR se revisan entre compañeros.
+El avance de una historia se ve como `3/5` en el checklist. Los PR se revisan entre compañeros.
+
+La épica y el área del código no coinciden: una épica puede tocar varias carpetas (EP-01, EP-02 y EP-04 usan `businesses`). Por eso el trabajo se reparte por **área**: cada persona es dueña de un área y toma las historias que la tocan. Quien termina lo suyo toma lo que haga falta de otra área, avisando al dueño.
 
 ## Columnas y sprint
 
@@ -37,6 +40,7 @@ Título: `🟩 US-02 Buscar por texto`. Código único, nunca se reutiliza.
 **Como** visitante **quiero** escribir lo que busco **para** encontrarlo sin recorrer toda la lista.
 
 **Épica:** EP-01 Exploración · **Depende de:** US-01
+**Área del código:** `businesses` (backend) · `web`
 
 **Criterios de aceptación**
 - Busca en el nombre y en la descripción.
@@ -71,11 +75,19 @@ La tarea debe dejar claro **qué se entrega**. Si tarda más de 2 días, partirl
 
 ## Orden de trabajo
 
-Primero el backend y la base de datos, que se prueban con Swagger y con pruebas de integración. Las pantallas (`[WEB]` y `[PANEL]`) se suman cuando el backend de ese módulo está listo.
+Una historia con backend y pantalla la hacen dos personas en la misma rama (D-39 y D-40), y el checklist va en este orden:
+
+1. `[BE] Contrato`: el esquema de la respuesta y su Swagger. Es el primer commit; al tildarlo se avisa en un comentario.
+2. Las tareas de backend y base de datos, que se prueban con Swagger y con pruebas de integración.
+3. Las tareas de pantalla (`[WEB]` o `[PANEL]`) con datos de ejemplo. Arrancan apenas está el contrato, sin esperar el resto del backend.
+4. `[WEB]` o `[PANEL] Conectar con la API`: la última. Reemplaza los datos de ejemplo cuando el backend está listo.
+
+La historia tiene **un solo PR**, que se abre cuando todo el checklist está hecho.
 
 ## Reglas
 
 - Las tareas viven **solo en el checklist**. No repetirlas en la descripción de la historia.
 - El estado de las tareas se ve **solo en Trello** (D-36). `docs/epicas-e-historias.md` es el plan: cuando la tarjeta ya existe, una tarea nueva o cambiada se edita en Trello y no se copia al documento. El documento se toca solo si cambian la historia o sus criterios.
 - Si cambia un criterio de aceptación, avisar al equipo y editar la tarjeta; no cambiarlo en silencio.
+- Cada historia lleva la línea **Área del código** (D-40). Al pasarla a "Sprint actual", se asigna a los dueños de esas áreas.
 - Historias opcionales (US-07 y US-20): se recortan primero si el plazo se complica.
