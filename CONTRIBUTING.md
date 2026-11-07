@@ -8,6 +8,7 @@ Reglas para trabajar en el repositorio: ramas, commits, pull requests y cuándo 
 |---|---|---|---|
 | 0.1 | 03/11/2026 | Tobias | Versión inicial |
 | 0.2 | 06/11/2026 | Tobias | Agrega "Tu primer día". Los secretos van en el `.env` de cada app |
+| 0.3 | 07/11/2026 | Tobias | Ramas `develop` y `main`, una rama y un PR por historia, y arreglos urgentes (D-39). El contrato primero y el frontend con datos de ejemplo (D-40) |
 
 ## Índice
 
@@ -34,38 +35,44 @@ El recorrido para alguien que se suma al proyecto, en orden. Cada paso remite a 
    - Si vas a backend: la skill `nuevo-endpoint` y `docs/api.md`.
    - Si vas a frontend: la skill `nueva-pantalla` y `docs/diseno.md`, con el enlace al mockup.
 5. **Tomar una tarjeta.** De "Sprint actual" en Trello: asignártela y pasarla a "En curso". Leer los criterios de aceptación antes de escribir código.
-6. **Primer PR.** Seguir el [flujo de una tarea](#flujo-de-una-tarea): rama desde `main` actualizada, commits chicos, PR con la plantilla, la tarjeta a "En revisión" y la revisión de un compañero.
+6. **Primer PR.** Seguir el [flujo de una tarea](#flujo-de-una-tarea): rama de la historia desde `develop` actualizada, commits chicos, PR con la plantilla, la tarjeta a "En revisión" y la revisión de un compañero.
 7. **Si algo no está claro,** no lo inventes: mirá `docs/decisiones.md` o preguntale al equipo.
 
 ## Reglas básicas
 
 - El repositorio es **público**. Todo lo que se sube lo puede leer cualquiera.
-- `main` está **protegida**. Nadie sube directo a `main`: todo entra por pull request (PR) con la aprobación de un compañero.
+- `develop` y `main` están **protegidas**. Nadie sube directo a ninguna de las dos: todo entra por pull request (PR) con la aprobación de un compañero. `develop` tiene el trabajo del sprint; `main`, lo entregado (D-39).
 - Los datos de prueba son **ficticios**. Nunca se suben datos reales de personas.
 - Los secretos (claves, contraseñas, tokens) van en el `.env` de cada app (`backend/`, `web/` y `panel/`), que está ignorado por Git. Cada `.env.example` muestra qué variables hacen falta, sin valores reales.
 
 ## Flujo de una tarea
 
-1. Tomar una tarjeta de "Sprint actual" en Trello, asignársela y pasarla a "En curso". Máximo dos tarjetas en curso por persona.
-2. Actualizar `main` y crear la rama:
+Cada historia se hace en **una rama y un PR**. Si tiene backend y pantalla, la hacen dos personas en la misma rama: el dueño del módulo del backend y el de la app (D-40).
+
+1. Tomar una tarjeta de "Sprint actual" en Trello, asignársela (las dos personas, si son dos) y pasarla a "En curso". Máximo dos tarjetas en curso por persona.
+2. Quien empieza crea la rama desde `develop` actualizada y la sube. Quien se suma después la trae con `git switch`:
 
    ```bash
-   git switch main
+   git switch develop
    git pull
-   git switch -c feat/business-search
+   git switch -c feat/us-01-business-list
+   git push -u origin feat/us-01-business-list
    ```
 
-3. Hacer las tareas del checklist de a una, con commits chicos.
-4. Correr `lint` y `test` antes de subir. Si fallan, no se sube.
-5. Subir la rama y abrir el PR contra `main`.
-6. Pasar la tarjeta a "En revisión" y pedir revisión a un compañero.
-7. Con el PR aprobado y mergeado, pasar la tarjeta a "Hecho".
+3. **El contrato primero.** El primer commit del backend es el esquema de Zod de la respuesta y su documentación en Swagger, sin la lógica. Se tilda la tarea "Contrato" y se avisa en un comentario de la tarjeta.
+4. **El frontend arranca con datos de ejemplo** que respetan el contrato, sin esperar el resto del backend. Su última tarea es conectar la pantalla con la API.
+5. Hacer las tareas del checklist de a una, con commits chicos. Antes de cada `push`, `git pull --rebase`.
+6. Correr `lint` y `test` antes de subir. Si fallan, no se sube.
+7. Con la historia completa (backend, pantalla y conexión), abrir **un solo PR** contra `develop`, pasar la tarjeta a "En revisión" y pedir revisión a un compañero que no la haya hecho.
+8. Con el PR aprobado y mergeado, pasar la tarjeta a "Hecho".
 
 Si algo te bloquea, avisalo en un comentario de la tarjeta.
 
 ## Ramas
 
-Formato: `tipo/descripcion-corta-en-ingles`. Siempre se crea desde `main` actualizada.
+Hay dos ramas fijas, las dos protegidas: **`develop`**, donde entra el trabajo del sprint, y **`main`**, que tiene lo entregado. `develop` es la rama por defecto: un PR nuevo apunta ahí solo.
+
+Formato de las demás: `tipo/descripcion-corta-en-ingles`. Se crean desde `develop` actualizada, salvo `hotfix/`, que sale de `main`.
 
 | Tipo | Para qué | Ejemplo |
 |---|---|---|
@@ -73,8 +80,17 @@ Formato: `tipo/descripcion-corta-en-ingles`. Siempre se crea desde `main` actual
 | `fix/` | Corregir un error | `fix/opening-hours-midnight` |
 | `docs/` | Solo documentación | `docs/api-errors` |
 | `chore/` | Configuración, dependencias, CI | `chore/eslint-setup` |
+| `hotfix/` | Arreglo urgente de lo que ya está en `main` | `hotfix/listing-crash` |
 
-Una rama corresponde a una historia o a una parte clara de ella.
+- **Una rama por historia**, con el código de la historia en el nombre: `feat/us-01-business-list`, `feat/ht-01-open-now`.
+- **Una rama compartida** (backend y pantalla en la misma): antes de cada `push`, `git pull --rebase`. Nunca `push --force`: borra el trabajo del otro.
+- **Si `develop` avanzó** y tu rama necesita esos cambios: `git merge develop` dentro de tu rama.
+
+**Cierre del sprint.** Después de la demo, se abre un PR de `develop` a `main` (título `chore: entrega del sprint N`). Se mergea con **merge commit**, nunca con *squash*: si no, las dos ramas se separan y aparecen conflictos.
+
+**Arreglo urgente.**
+1. Rama `hotfix/` desde `main` y PR directo a `main`.
+2. Después, un PR de `main` a `develop` (título `chore: lleva el arreglo de main a develop`), para que el arreglo no se pierda en el próximo sprint.
 
 ## Commits
 
@@ -114,9 +130,9 @@ Reglas:
 
 1. **Título:** mismo formato que un commit (`feat(businesses): agrega búsqueda por texto`).
 2. **Descripción:** completar la plantilla que aparece al abrir el PR (`.github/pull_request_template.md`). Incluye qué cambia, la historia de Trello, cómo probarlo y una lista de verificación.
-3. **Revisión:** pedirla a un compañero. La aprobación final es del responsable del repositorio.
+3. **Revisión:** pedirla a un compañero que no haya hecho la historia. Con su aprobación, se mergea (D-39).
 4. **Cambios pedidos:** se corrigen en la misma rama. No se abre otro PR.
-5. **Tamaño:** si el PR supera unos 400 renglones cambiados, conviene partirlo. Un PR chico se revisa mejor y más rápido.
+5. **Tamaño:** **un PR por historia**, con backend y pantalla juntos, aunque pase los 400 renglones. No se abre un PR por cada parte. En los PR que no son de una historia (configuración, documentación), conviene no pasar los 400 renglones.
 
 ## Revisar el PR de un compañero
 
@@ -129,17 +145,17 @@ Reglas:
 
 Una tarea está **hecha** cuando cumple las cuatro condiciones:
 
-1. Funciona y cumple los criterios de aceptación de la historia.
+1. Funciona y cumple los criterios de aceptación de la historia. Si tiene pantalla, ya está conectada a la API: ningún dato de ejemplo queda en uso (D-40).
 2. Tiene prueba.
 3. El PR fue revisado y aprobado.
-4. Está mergeado en `main`.
+4. Está mergeado en `develop`.
 
 Si falta una, la tarea no está hecha.
 
 ## Nunca
 
 - Subir `.env`, claves, contraseñas o datos reales de personas.
-- Hacer `push --force` sobre `main`.
+- Hacer `push --force` sobre `develop`, `main` o una rama que comparte otra persona.
 - Mergear tu propio PR sin revisión.
 - Agregar `Co-Authored-By` o cualquier atribución a una IA en commits o PR.
 

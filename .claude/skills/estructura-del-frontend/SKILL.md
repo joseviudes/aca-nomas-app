@@ -14,7 +14,7 @@ Misma idea que el backend: **carpetas por módulo, y dentro de cada módulo, cap
 | `pages/` (en la web, `app/`) | Arma la pantalla: usa hooks y pasa datos a los componentes | Llamar a la API directo, reglas de negocio | `routes` + `controllers` |
 | `components/` | Muestra lo que recibe por props y avisa eventos (`onSubmit`, `onChange`) | Pedir datos, conocer la API | — (la vista) |
 | `hooks/` | Estado, carga, errores, qué pasa al guardar | Dibujar HTML | `services` |
-| `api/` | Las llamadas HTTP del módulo, con el `http-client` | Estado, lógica de pantalla | `repositories` |
+| `api/` | Las llamadas HTTP del módulo, con el `http-client`. Mientras el backend no está, devuelven los datos de ejemplo de `<módulo>.fixtures.ts` (D-40) | Estado, lógica de pantalla | `repositories` |
 | `schemas/` | Esquemas Zod de formularios y respuestas | — | `schemas` |
 | `domain/` | Funciones puras (formatear un horario, por ejemplo) | Depender de React o de la API | `domain` |
 

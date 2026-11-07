@@ -75,11 +75,19 @@ La tarea debe dejar claro **qué se entrega**. Si tarda más de 2 días, partirl
 
 ## Orden de trabajo
 
-Primero el backend y la base de datos, que se prueban con Swagger y con pruebas de integración. Las pantallas (`[WEB]` y `[PANEL]`) se suman cuando el backend de esa historia está listo.
+Una historia con backend y pantalla la hacen dos personas en la misma rama (D-39 y D-40), y el checklist va en este orden:
+
+1. `[BE] Contrato`: el esquema de la respuesta y su Swagger. Es el primer commit; al tildarlo se avisa en un comentario.
+2. Las tareas de backend y base de datos, que se prueban con Swagger y con pruebas de integración.
+3. Las tareas de pantalla (`[WEB]` o `[PANEL]`) con datos de ejemplo. Arrancan apenas está el contrato, sin esperar el resto del backend.
+4. `[WEB]` o `[PANEL] Conectar con la API`: la última. Reemplaza los datos de ejemplo cuando el backend está listo.
+
+La historia tiene **un solo PR**, que se abre cuando todo el checklist está hecho.
 
 ## Reglas
 
 - Las tareas viven **solo en el checklist**. No repetirlas en la descripción de la historia.
 - El estado de las tareas se ve **solo en Trello** (D-36). `docs/epicas-e-historias.md` es el plan: cuando la tarjeta ya existe, una tarea nueva o cambiada se edita en Trello y no se copia al documento. El documento se toca solo si cambian la historia o sus criterios.
 - Si cambia un criterio de aceptación, avisar al equipo y editar la tarjeta; no cambiarlo en silencio.
+- Cada historia lleva la línea **Área del código** (D-40). Al pasarla a "Sprint actual", se asigna a los dueños de esas áreas.
 - Historias opcionales (US-07 y US-20): se recortan primero si el plazo se complica.

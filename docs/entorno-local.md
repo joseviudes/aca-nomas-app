@@ -13,6 +13,7 @@ Qué hacer con la base de datos, el backend y el frontend después de levantar e
 | 0.5 | 06/11/2026 | Tobias | Agrega el error de CORS a los problemas comunes (D-28) |
 | 0.6 | 06/11/2026 | Tobias | La sección de Docker cubre las tres apps: perfiles `web`, `panel` y `full`, qué pasa al guardar y cómo apagarlas (D-33) |
 | 0.7 | 06/11/2026 | Tobias | Agrega la dirección de Swagger (D-34) |
+| 0.8 | 07/11/2026 | Tobias | Una migración no se edita desde que está en `develop` (D-39) |
 
 ## Índice
 
@@ -133,7 +134,7 @@ Para saber si falta aplicar alguna migración:
 npx prisma migrate status
 ```
 
-**Una migración que ya está en `main` no se edita.** Si algo cambia, se agrega una migración nueva. Editar una ya aplicada hace que Prisma detecte diferencias y pida resetear la base.
+**Una migración que ya está en `develop` no se edita.** Si algo cambia, se agrega una migración nueva. Editar una ya aplicada hace que Prisma detecte diferencias y pida resetear la base.
 
 ## Ver los datos
 

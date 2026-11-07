@@ -16,6 +16,7 @@
 | 0.10 | 06/11/2026 | Tobias | Suma la skill `nueva-pantalla` |
 | 0.11 | 06/11/2026 | Tobias | Aclara que el estado de las tareas vive en Trello (D-36). Las tareas de Postman pasan a Swagger y a escenarios (D-35) |
 | 0.12 | 06/11/2026 | Tobias | Agrega HT-02, la base visual del frontend (D-38). US-08: la ficha pública está en `/negocios/[slug]` (D-29) |
+| 0.13 | 07/11/2026 | Tobias | "Etiquetas de área" pasa a "Tipos de tarea". Suma el área del código y el orden contrato → conexión (D-40) |
 
 ## Cómo leer este documento
 
@@ -24,7 +25,9 @@
 - **Historia técnica (HT):** trabajo necesario que no es una acción de un usuario.
 - **Tarea:** unidad de trabajo para una persona, de uno a dos días como máximo.
 
-**Etiquetas de área:** `BE` backend · `WEB` web pública · `PANEL` panel del dueño · `DB` base de datos · `INFRA` infraestructura · `QA` pruebas · `DOC` documentación
+**Tipos de tarea:** `BE` backend · `WEB` web pública · `PANEL` panel del dueño · `DB` base de datos · `INFRA` infraestructura · `QA` pruebas · `DOC` documentación
+
+**Área del código y orden (D-40):** cada historia la toman los dueños de las áreas que toca (un módulo del backend y una app). Si tiene pantalla, su primera tarea es `[BE] Contrato` y la última, `[WEB]` o `[PANEL] Conectar con la API`. Esas dos tareas se agregan en la tarjeta de Trello, no en este documento (D-36).
 
 **Tamaño:** `S` hasta medio día · `M` un día · `L` dos días. Una tarea más grande se divide.
 
