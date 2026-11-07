@@ -10,6 +10,7 @@ Reglas para trabajar en el repositorio: ramas, commits, pull requests y cuándo 
 | 0.2 | 06/11/2026 | Tobias | Agrega "Tu primer día". Los secretos van en el `.env` de cada app |
 | 0.3 | 07/11/2026 | Tobias | Ramas `develop` y `main`, una rama y un PR por historia, y arreglos urgentes (D-39). El contrato primero y el frontend con datos de ejemplo (D-40) |
 | 0.4 | 07/11/2026 | Tobias | Agrega "Configuración de GitHub": protecciones de cada rama, rama por defecto, borrado automático y métodos de merge. `develop` no exige aprobaciones ni la CI |
+| 0.5 | 07/11/2026 | Tobias | El borrado automático de ramas queda apagado. Se explica cómo limpiar las ramas a mano |
 
 ## Índice
 
@@ -183,5 +184,5 @@ Lo que tiene que estar configurado en el repositorio para que este flujo funcion
 ### Ajustes generales
 
 - **Rama por defecto:** `develop`. Así los PR nuevos apuntan ahí solos y quien clona arranca en `develop`.
-- **Borrado automático de ramas al mergear:** activado. Es un ajuste de **todo el repositorio**, no de una rama: GitHub borra la rama de origen de cada PR cuando se mergea, y así las ramas de las historias no se acumulan. Se activa **después** de proteger `develop` con "Impedir que se borre la rama": el PR de cierre de sprint tiene a `develop` como rama de origen, y esa protección evita que el borrado automático la alcance.
+- **Borrado automático de ramas al mergear:** **apagado**, y así se queda. No se puede activar solo para una rama, y en el PR de cierre de sprint la rama de origen es `develop`: se prefirió no arriesgarla. Las ramas de las historias se limpian a mano: el botón *Delete branch* del PR una vez mergeado y, en tu máquina, `git fetch --prune` seguido de `git branch -d <rama>` (el `-d` se niega si la rama tiene algo sin mergear).
 - **Métodos de merge:** están permitidos los tres. En los PR de historias a `develop` se puede usar cualquiera. En el de `develop` a `main` se usa siempre **merge commit**, nunca *squash* ni *rebase* (D-39).
