@@ -43,6 +43,13 @@ describe('API docs enabled (D-34)', () => {
     expect(response.headers.get('content-type')).toContain('text/html');
     expect(await response.text()).toContain('swagger-ui');
   });
+
+  it('redirects the root to the Swagger UI', async () => {
+    const response = await fetch(`${baseUrl}/`, { redirect: 'manual' });
+
+    expect(response.status).toBe(302);
+    expect(response.headers.get('location')).toBe('/api/docs/');
+  });
 });
 
 describe('API docs disabled', () => {
@@ -55,7 +62,7 @@ describe('API docs disabled', () => {
 
   afterAll(() => stop(server));
 
-  it.each(['/api/openapi.json', '/api/docs/'])('answers 404 on %s', async (path) => {
+  it.each(['/', '/api/openapi.json', '/api/docs/'])('answers 404 on %s', async (path) => {
     const response = await fetch(`${baseUrl}${path}`);
 
     expect(response.status).toBe(404);
