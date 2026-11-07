@@ -9,12 +9,15 @@ description: Cómo se trabaja el tablero de Trello de AcáNomás (épicas, histo
 
 | Concepto | En Trello | Qué es |
 |---|---|---|
-| **Épica** | Color + código en el título (🟩 EP-01) | Un módulo del sistema |
+| **Épica** | Color + código en el título (🟩 EP-01) | Un área de la app, como la ve el usuario. Sirve para planificar y para la demo |
+| **Área del código** | Línea "Área del código" en la descripción | Las carpetas que toca la historia: `businesses`, `auth`, `opening-hours`, `web`, `panel`. Dice quién la toma |
 | **Historia de usuario** | Una tarjeta | Una funcionalidad, con descripción y criterios de aceptación |
 | **Tarea técnica** | Un ítem del checklist "Tareas técnicas" | Un trabajo de 1 a 2 días dentro de la historia |
 | **Sprint** | Las columnas | Una semana de trabajo |
 
-El avance de una historia se ve como `3/5` en el checklist. Cada épica tiene un dueño, que responde por sus historias. Los PR se revisan entre compañeros.
+El avance de una historia se ve como `3/5` en el checklist. Los PR se revisan entre compañeros.
+
+La épica y el área del código no coinciden: una épica puede tocar varias carpetas (EP-01, EP-02 y EP-04 usan `businesses`). Por eso el trabajo se reparte por **área**: cada persona es dueña de un área y toma las historias que la tocan. Quien termina lo suyo toma lo que haga falta de otra área, avisando al dueño.
 
 ## Columnas y sprint
 
@@ -37,6 +40,7 @@ Título: `🟩 US-02 Buscar por texto`. Código único, nunca se reutiliza.
 **Como** visitante **quiero** escribir lo que busco **para** encontrarlo sin recorrer toda la lista.
 
 **Épica:** EP-01 Exploración · **Depende de:** US-01
+**Área del código:** `businesses` (backend) · `web`
 
 **Criterios de aceptación**
 - Busca en el nombre y en la descripción.
@@ -71,7 +75,7 @@ La tarea debe dejar claro **qué se entrega**. Si tarda más de 2 días, partirl
 
 ## Orden de trabajo
 
-Primero el backend y la base de datos, que se prueban con Swagger y con pruebas de integración. Las pantallas (`[WEB]` y `[PANEL]`) se suman cuando el backend de ese módulo está listo.
+Primero el backend y la base de datos, que se prueban con Swagger y con pruebas de integración. Las pantallas (`[WEB]` y `[PANEL]`) se suman cuando el backend de esa historia está listo.
 
 ## Reglas
 
