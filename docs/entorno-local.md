@@ -14,6 +14,7 @@ Qué hacer con la base de datos, el backend y el frontend después de levantar e
 | 0.6 | 06/11/2026 | Tobias | La sección de Docker cubre las tres apps: perfiles `web`, `panel` y `full`, qué pasa al guardar y cómo apagarlas (D-33) |
 | 0.7 | 06/11/2026 | Tobias | Agrega la dirección de Swagger (D-34) |
 | 0.8 | 07/11/2026 | Tobias | Una migración no se edita desde que está en `develop` (D-39) |
+| 0.9 | 07/11/2026 | Tobias | Agrega cuándo instalar dependencias después de un `pull`. `postcss.config.mjs` reinicia la web en Docker (D-38) |
 
 ## Índice
 
@@ -72,7 +73,7 @@ Con `--watch`, Docker copia cada archivo guardado al contenedor y la app se reca
 | App | Se copia al guardar | Reinicia el contenedor | Reconstruye la imagen |
 |---|---|---|---|
 | API | `backend/src/`, `backend/tests/` | — | `package-lock.json` o `backend/prisma/` (y vuelve a migrar) |
-| Web | `web/src/`, `web/tests/` | `next.config.ts` | `package-lock.json` |
+| Web | `web/src/`, `web/tests/` | `next.config.ts`, `postcss.config.mjs` | `package-lock.json` |
 | Panel | `panel/src/`, `panel/tests/`, `panel/public/` | `index.html`, `vite.config.ts` | `package-lock.json` |
 
 Si algo queda raro, `--build` fuerza a reconstruir las imágenes: `docker compose --profile full up --watch --build`.
@@ -127,6 +128,18 @@ No hace falta correrlos cada vez que se prende la base: los datos quedan guardad
 | Cambiaste `schema.prisma` | `npm run db:migrate` (crea la migración y pide un nombre) |
 | Querés volver a los datos iniciales | `npm run db:seed` |
 | Borraste el volumen o es la primera vez | `npm run db:migrate` y después `npm run db:seed` |
+
+## Cuándo instalar dependencias
+
+Si hiciste `pull` y cambió el `package-lock.json` de una app (por ejemplo, alguien sumó una librería):
+
+| Cómo levantás el proyecto | Qué hacer |
+|---|---|
+| Docker con `--watch` | Nada: Docker reconstruye la imagen de esa app solo |
+| Docker sin `--watch` | `docker compose --profile full up --build` |
+| Sin Docker | `npm install` dentro de esa app (`backend/`, `web/` o `panel/`) |
+
+Para saber si cambió: `git diff --stat HEAD@{1} -- '*/package-lock.json'` justo después del `pull`. Si la app no arranca con un error del tipo `Cannot find module`, casi siempre es esto.
 
 Para saber si falta aplicar alguna migración:
 

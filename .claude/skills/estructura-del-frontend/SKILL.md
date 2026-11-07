@@ -25,6 +25,7 @@ panel/src/
 ├── main.tsx                 monta el RouterProvider
 ├── app/
 │   ├── router.tsx           TODAS las rutas del panel (D-32)
+│   ├── layout/              PanelLayout: menú lateral y barra de pestañas (navItems)
 │   └── pages/               páginas que no son de ningún módulo (inicio, 404)
 ├── config/
 │   └── env.ts               VITE_API_URL validada con Zod
@@ -39,8 +40,8 @@ panel/src/
 │       └── index.ts         lo único que otros módulos (y router.tsx) importan
 └── shared/
     ├── api/                 http-client.ts y api-error.ts (D-30)
-    ├── ui/                  Button, Input, Modal: genéricos, sin lógica de negocio,
-    │                        y theme.css con los tokens de Tailwind (D-38)
+    ├── ui/                  Button, Input, Card y cx (class-names.ts): genéricos, sin
+    │                        lógica de negocio, y theme.css con los tokens de Tailwind (D-38)
     └── hooks/
 ```
 
@@ -61,7 +62,8 @@ web/src/
 │       └── index.ts
 └── shared/
     ├── api/                 http-client.ts y api-error.ts (D-30)
-    └── ui/                  componentes genéricos y theme.css (D-38)
+    └── ui/                  Button, Input, Card, cx, theme.css (D-38) y SiteHeader y
+                             SiteFooter, que usa app/layout.tsx
 ```
 
 En la web hay una decisión más por componente: **servidor o cliente**.
@@ -80,7 +82,7 @@ En la web hay una decisión más por componente: **servidor o cliente**.
 6. **Los errores se muestran según `error.code`, nunca según `error.message`.** El código es estable; el texto puede cambiar. Todo error del `http-client` es un `ApiError`: los de la API traen su `code` (`BUSINESS_NOT_FOUND`), y además están `NETWORK_ERROR` (sin conexión) e `INVALID_RESPONSE` (la respuesta no tiene la forma esperada).
 7. **Las URLs van en español; el código, en inglés** (D-29): la ruta `/mis-negocios` muestra `MyBusinessesPage`.
 8. **Nada secreto en `config/env.ts`.** Las variables `VITE_` y `NEXT_PUBLIC_` llegan al navegador.
-9. **El `http-client` y `shared/ui/theme.css` están copiados en las dos apps.** Si se cambia uno, se cambia el otro en el mismo PR. La única diferencia es que el de la web usa `API_INTERNAL_URL` cuando corre en el servidor (D-33).
+9. **El `http-client` y `shared/ui/` (`theme.css`, `class-names.ts`, `Button`, `Input` y `Card`) están copiados en las dos apps.** Si se cambia uno, se cambia el otro en el mismo PR. La única diferencia es que el `http-client` de la web usa `API_INTERNAL_URL` cuando corre en el servidor (D-33). Para `shared/ui/`, la prueba `tests/unit/shared/ui/theme.test.ts` de cada app falla si las copias no son iguales. Esas copias no usan hooks, para que también funcionen como Server Components en la web.
 
 ## Nombres
 

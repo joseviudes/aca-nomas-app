@@ -10,6 +10,7 @@ La referencia visual de la web y el panel: dónde está el mockup, qué hay que 
 | 0.2 | 06/11/2026 | Tobias | Agrega qué hacer con una pantalla que no está en el mockup |
 | 0.3 | 06/11/2026 | Tobias | Mockup nuevo: cambian los colores, las fuentes y las formas. Agrega lo que el mockup muestra pero no entra en el MVP |
 | 0.4 | 06/11/2026 | Tobias | El mockup se ajusta al MVP y suma las pantallas de celular y el listado sin ubicación. Agrega "Celular primero" |
+| 0.5 | 07/11/2026 | Tobias | Los tokens ya están en `theme.css` (HT-02): agrega las clases de cada uno, los tokens de esquinas y ancho, y los componentes base |
 
 ## Índice
 
@@ -22,6 +23,7 @@ La referencia visual de la web y el panel: dónde está el mockup, qué hay que 
 7. Estados de un negocio
 8. Accesibilidad
 9. Celular primero
+10. Componentes base
 
 ---
 
@@ -98,6 +100,8 @@ En los dos casos, si hace falta un color o un tamaño que no está en los tokens
 
 ## 4. Colores
 
+Cada token es una clase de Tailwind: `bg-brand`, `text-ink`, `border-line`. La paleta de Tailwind está desactivada: `bg-red-500` no existe, así que solo se pueden usar estos colores.
+
 | Token | Color | Uso |
 |---|---|---|
 | `ink` | `#0E150E` | Texto principal |
@@ -119,17 +123,18 @@ En los dos casos, si hace falta un color o un tamaño que no está en los tokens
 | `font-display` | Urbanist (400 y 500) | Títulos grandes y nombres de rubros |
 | `font-body` | Figtree (400 y 700) | Todo el texto, botones y etiquetas |
 
-- Las etiquetas cortas (secciones, botones del encabezado, estados) van en mayúsculas, a 11–13 px, en negrita y con `letter-spacing: 0.05em`.
+- Las clases son `font-display` y `font-body`. `font-body` es la de todo el texto, así que no hace falta ponerla.
+- Las etiquetas cortas (secciones, botones del encabezado, estados) van en mayúsculas, a 11–13 px, en negrita y con `letter-spacing: 0.05em`: es la clase `caps-label`.
 - El texto común va a 14–16 px.
 - Las fuentes se sirven desde la propia app, no desde Google: `next/font` en la web y `@fontsource` en el panel (D-38).
 
 ## 6. Formas y medidas
 
 - **Botones y etiquetas:** de forma de píldora (`rounded-full`).
-- **Tarjetas y bloques:** esquinas de 20 a 28 px. **Campos e ítems del menú:** 8 a 12 px.
+- **Tarjetas y bloques:** esquinas de 20 a 28 px (`rounded-card`, 24 px). **Campos e ítems del menú:** 8 a 12 px (`rounded-field`, 10 px).
 - **Sin sombras.** Los bloques se separan por color de fondo, no por sombra.
 - **Bordes:** 1 px `line` en los campos; 2 px `brand` en los botones secundarios.
-- **Ancho máximo del contenido:** 1120 px.
+- **Ancho máximo del contenido:** 1120 px (`max-w-page`).
 - **Botones y enlaces:** al menos 44 px de alto.
 
 ## 7. Estados de un negocio
@@ -172,3 +177,19 @@ La mayoría de los vecinos y los dueños van a usar AcáNomás desde el celular.
 - **Nada de desplazarse de costado:** las tablas se convierten en tarjetas (por ejemplo, un día del horario por tarjeta) y las listas largas de botones pasan a una grilla.
 - **Campos cómodos:** al menos 48 px de alto y texto de 16 px, para que el celular no haga zoom al escribir. Cada campo usa su tipo (`email`, `tel`, `time`) para que aparezca el teclado correcto.
 - **Revisión:** el PR de una pantalla lleva una captura a 390 px y otra en escritorio (sección 3).
+
+## 10. Componentes base
+
+Están en `src/shared/ui/` de cada app, con una copia idéntica en la web y en el panel. Una prueba de cada app falla si las copias se separan.
+
+| Componente | Para qué | Opciones |
+|---|---|---|
+| `Button` | Toda acción con botón. Píldora, al menos 44 px de alto | `variant`: `primary` (lima, la principal de la web), `brand` (verde oscuro, la principal del panel) y `secondary` (con borde) |
+| `Input` | Todo campo de texto. 48 px de alto y texto de 16 px | `id` y `label` obligatorios; `hideLabel` lo oculta a la vista pero no al lector de pantalla; `hint` y `error` |
+| `Card` | Tarjetas y bloques, sin sombra | `tone`: `surface`, `mint`, `sand` o `brand`; `as`: `div`, `section` o `article` |
+
+Además, cada app tiene su estructura:
+- **Web:** `SiteHeader` y `SiteFooter` en `shared/ui/`, que usa el `layout.tsx` de la raíz.
+- **Panel:** `PanelLayout` en `app/layout/`, con el menú lateral en escritorio y la barra de pestañas abajo en el celular. Cada historia que suma una sección agrega su enlace en `navItems`.
+
+Si una pantalla necesita un componente genérico que no está (un `Select`, un `Modal`), se agrega a `shared/ui/` en las dos apps, en el mismo PR.
