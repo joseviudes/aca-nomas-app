@@ -14,7 +14,7 @@ aca-nomas-app/
 ├── CLAUDE.md
 ├── CONTRIBUTING.md            ramas, commits, flujo de PR, definición de hecho
 ├── README.md                  cómo levantar el proyecto
-├── docker-compose.yml         PostgreSQL local y la API con el perfil api (D-26)
+├── docker-compose.yml         PostgreSQL local y las apps con los perfiles api, web, panel y full (D-26, D-33)
 ├── .github/                   pull_request_template.md y workflows (GitHub Actions)
 ├── .claude/skills/
 ├── docs/
@@ -34,13 +34,14 @@ aca-nomas-app/
 │   │   ├── generated/         cliente de Prisma generado por npm install (no se sube ni se edita)
 │   │   ├── app.ts             arma Express (cadena de middlewares) y monta las rutas bajo /api
 │   │   ├── routes.ts          registro central: suma el router de cada módulo (D-23)
+│   │   ├── openapi.ts         registro central de la documentación: suma los paths de cada módulo (D-34)
 │   │   ├── server.ts          abre el puerto
 │   │   ├── container.ts       conecta las dependencias
 │   │   ├── config/
 │   │   │   └── env.ts         variables de entorno validadas con Zod
 │   │   ├── modules/
 │   │   │   └── businesses/    un módulo = una carpeta (auth, businesses, categories…)
-│   │   │       ├── routes/
+│   │   │       ├── routes/         el router y su documentación (businesses.openapi.ts)
 │   │   │       ├── controllers/
 │   │   │       ├── services/
 │   │   │       ├── repositories/   PrismaBusinessRepository
@@ -50,6 +51,7 @@ aca-nomas-app/
 │   │   │   ├── ports/         contratos (interfaces) de todo lo externo
 │   │   │   ├── errors/        AppError, subclases y formato estándar de error
 │   │   │   ├── middlewares/   validate, requireAuth, errores, logs, 404
+│   │   │   ├── openapi/       piezas comunes de la documentación (ErrorResponse) (D-34)
 │   │   │   └── pagination/    esquema de page y limit, y armado de la respuesta paginada
 │   │   └── infrastructure/
 │   │       ├── database/      solo el cliente único de Prisma (prisma.ts)
@@ -59,20 +61,22 @@ aca-nomas-app/
 │       ├── unit/              Vitest: servicios y reglas puras
 │       └── integration/       Supertest: endpoints contra una base de pruebas
 ├── panel/                      Panel del dueño, SPA con Vite y React (D-20), independiente del backend
-│   ├── src/                    App.tsx, main.tsx y los componentes
+│   ├── Dockerfile              imagen de desarrollo (D-33)
+│   ├── src/                    app/ (router), config/, modules/ y shared/ (D-31)
 │   ├── public/                 archivos estáticos
 │   └── package.json            dependencias y scripts propios (puerto 3002 en dev)
 └── web/                        Web pública con Next.js (D-27), independiente del backend
-    ├── src/app/                App Router: layout.tsx, page.tsx y una carpeta por ruta
+    ├── Dockerfile              imagen de desarrollo (D-33)
+    ├── src/                    app/ (solo rutas), config/, modules/ y shared/ (D-31)
     ├── public/                 archivos estáticos
     └── package.json            dependencias y scripts propios (puerto 3001 en dev)
 ```
 
-Todo el código del servidor vive en `backend/`. El frontend son dos apps: `web/` (web pública, Next.js) y `panel/` (panel del dueño, SPA con Vite y React). Son carpetas hermanas de `backend/`, con sus propias dependencias, sin mezclarse entre sí.
+Todo el código del servidor vive en `backend/`. El frontend son dos apps: `web/` (web pública, Next.js) y `panel/` (panel del dueño, SPA con Vite y React). Son carpetas hermanas de `backend/`, con sus propias dependencias, sin mezclarse entre sí. **Por dentro, el frontend sigue la skill `estructura-del-frontend`.**
 
 ## Pruebas
 
-- Van **en `backend/tests/`**, no al lado del código.
+- Van **en `backend/tests/`**, no al lado del código. En la web y el panel, igual: `web/tests/` y `panel/tests/` (ver `estructura-del-frontend`).
 - Dentro de `unit/` e `integration/` se repite la estructura de `src/modules/`:
   `tests/unit/businesses/business.service.test.ts` prueba `src/modules/businesses/services/business.service.ts`.
 - Los archivos terminan en `.test.ts`.

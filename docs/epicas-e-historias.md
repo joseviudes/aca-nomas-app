@@ -10,6 +10,11 @@
 | 0.4 | 05/11/2026 | Tobias | Sincroniza con Trello la tarea de diseño de la API (D-25) y la del `Dockerfile` (D-26) |
 | 0.5 | 05/11/2026 | Josi | Saca el bloqueo de `[PANEL] Inicializar el panel`: el equipo ya tuvo la primera clase de React |
 | 0.6 | 05/11/2026 | Josi | Saca el bloqueo de `[WEB] Inicializar la web pública`: Next.js queda decidido en D-27 |
+| 0.7 | 06/11/2026 | Tobias | Agrega a EP-00 las tareas de la base del frontend (D-28 a D-32) y las pruebas con Vitest |
+| 0.8 | 06/11/2026 | Tobias | Suma la regla de ESLint de las fronteras entre módulos (D-31). La localidad del seed pasa a ser Mantilla |
+| 0.9 | 06/11/2026 | Tobias | Suma Swagger con OpenAPI generado desde Zod (D-34) |
+| 0.10 | 06/11/2026 | Tobias | Suma la skill `nueva-pantalla` |
+| 0.11 | 06/11/2026 | Tobias | Aclara que el estado de las tareas vive en Trello (D-36). Las tareas de Postman pasan a Swagger y a escenarios (D-35) |
 
 ## Cómo leer este documento
 
@@ -23,6 +28,8 @@
 **Tamaño:** `S` hasta medio día · `M` un día · `L` dos días. Una tarea más grande se divide.
 
 **Prioridad:** la del ERS. Indica el orden de construcción y qué se recorta último.
+
+**Plan, no tablero (D-36):** este documento es el plan. El estado de cada tarea (hecha, en curso, pendiente) se ve solo en Trello. Cuando la tarjeta de una historia ya existe, sus tareas se cambian en Trello y este documento no se vuelve a sincronizar; solo se actualiza si cambian la historia o sus criterios.
 
 ## Resumen
 
@@ -66,7 +73,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
 - [DB][S] Dibujar el diagrama entidad-relación en Mermaid y guardarlo en `docs/diagramas/`.
 - [INFRA][S] `docker-compose.yml` con PostgreSQL local, en el puerto 5433 para no chocar con un PostgreSQL instalado en la máquina. Va antes del schema porque la migración necesita la base levantada.
 - [DB][M] Escribir `schema.prisma` y la primera migración.
-- [DB][M] Seed con datos ficticios: una localidad (Corrientes Capital), rubros, dueños y entre 8 y 12 negocios con horarios variados, incluido uno con turno que cruza la medianoche y uno pausado.
+- [DB][M] Seed con datos ficticios: una localidad (Mantilla, Corrientes), rubros, dueños y entre 8 y 12 negocios con horarios variados, incluido uno con turno que cruza la medianoche y uno pausado.
 
 **Infraestructura**
 - [INFRA][S] `Dockerfile` de desarrollo de la API y perfil `api` en `docker-compose.yml`: levantar solo la base o la base y la API, sin instalar Node (D-26). La imagen de producción se define con el hosting.
@@ -79,6 +86,19 @@ Sin historias de usuario. Todo lo demás depende de esto.
 - [DOC][M] Crear la colección base de Postman con ese diseño (permite que el frontend avance con datos simulados).
 - [WEB][M] Inicializar la web pública con Next.js, TypeScript y Zod en `web/` (D-27).
 - [PANEL][M] Inicializar el panel con Vite, React y TypeScript en `panel/` (D-20).
+
+**Base del frontend**
+- [BE][S] CORS en la API con la lista de orígenes en `CORS_ORIGINS` y `credentials: true`, para que la web y el panel puedan llamarla con la cookie (D-28).
+- [INFRA][S] Sumar la web y el panel a GitHub Actions: lint, formato, tipos, pruebas y build en cada PR.
+- [PANEL][S] React Router con todas las rutas en `src/app/router.tsx`, y TypeScript en modo `strict` (D-32).
+- [WEB][S] [PANEL] `http-client` con `fetch`, `ApiError` y la URL de la API validada con Zod en `config/env.ts`, con su `.env.example` (D-30).
+- [WEB][S] Igualar con el panel las versiones de TypeScript, ESLint y los tipos de Node. El chequeo de tipos genera antes los tipos de Next (`next typegen`).
+- [DOC][S] Skill `estructura-del-frontend` (módulos y capas, D-31), URLs en español (D-29) y registro de D-28 a D-32.
+- [WEB][S] [PANEL] Regla de ESLint que impide importar las carpetas internas de otro módulo: solo por su `index.ts` (D-31).
+- [BE][S] Swagger en `/api/docs` y OpenAPI en `/api/openapi.json`, generados desde los esquemas Zod con `zod-openapi` (D-34). Postman queda para los escenarios de varios pasos (D-35).
+- [DOC][S] Skill `nueva-pantalla`: los pasos para armar una pantalla de la web o del panel, como `nuevo-endpoint` en el backend. Reglas del frontend en `CLAUDE.md` y `convenciones-de-codigo`.
+- [QA][S] Vitest en la web y el panel, con pruebas del `http-client`, `ApiError` y `config/env.ts`, y `npm test` en GitHub Actions.
+- [INFRA][S] `Dockerfile` de desarrollo de la web y el panel, y perfiles `web`, `panel` y `full` en `docker-compose.yml`: levantar todo el proyecto sin instalar Node (D-33).
 
 ---
 
@@ -93,7 +113,7 @@ Sin historias de usuario. Todo lo demás depende de esto.
   - [BE][S] Esquema Zod de los parámetros de consulta.
   - [BE][S] Pruebas del servicio con un repositorio falso.
   - [WEB][M] Pantalla de listado con tarjetas.
-  - [DOC][S] Agregar el endpoint a Postman.
+  - [DOC][S] Documentar el endpoint en Swagger (D-34).
 
 ### US-02 Buscar por texto
 **Como** visitante **quiero** escribir lo que busco **para** encontrarlo sin recorrer toda la lista.
@@ -338,7 +358,7 @@ Función pura que decide el estado de un negocio. La usan el listado, la ficha y
 Se avanza junto con las demás épicas; no se deja para el final.
 
 **Pruebas**
-- [QA][M] Completar la colección de Postman con pruebas automáticas.
+- [QA][M] Escenarios de Postman con pruebas automáticas: los flujos de varios pasos con sesión, como iniciar sesión y editar la ficha (D-35).
 - [QA][M] Pruebas de integración de la API con Supertest contra una base de pruebas (listado, ficha, login, edición).
 - [QA][L] Playwright: flujo del visitante (buscar → abrir ficha → botón de WhatsApp).
 - [QA][L] Playwright: flujo del dueño (login → cargar horarios → ver el cambio en la ficha).
@@ -360,11 +380,11 @@ Se avanza junto con las demás épicas; no se deja para el final.
 
 | Épica | Historias | Tareas aprox. |
 |---|---|---|
-| EP-00 Cimientos | — | 26 |
+| EP-00 Cimientos | — | 37 |
 | EP-01 Exploración | 7 | 19 |
 | EP-02 Ficha de negocio | 4 | 10 |
 | EP-03 Cuentas de dueños | 3 | 11 |
 | EP-04 Gestión de la ficha | 6 | 16 |
 | EP-05 Horarios y estado | 1 técnica + 5 | 18 |
 | EP-06 Calidad y entrega | — | 11 |
-| **Total** | **26** | **~111** |
+| **Total** | **26** | **~122** |

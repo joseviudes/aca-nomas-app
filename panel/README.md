@@ -1,6 +1,6 @@
 # AcáNomás — Panel del dueño
 
-Panel del dueño de AcáNomás, hecho como SPA con [Vite](https://vite.dev) y React (TypeScript). Ver [D-20](../docs/decisiones.md#d-20-decisiones-diferidas).
+Panel del dueño de AcáNomás, hecho como SPA con [Vite](https://vite.dev), React (TypeScript) y [React Router](https://reactrouter.com). Ver [D-20](../docs/decisiones.md#d-20-decisiones-diferidas) y [D-32](../docs/decisiones.md#d-32-react-router-en-el-panel). La organización de carpetas está en la skill `estructura-del-frontend`.
 
 ## Cómo levantarlo
 
@@ -13,6 +13,10 @@ npm run dev
 
 Corre en [http://localhost:3002](http://localhost:3002). Los puertos 3000 y 3001 quedan libres para la API y la web pública.
 
+**Con Docker, sin instalar Node:** desde la raíz del repo, `docker compose --profile panel up --watch` (o `--profile full` para levantar también la API y la web). Ver [entorno-local.md](../docs/entorno-local.md#levantar-las-apps-en-docker).
+
+**URL de la API:** en desarrollo llama a `http://localhost:3000/api`. Para cambiarla, copiar `.env.example` a `.env.local` y editar `VITE_API_URL`. En producción la variable es obligatoria. La API ya permite este origen en desarrollo (CORS, D-28).
+
 ## Scripts
 
 | Script | Qué hace |
@@ -22,4 +26,5 @@ Corre en [http://localhost:3002](http://localhost:3002). Los puertos 3000 y 3001
 | `npm run preview` | Sirve el build de producción |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | Chequeo de tipos con TypeScript |
+| `npm test` / `test:watch` | Pruebas con Vitest (en `tests/`) |
 | `npm run format` / `format:check` | Prettier |
