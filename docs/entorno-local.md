@@ -15,6 +15,7 @@ Qué hacer con la base de datos, el backend y el frontend después de levantar e
 | 0.7 | 06/11/2026 | Tobias | Agrega la dirección de Swagger (D-34) |
 | 0.8 | 07/11/2026 | Tobias | Una migración no se edita desde que está en `develop` (D-39) |
 | 0.9 | 07/11/2026 | Tobias | Agrega cuándo instalar dependencias después de un `pull`. `postcss.config.mjs` reinicia la web en Docker (D-38) |
+| 0.10 | 07/11/2026 | Tobias | `http://localhost:3000` redirige a Swagger en desarrollo. Agrega el problema de `localhost:3001` que muestra otra app |
 
 ## Índice
 
@@ -54,7 +55,7 @@ Los perfiles son `api`, `web`, `panel` y `full`, y se combinan repitiendo `--pro
 | App | Dirección |
 |---|---|
 | API | `http://localhost:3000/api/health` responde `{"status":"ok"}` |
-| Swagger (todos los endpoints) | `http://localhost:3000/api/docs` |
+| Swagger (todos los endpoints) | `http://localhost:3000/api/docs`. También abre desde `http://localhost:3000`, que redirige ahí (solo en desarrollo) |
 | Web pública | `http://localhost:3001` |
 | Panel | `http://localhost:3002` |
 
@@ -169,4 +170,5 @@ También se puede usar un cliente como DBeaver o pgAdmin. Los datos de conexión
 | `Variables de entorno inválidas` al levantar el backend | Falta `backend/.env` | `cp backend/.env.example backend/.env` |
 | `port is already allocated` al levantar la base | Otro programa usa el puerto `5433` | Cerrar ese programa, o cambiar el puerto en `docker-compose.yml` y en `DATABASE_URL` de tu `.env` |
 | `blocked by CORS policy` en la consola del navegador | El origen de la página no está en `CORS_ORIGINS` (D-28) | Usar los puertos 3001 (web) o 3002 (panel), o agregar el origen a `CORS_ORIGINS` en `backend/.env` y reiniciar la API |
+| `localhost:3001` o `3002` muestra otra página (de otro proyecto tuyo) | El navegador guardó una página de otro proyecto que corrió en ese puerto, por su caché o su *service worker*. El servidor responde bien: con `127.0.0.1` en lugar de `localhost` se ve la correcta | En Chrome: F12 > Application > Service workers > Unregister, y Storage > Clear site data (con ese sitio abierto) |
 | Prisma pide resetear la base al migrar | La base y el historial de migraciones no coinciden | Si los datos no importan: `npx prisma migrate reset` (borra todo, migra y corre el seed) |
