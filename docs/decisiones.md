@@ -413,7 +413,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
   - El mockup es una referencia, no un plano: los tokens se respetan siempre; la distribución y los detalles de cada pantalla puede cambiarlos quien la arma, explicándolo en el PR con una captura. El detalle está en `docs/diseno.md`.
 - **Motivo:** con cinco personas armando pantallas a la vez, los tokens evitan que cada uno invente su propio color o botón. Tailwind funciona igual en Next y en Vite, y en la versión 4 el tema se declara en CSS, sin archivo de configuración. El mockup tiene un estilo propio (verde oscuro y verde lima, formas de píldora, sin sombras) que se arma bien con clases utilitarias.
 - **Descartado:** CSS Modules, porque cada pantalla tiene su archivo de estilos y la coherencia depende de que todos usen las mismas variables a mano; una librería de componentes (MUI, shadcn/ui), porque su estética choca con la del mockup y habría que pisarla en cada componente; CSS-in-JS (styled-components), porque corre en el navegador y no se lleva bien con los Server Components de Next.
-- **Nota:** instalar Tailwind, el tema y los componentes base de `shared/ui` es la primera tarea de frontend del sprint 1. Los tokens salen del mockup del 06/11/2026; si el mockup cambia, se actualizan el tema y `docs/diseno.md` en el mismo PR.
+- **Nota:** Tailwind, el tema y los componentes base de `shared/ui` se instalaron con HT-02. Los tokens salen del mockup del 06/11/2026; si el mockup cambia, se actualizan el tema y `docs/diseno.md` en el mismo PR.
 
 ## D-39 Ramas `develop` y `main`, con una rama y un PR por historia
 - **Decisión:**
