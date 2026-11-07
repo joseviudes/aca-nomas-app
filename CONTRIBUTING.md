@@ -7,24 +7,42 @@ Reglas para trabajar en el repositorio: ramas, commits, pull requests y cuándo 
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 03/11/2026 | Tobias | Versión inicial |
+| 0.2 | 06/11/2026 | Tobias | Agrega "Tu primer día". Los secretos van en el `.env` de cada app |
 
 ## Índice
 
-1. [Reglas básicas](#reglas-básicas)
-2. [Flujo de una tarea](#flujo-de-una-tarea)
-3. [Ramas](#ramas)
-4. [Commits](#commits)
-5. [Pull requests](#pull-requests)
-6. [Revisar el PR de un compañero](#revisar-el-pr-de-un-compañero)
-7. [Definición de hecho](#definición-de-hecho)
-8. [Nunca](#nunca)
+1. [Tu primer día](#tu-primer-día)
+2. [Reglas básicas](#reglas-básicas)
+3. [Flujo de una tarea](#flujo-de-una-tarea)
+4. [Ramas](#ramas)
+5. [Commits](#commits)
+6. [Pull requests](#pull-requests)
+7. [Revisar el PR de un compañero](#revisar-el-pr-de-un-compañero)
+8. [Definición de hecho](#definición-de-hecho)
+9. [Nunca](#nunca)
+
+## Tu primer día
+
+El recorrido para alguien que se suma al proyecto, en orden. Cada paso remite a donde está el detalle.
+
+1. **Accesos.** Tener acceso al repositorio en GitHub y al tablero de Trello. Si falta alguno, pedírselo a Tobias.
+2. **Instalar.** Git y Docker Desktop. Node 24 solo si preferís correr las apps sin Docker.
+3. **Levantar el proyecto.** Clonar el repo, copiar cada `.env.example` a `.env` (en `backend/`, `web/` y `panel/`) y seguir "Cómo levantar el proyecto" del `README.md`. Con Docker alcanza con `docker compose --profile full up --watch` y, la primera vez, `docker compose exec api npm run db:seed`. Funciona si abren la API (`http://localhost:3000/api/docs`), la web (`http://localhost:3001`) y el panel (`http://localhost:3002`). Si algo falla, mirar "Problemas comunes" en `docs/entorno-local.md`.
+4. **Leer, en este orden:**
+   - `CLAUDE.md`: las reglas que no se negocian y qué skill usar para cada tarea.
+   - `docs/ers.md`, por arriba: qué hace el sistema y qué entra en el MVP.
+   - Si vas a backend: la skill `nuevo-endpoint` y `docs/api.md`.
+   - Si vas a frontend: la skill `nueva-pantalla` y `docs/diseno.md`, con el enlace al mockup.
+5. **Tomar una tarjeta.** De "Sprint actual" en Trello: asignártela y pasarla a "En curso". Leer los criterios de aceptación antes de escribir código.
+6. **Primer PR.** Seguir el [flujo de una tarea](#flujo-de-una-tarea): rama desde `main` actualizada, commits chicos, PR con la plantilla, la tarjeta a "En revisión" y la revisión de un compañero.
+7. **Si algo no está claro,** no lo inventes: mirá `docs/decisiones.md` o preguntale al equipo.
 
 ## Reglas básicas
 
 - El repositorio es **público**. Todo lo que se sube lo puede leer cualquiera.
 - `main` está **protegida**. Nadie sube directo a `main`: todo entra por pull request (PR) con la aprobación de un compañero.
 - Los datos de prueba son **ficticios**. Nunca se suben datos reales de personas.
-- Los secretos (claves, contraseñas, tokens) van en `backend/.env`, que está ignorado por Git. `backend/.env.example` muestra qué variables hacen falta, sin valores reales.
+- Los secretos (claves, contraseñas, tokens) van en el `.env` de cada app (`backend/`, `web/` y `panel/`), que está ignorado por Git. Cada `.env.example` muestra qué variables hacen falta, sin valores reales.
 
 ## Flujo de una tarea
 
