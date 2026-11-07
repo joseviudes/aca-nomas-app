@@ -41,6 +41,7 @@ Seguir los pasos en orden. Es el equivalente de `nuevo-endpoint` para el fronten
 - [ ] Hay estado de carga, de error y de lista vacía.
 - [ ] Usa solo los tokens de `shared/ui/theme.css`: ningún color ni medida escrita a mano (D-38).
 - [ ] No construye nada de la lista "no entra" de `docs/diseno.md` (sección 2).
+- [ ] Está armada primero para celular (390 px) y se ve bien en escritorio; nada obliga a desplazarse de costado (`docs/diseno.md`, sección 9).
 - [ ] "Abierto ahora" sale de la API (`isOpenNow`): no se calcula en el frontend.
 - [ ] Un canal de contacto oculto no se muestra en la web pública.
 - [ ] Los botones y campos tienen texto o `label` (se usan con teclado y lector de pantalla).

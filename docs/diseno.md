@@ -9,6 +9,7 @@ La referencia visual de la web y el panel: dónde está el mockup, qué hay que 
 | 0.1 | 06/11/2026 | Tobias | Versión inicial: mockup, tokens y reglas de uso (D-38) |
 | 0.2 | 06/11/2026 | Tobias | Agrega qué hacer con una pantalla que no está en el mockup |
 | 0.3 | 07/11/2026 | Tobias | Mockup nuevo: cambian los colores, las fuentes y las formas. Agrega lo que el mockup muestra pero no entra en el MVP |
+| 0.4 | 07/11/2026 | Tobias | El mockup se ajusta al MVP y suma las pantallas de celular y el listado sin ubicación. Agrega "Celular primero" |
 
 ## Índice
 
@@ -20,6 +21,7 @@ La referencia visual de la web y el panel: dónde está el mockup, qué hay que 
 6. Formas y medidas
 7. Estados de un negocio
 8. Accesibilidad
+9. Celular primero
 
 ---
 
@@ -27,19 +29,19 @@ La referencia visual de la web y el panel: dónde está el mockup, qué hay que 
 
 Está en Claude, como un lienzo de diseño: [AcáNomás — Mockup](https://claude.ai/artifact/XbXNuhzCf3bs7SycUqCXim). Reemplaza al mockup anterior ("Emprendimientos Local").
 
-| Pantalla | App | Historias |
-|---|---|---|
-| Inicio y listado | Web | US-01 a US-06, US-11 |
-| Listado en celular | Web | Las mismas, a 390 px |
-| Panel de filtros | Web | US-03 y US-04 (ver la sección 2) |
-| Nada abierto ahora | Web | US-04: el estado vacío del filtro |
-| Ficha del negocio | Web | US-08 a US-11, US-17 |
-| Ingreso | Panel | US-12 y US-13 |
-| Inicio del panel | Panel | US-23 a US-25 |
-| Mi ficha | Panel | US-15 a US-20 |
-| Horarios | Panel | US-21 a US-24 |
+| Pantalla | Escritorio | Celular | Historias |
+|---|---|---|---|
+| Inicio y listado | Inicio y listado | Listado en celular | US-01 a US-06, US-11 |
+| Listado sin ubicación | Listado sin ubicación | — (lo arma quien hace US-06) | US-05 y US-06 |
+| Panel de filtros | Panel de filtros (ya tiene ancho de celular) | — | US-03 y US-04 |
+| Nada abierto ahora | Nada abierto ahora | — | US-04: el estado vacío del filtro |
+| Ficha del negocio | Ficha del negocio | Ficha en celular | US-08 a US-11, US-17 |
+| Ingreso | Panel del dueño — Ingreso | Ingreso en celular | US-12 y US-13 |
+| Inicio del panel | Panel del dueño — Inicio | Panel — Inicio en celular | US-23 a US-25 |
+| Mi ficha | Panel del dueño — Mi ficha | Panel — Mi ficha en celular | US-15 a US-20 |
+| Horarios | Panel del dueño — Horarios | Panel — Horarios en celular | US-21 a US-24 |
 
-El mockup tiene datos de ejemplo. Donde dice "Corrientes Capital" o "Corrientes", la localidad del MVP es **Mantilla** (D-20). Los datos reales salen de la API y del seed.
+El mockup ya está ajustado al MVP: la localidad es **Mantilla** (D-20), los rubros son los del seed y se sacaron las partes de la sección 2 que no entran. Los nombres de los negocios son de ejemplo; los datos reales salen de la API y del seed.
 
 ## 2. Qué entra del mockup y qué no
 
@@ -55,7 +57,7 @@ El mockup tiene datos de ejemplo. Donde dice "Corrientes Capital" o "Corrientes"
 
 Por eso el encabezado de la web **no lleva** los enlaces a Oficios ni a Eventos.
 
-**Partes de pantallas del MVP que no entran:**
+**Partes de pantallas del MVP que no entran** (ya se sacaron del mockup; quedan anotadas para no volver a sumarlas sin una historia):
 
 | Qué | Dónde aparece | Por qué |
 |---|---|---|
@@ -69,6 +71,8 @@ Por eso el encabezado de la web **no lleva** los enlaces a Oficios ni a Eventos.
 | El mapa dentro de la ficha | Ficha | El mapa está en el listado (RF-07); en la ficha está el botón "Cómo llegar" (RF-10) |
 
 **Sí entra**, aunque no tenga una historia propia: el carrusel "Abiertos ahora cerca tuyo" del inicio. No agrega funcionalidad: muestra los primeros resultados del listado (RF-01, RF-04 y RF-05) con su foto.
+
+**Si el visitante no comparte su ubicación** (US-06, RF-05 y RF-06), ve igual todos los negocios de Mantilla, sin distancias y con los abiertos primero y después por nombre. El carrusel dice "Abiertos ahora" (no "cerca tuyo") y un aviso ofrece "Usar mi ubicación", que vuelve a pedir el permiso. No se elige otra localidad (hay una sola en el MVP) ni se usa una ubicación inventada, porque mostraría distancias falsas. Está en la pantalla "Listado sin ubicación". El pedido de permiso no se diseña: es el cartel propio del navegador.
 
 **Lo que el MVP pide y el mockup no muestra** lo plantea quien arma la pantalla (sección 3): el mapa del listado (US-07), el formulario de registro (US-12; el mockup solo tiene la pestaña "Crear cuenta") y la página 404 de una ficha que no existe (US-08).
 
@@ -158,3 +162,13 @@ Todas las combinaciones del mockup cumplen el contraste mínimo (4,5 a 1 para te
 - `line` sobre `paper` da 3,0: sirve para **bordes** (el mínimo para elementos que no son texto es 3 a 1), **no para texto**.
 - El estado "abierto" o "cerrado" no se indica solo con color: siempre lleva el texto.
 - Los campos llevan su `<label>`, aunque esté oculto a la vista.
+
+## 9. Celular primero
+
+La mayoría de los vecinos y los dueños van a usar AcáNomás desde el celular. Por eso cada pantalla **se arma primero para 390 px** y después se agranda para escritorio, con las clases de Tailwind por tamaño (`md:`, `lg:`).
+
+- **Panel:** en el celular, el menú lateral del escritorio pasa a una **barra de pestañas abajo** (Inicio, Mi ficha, Horarios). "Cerrar sesión" va en la barra de arriba.
+- **Botón principal a mano:** en Mi ficha y Horarios, "Guardar" queda fijo abajo, sobre la barra de pestañas. En la ficha pública, "Escribir por WhatsApp" va arriba, justo después del estado.
+- **Nada de desplazarse de costado:** las tablas se convierten en tarjetas (por ejemplo, un día del horario por tarjeta) y las listas largas de botones pasan a una grilla.
+- **Campos cómodos:** al menos 48 px de alto y texto de 16 px, para que el celular no haga zoom al escribir. Cada campo usa su tipo (`email`, `tel`, `time`) para que aparezca el teclado correcto.
+- **Revisión:** el PR de una pantalla lleva una captura a 390 px y otra en escritorio (sección 3).
