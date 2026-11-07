@@ -11,6 +11,7 @@ Reglas para trabajar en el repositorio: ramas, commits, pull requests y cuándo 
 | 0.3 | 07/11/2026 | Tobias | Ramas `develop` y `main`, una rama y un PR por historia, y arreglos urgentes (D-39). El contrato primero y el frontend con datos de ejemplo (D-40) |
 | 0.4 | 07/11/2026 | Tobias | Agrega "Configuración de GitHub": protecciones de cada rama, rama por defecto, borrado automático y métodos de merge. `develop` no exige aprobaciones ni la CI |
 | 0.5 | 07/11/2026 | Tobias | El borrado automático de ramas queda apagado. Se explica cómo limpiar las ramas a mano |
+| 0.6 | 07/11/2026 | Tobias | Agrega la plantilla del PR de entrega de `develop` a `main` |
 
 ## Índice
 
@@ -89,7 +90,7 @@ Formato de las demás: `tipo/descripcion-corta-en-ingles`. Se crean desde `devel
 - **Una rama compartida** (backend y pantalla en la misma): antes de cada `push`, `git pull --rebase`. Nunca `push --force`: borra el trabajo del otro.
 - **Si `develop` avanzó** y tu rama necesita esos cambios: `git merge develop` dentro de tu rama.
 
-**Cierre del sprint.** Después de la demo, se abre un PR de `develop` a `main` (título `chore: entrega del sprint N`). Se mergea con **merge commit**, nunca con *squash*: si no, las dos ramas se separan y aparecen conflictos.
+**Cierre del sprint.** Después de la demo, se abre un PR de `develop` a `main` (título `chore: entrega del sprint N`). Se mergea con **merge commit**, nunca con *squash*: si no, las dos ramas se separan y aparecen conflictos. Se abre con su propia plantilla, `.github/PULL_REQUEST_TEMPLATE/entrega.md`, en https://github.com/joseviudes/aca-nomas-app/compare/main...develop?template=entrega.md: lista las historias entregadas y lo que hay que confirmar antes y después de mergear.
 
 **Arreglo urgente.**
 1. Rama `hotfix/` desde `main` y PR directo a `main`.
