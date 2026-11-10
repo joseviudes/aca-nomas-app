@@ -19,12 +19,17 @@ export const businessesPaths: ZodOpenApiPathsObject = {
           description: 'Una página del listado',
           content: { 'application/json': { schema: businessListResponseSchema } },
         },
-        // La respuesta real de ?limit=500. El message de details lo arma Zod y hoy sale en inglés.
+        // La respuesta real de ?limit=500. El message de details sale del locale de Zod (config/zod.ts).
         '400': errorResponse('page o limit no son válidos (VALIDATION_ERROR)', {
           error: {
             code: 'VALIDATION_ERROR',
             message: 'Los datos enviados no son válidos',
-            details: [{ path: 'query.limit', message: 'Too big: expected number to be <=100' }],
+            details: [
+              {
+                path: 'query.limit',
+                message: 'Demasiado grande: se esperaba que número fuera <=100',
+              },
+            ],
           },
         }),
       },
