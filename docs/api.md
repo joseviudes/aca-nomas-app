@@ -11,6 +11,7 @@ Las reglas comunes a todos los endpoints y la lista de endpoints del MVP. El det
 | 0.3 | 06/11/2026 | Tobias | El detalle de cada endpoint pasa a Swagger, generado desde los esquemas Zod (D-34) |
 | 0.4 | 06/11/2026 | Tobias | Postman queda para escenarios de varios pasos (D-35) |
 | 0.5 | 10/11/2026 | José | `errorResponse` acepta un ejemplo del error (sección 5) |
+| 0.6 | 10/11/2026 | José | Los mensajes de `details` salen en español (sección 3) |
 
 ## Índice
 
@@ -105,7 +106,7 @@ Formato único (D-11):
 
 - `code`: en inglés y `UPPER_SNAKE_CASE`. Es estable: el frontend decide qué hacer según el código, nunca según el mensaje.
 - `message`: en español, para mostrar o para depurar.
-- `details`: la lista de campos con error. Solo la completa `VALIDATION_ERROR`; en el resto queda vacía.
+- `details`: la lista de campos con error. Solo la completa `VALIDATION_ERROR`; en el resto queda vacía. Sus mensajes salen en español porque el backend configura el idioma de Zod en `backend/src/config/zod.ts`. Si el mensaje del idioma de Zod no se entiende bien, el esquema puede traer uno propio.
 
 ### Errores comunes
 
