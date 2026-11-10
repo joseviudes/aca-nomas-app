@@ -1,3 +1,5 @@
+// Primero, para que todo esquema, incluido el de env, valide con los mensajes en español.
+import './config/zod.js';
 import express, { type Express } from 'express';
 import { env } from './config/env.js';
 import { createApiRouter } from './routes.js';
