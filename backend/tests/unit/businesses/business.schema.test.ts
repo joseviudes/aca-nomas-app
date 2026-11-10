@@ -194,6 +194,13 @@ describe('businessListResponseSchema', () => {
 
     expect(businessListResponseSchema.safeParse(withoutTotal).success).toBe(false);
   });
+
+  // Si el esquema cambia (por ejemplo, con HT-01), el ejemplo de Swagger no puede quedar viejo.
+  it('el ejemplo que muestra Swagger cumple el esquema', () => {
+    const example: unknown = businessListResponseSchema.meta()?.example;
+
+    expect(businessListResponseSchema.safeParse(example).success).toBe(true);
+  });
 });
 
 describe('paymentMethodsSchema', () => {
