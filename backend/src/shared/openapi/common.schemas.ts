@@ -13,10 +13,16 @@ export const errorResponseSchema = z
   })
   .meta({ id: 'ErrorResponse', description: 'Formato de todas las respuestas de error' });
 
-// Respuesta de error lista para usar en `responses` de cada endpoint.
-export function errorResponse(description: string): ZodOpenApiResponseObject {
+export type ErrorResponseExample = z.infer<typeof errorResponseSchema>;
+
+// Respuesta de error lista para usar en `responses` de cada endpoint. El ejemplo es opcional y va
+// en la respuesta, no en el esquema: ErrorResponse es uno solo y cada endpoint tiene su propio caso.
+export function errorResponse(
+  description: string,
+  example?: ErrorResponseExample,
+): ZodOpenApiResponseObject {
   return {
     description,
-    content: { 'application/json': { schema: errorResponseSchema } },
+    content: { 'application/json': { schema: errorResponseSchema, example } },
   };
 }
