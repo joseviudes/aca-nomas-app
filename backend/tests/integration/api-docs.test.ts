@@ -34,6 +34,7 @@ describe('API docs enabled (D-34)', () => {
     expect(document.openapi).toBe('3.1.0');
     expect(document.servers).toEqual([{ url: '/api' }]);
     expect(document.paths['/health']?.get).toBeDefined();
+    expect(document.paths['/businesses']?.get).toBeDefined();
   });
 
   it('serves the Swagger UI page', async () => {
