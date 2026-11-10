@@ -10,6 +10,10 @@ async function startApp(options: AppOptions) {
   return { server, baseUrl: `http://127.0.0.1:${port}` };
 }
 
+interface OperationDoc {
+  responses: Record<string, { content: Record<string, { example?: unknown }> }>;
+}
+
 const stop = (server: Server) => new Promise<void>((resolve) => server.close(() => resolve()));
 
 describe('API docs enabled (D-34)', () => {
@@ -35,6 +39,20 @@ describe('API docs enabled (D-34)', () => {
     expect(document.servers).toEqual([{ url: '/api' }]);
     expect(document.paths['/health']?.get).toBeDefined();
     expect(document.paths['/businesses']?.get).toBeDefined();
+  });
+
+  // La validación corta antes del repositorio, así que no hace falta la base.
+  it('documents the real 400 of GET /businesses as its example', async () => {
+    const document = (await (await fetch(`${baseUrl}/api/openapi.json`)).json()) as {
+      paths: Record<string, Record<string, OperationDoc>>;
+    };
+    const documented =
+      document.paths['/businesses']?.get?.responses['400']?.content['application/json']?.example;
+
+    const response = await fetch(`${baseUrl}/api/businesses?limit=500`);
+
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual(documented);
   });
 
   it('serves the Swagger UI page', async () => {
