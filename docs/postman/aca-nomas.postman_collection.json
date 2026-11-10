@@ -40,27 +40,6 @@
       "name": "Negocios (público)",
       "item": [
         {
-          "name": "[Pendiente] Listar negocios",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/businesses?page=1&limit=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["businesses"],
-              "query": [
-                { "key": "page", "value": "1" },
-                { "key": "limit", "value": "20" },
-                { "key": "q", "value": "", "description": "Texto a buscar en nombre y descripción (US-02)", "disabled": true },
-                { "key": "category", "value": "panaderia", "description": "Slug del rubro (US-03)", "disabled": true },
-                { "key": "openNow", "value": "true", "description": "Solo los abiertos ahora (US-04)", "disabled": true },
-                { "key": "lat", "value": "-28.7514", "description": "Latitud del visitante (US-05, US-06)", "disabled": true },
-                { "key": "lng", "value": "-58.6531", "description": "Longitud del visitante (US-05, US-06)", "disabled": true }
-              ]
-            },
-            "description": "US-01 a US-07. Listado paginado: { data, page, limit, total }."
-          }
-        },
-        {
           "name": "[Pendiente] Ver la ficha de un negocio",
           "request": {
             "method": "GET",
