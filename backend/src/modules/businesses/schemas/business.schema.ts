@@ -117,15 +117,10 @@ export const businessListResponseSchema = z
   })
   .meta({
     id: 'BusinessListResponse',
+    // Lo que devuelve hoy ?page=3&limit=2 con el seed. Hasta HT-01 no sale ningún negocio abierto:
+    // cuando esté isOpenNow, sumar uno con state open y su closesAt.
     example: {
       data: [
-        {
-          slug: 'panaderia-la-espiga',
-          name: 'Panadería La Espiga',
-          category: { slug: 'panaderia', name: 'Panadería' },
-          photoUrl: null,
-          status: { state: 'open', closesAt: '2026-11-10T23:00:00.000Z', nextOpeningAt: null },
-        },
         {
           slug: 'ferreteria-el-tornillo',
           name: 'Ferretería El Tornillo',
@@ -133,9 +128,16 @@ export const businessListResponseSchema = z
           photoUrl: null,
           status: { state: 'paused', closesAt: null, nextOpeningAt: null },
         },
+        {
+          slug: 'kiosco-la-esquina',
+          name: 'Kiosco La Esquina',
+          category: { slug: 'kiosco', name: 'Kiosco' },
+          photoUrl: null,
+          status: { state: 'closed', closesAt: null, nextOpeningAt: null },
+        },
       ],
-      page: 1,
-      limit: 20,
+      page: 3,
+      limit: 2,
       total: 10,
     },
   });
