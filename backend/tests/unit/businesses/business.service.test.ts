@@ -133,4 +133,14 @@ describe('BusinessService.list', () => {
 
     expect(result).toEqual({ data: [], page: 1, limit: 20, total: 0 });
   });
+
+  // El servicio no tiene errores propios: el único que puede pasar es que falle la base. Tiene que
+  // llegar al middleware de errores (500), no convertirse en una lista vacía que diga "no hay negocios".
+  it('deja pasar el error del repositorio en vez de devolver una lista vacía', async () => {
+    const failure = new Error('Se cortó la conexión con la base');
+    const failingRepository: BusinessRepository = { findPage: () => Promise.reject(failure) };
+    const service = new BusinessService(failingRepository);
+
+    await expect(service.list({ page: 1, limit: 20 })).rejects.toBe(failure);
+  });
 });
