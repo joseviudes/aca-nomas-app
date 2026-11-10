@@ -25,6 +25,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.17 | 06/11/2026 | Tobias | Agrega D-38: estilos con Tailwind y los tokens del mockup (06/11/2026). El equipo pasa a ser de 5 (D-37) |
 | 0.18 | 07/11/2026 | Tobias | Agrega D-39 (ramas `develop` y `main`, una rama y un PR por historia) y D-40 (reparto por área y frontend con datos de ejemplo). Actualiza D-16 y D-17. Cierra la rama `develop` en D-20 |
 | 0.19 | 07/11/2026 | Tobias | D-39 suma las protecciones de las ramas en GitHub (`develop` sin aprobaciones, CI no obligatoria). D-16 remite a D-39 |
+| 0.20 | 10/11/2026 | José | Agrega D-41 como pendiente: si Swagger declara en cada endpoint los errores comunes |
 
 ## Índice
 
@@ -70,6 +71,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-38 | Estilos con Tailwind CSS y los tokens del mockup | Aceptada |
 | D-39 | Ramas `develop` y `main`, con una rama y un PR por historia | Aceptada |
 | D-40 | Reparto por área y frontend en paralelo con datos de ejemplo | Aceptada |
+| D-41 | Errores comunes en Swagger | Pendiente |
 
 ---
 
@@ -441,3 +443,10 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Motivo:** la épica y el código no coinciden (EP-01, EP-02 y EP-04 usan `businesses`), así que repartir por épica hace que dos personas toquen la misma carpeta. Repartir por área evita pisarse. Con el contrato acordado el primer día, el frontend avanza en paralelo, y conectar es un cambio chico en un solo archivo porque los datos de ejemplo ya tienen la forma real.
 - **Descartado:** repartir por épica, por lo anterior; un dueño por módulo de punta a punta, porque `businesses` tiene casi la mitad de las historias y `categories` una sola, y porque obliga a cada uno a manejar Next y Vite; MSW para simular la API, porque suma una herramienta (D-37); que el frontend espere al backend terminado, porque frena a dos personas.
 - **Nota:** el área va en la descripción y no como etiqueta, para que se lea junto a la épica al abrir la tarjeta. Actualiza las etiquetas por área de D-17.
+
+## D-41 Errores comunes en Swagger
+- **Decisión:** pendiente. Falta definir si cada endpoint declara en Swagger los errores comunes que vienen de los middlewares globales (`500 INTERNAL_ERROR` y `400 INVALID_JSON`) o solo sus errores propios. Las opciones son:
+  - **A. Solo los errores propios.** Los comunes quedan documentados una sola vez, en la sección 3 de `docs/api.md`.
+  - **B. Todos, sumados desde `src/openapi.ts`.** El registro central los agrega a cada endpoint, así ningún módulo los repite ni se olvida.
+- **Motivo:** cualquier endpoint puede devolver esos errores. Por ejemplo, un `GET /api/businesses` con un cuerpo JSON mal formado responde `INVALID_JSON`. Pero `docs/api.md` solo pide declarar los errores propios (sección 5), y la regla afecta a todos los módulos, así que no se resuelve desde una sola historia.
+- **Nota:** mientras no se decida, rige la opción A. Surgió al documentar el listado de negocios (US-01).
