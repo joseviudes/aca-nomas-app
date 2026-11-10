@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
+  businessListFiltersSchema,
   businessListQuerySchema,
   businessListResponseSchema,
+  MAX_SEARCH_LENGTH,
   paymentMethodsSchema,
   type BusinessListItem,
 } from '../../../src/modules/businesses/schemas/business.schema.js';
@@ -20,6 +22,119 @@ describe('businessListQuerySchema', () => {
 
   it.each([{ page: '0' }, { page: 'dos' }, { limit: '101' }])('rechaza %o', (query) => {
     expect(businessListQuerySchema.safeParse(query).success).toBe(false);
+  });
+
+  it('todavía no acepta filtros: los descarta hasta que el repositorio los aplique', () => {
+    expect(businessListQuerySchema.parse({ category: 'panaderia', openNow: 'true' })).toEqual({
+      page: 1,
+      limit: 20,
+    });
+  });
+});
+
+describe('businessListFiltersSchema', () => {
+  const issuePaths = (query: unknown) =>
+    businessListFiltersSchema.safeParse(query).error?.issues.map((issue) => issue.path.join('.'));
+
+  it('sin filtros no filtra nada', () => {
+    expect(businessListFiltersSchema.parse({})).toEqual({});
+  });
+
+  it('normaliza todos los filtros juntos', () => {
+    expect(
+      businessListFiltersSchema.parse({
+        q: '  pan casero ',
+        category: 'Panaderia',
+        openNow: 'true',
+        lat: '-27.4512',
+        lng: '-58.9867',
+      }),
+    ).toEqual({
+      q: 'pan casero',
+      category: 'panaderia',
+      openNow: true,
+      lat: -27.4512,
+      lng: -58.9867,
+    });
+  });
+
+  it.each([{ q: '' }, { q: '   ' }, { category: '' }, { openNow: '' }, { lat: '', lng: '' }])(
+    'toma %o como un filtro ausente',
+    (query) => {
+      expect(businessListFiltersSchema.parse(query)).toEqual({});
+    },
+  );
+
+  describe('q', () => {
+    it(`acepta hasta ${MAX_SEARCH_LENGTH} caracteres sin contar los espacios de los bordes`, () => {
+      const q = 'a'.repeat(MAX_SEARCH_LENGTH);
+
+      expect(businessListFiltersSchema.parse({ q: ` ${q} ` })).toEqual({ q });
+    });
+
+    it('rechaza un texto más largo', () => {
+      expect(issuePaths({ q: 'a'.repeat(MAX_SEARCH_LENGTH + 1) })).toEqual(['q']);
+    });
+
+    it('rechaza el parámetro repetido', () => {
+      expect(issuePaths({ q: ['pan', 'leche'] })).toEqual(['q']);
+    });
+  });
+
+  describe('category', () => {
+    it.each(['panaderia', 'mercado-central', 'kiosco-24'])('acepta el slug %s', (category) => {
+      expect(businessListFiltersSchema.parse({ category })).toEqual({ category });
+    });
+
+    it.each(['Panadería', 'mercado central', '-kiosco', 'kiosco--24', 'ferretería'])(
+      'rechaza %s',
+      (category) => {
+        expect(issuePaths({ category })).toEqual(['category']);
+      },
+    );
+  });
+
+  describe('openNow', () => {
+    it('convierte "false" en false, no en true', () => {
+      expect(businessListFiltersSchema.parse({ openNow: 'false' })).toEqual({ openNow: false });
+    });
+
+    it('no distingue mayúsculas', () => {
+      expect(businessListFiltersSchema.parse({ openNow: 'TRUE' })).toEqual({ openNow: true });
+    });
+
+    it.each(['1', 'si', 'abierto'])('rechaza %s', (openNow) => {
+      expect(issuePaths({ openNow })).toEqual(['openNow']);
+    });
+  });
+
+  describe('lat y lng', () => {
+    it('acepta los extremos del mapa', () => {
+      expect(businessListFiltersSchema.parse({ lat: '-90', lng: '180' })).toEqual({
+        lat: -90,
+        lng: 180,
+      });
+    });
+
+    it('acepta 0, 0 como un punto válido', () => {
+      expect(businessListFiltersSchema.parse({ lat: '0', lng: '0' })).toEqual({ lat: 0, lng: 0 });
+    });
+
+    it.each([
+      [{ lat: '90.1', lng: '0' }, 'lat'],
+      [{ lat: '0', lng: '-180.1' }, 'lng'],
+      [{ lat: 'norte', lng: '0' }, 'lat'],
+    ])('rechaza %o en %s', (query, path) => {
+      expect(issuePaths(query)).toEqual([path]);
+    });
+
+    it.each([
+      [{ lat: '-27.45' }, 'lng'],
+      [{ lng: '-58.98' }, 'lat'],
+      [{ lat: '-27.45', lng: '' }, 'lng'],
+    ])('rechaza %o y marca la que falta (%s)', (query, path) => {
+      expect(issuePaths(query)).toEqual([path]);
+    });
   });
 });
 
