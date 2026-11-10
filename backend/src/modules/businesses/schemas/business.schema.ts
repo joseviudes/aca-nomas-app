@@ -50,8 +50,59 @@ export const businessListItemSchema = z
 
 export type BusinessListItem = z.infer<typeof businessListItemSchema>;
 
-// Consulta del listado (US-01): page y limit, con 20 por página por defecto. Los filtros (q,
-// category, openNow, lat y lng) se suman con US-02 a US-06 extendiendo este esquema.
+// Tope del texto de búsqueda, para que no llegue a la base una consulta enorme. A confirmar con US-02.
+export const MAX_SEARCH_LENGTH = 100;
+
+// Mismo formato que los slugs del seed: minúsculas, números y guiones (panaderia, mercado-central).
+const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+// Un parámetro vacío o con solo espacios cuenta como ausente: el formulario de la web puede mandar
+// ?q= o ?category= al borrar el campo, y z.coerce convertiría ?lat= en 0, un punto válido del mapa.
+function optionalParam<T extends z.ZodType>(schema: T) {
+  return z.preprocess((value) => {
+    if (typeof value !== 'string') return value;
+    const trimmed = value.trim();
+    return trimmed === '' ? undefined : trimmed;
+  }, schema.optional());
+}
+
+// Filtros del listado, ya validados y normalizados. Todavía no entran en la ruta: el repositorio no
+// filtra, y publicarlos haría que ?category=panaderia devuelva todos los negocios sin avisar. Cada
+// historia suma su campo a businessListQuerySchema cuando lo aplica, por ejemplo
+// paginationQuerySchema.extend({ q: businessListFiltersSchema.shape.q }), y la regla de lat y lng
+// se suma con US-06.
+export const businessListFiltersSchema = z
+  .object({
+    // US-02: busca en nombre y descripción. Las mayúsculas y las tildes las resuelve el repositorio.
+    q: optionalParam(z.string().max(MAX_SEARCH_LENGTH)),
+    // US-03: slug del rubro. Un rubro que no existe devuelve una lista vacía, no un error.
+    category: optionalParam(
+      z.string().toLowerCase().regex(SLUG_PATTERN, {
+        message: 'Tiene que ser el slug de un rubro, por ejemplo panaderia',
+      }),
+    ),
+    // US-04: solo "true" o "false". z.coerce.boolean convertiría "false" en true.
+    openNow: optionalParam(
+      z.stringbool({ truthy: ['true'], falsy: ['false'], error: 'Tiene que ser true o false' }),
+    ),
+    // US-06: ubicación del visitante, para la distancia y el orden por cercanía (US-05).
+    lat: optionalParam(z.coerce.number().min(-90).max(90)),
+    lng: optionalParam(z.coerce.number().min(-180).max(180)),
+  })
+  // Como en la base (D-22): una coordenada sola no sirve para calcular la distancia.
+  .superRefine(({ lat, lng }, ctx) => {
+    if ((lat === undefined) === (lng === undefined)) return;
+    ctx.addIssue({
+      code: 'custom',
+      path: [lat === undefined ? 'lat' : 'lng'],
+      message: 'lat y lng van juntas',
+    });
+  });
+
+export type BusinessListFilters = z.infer<typeof businessListFiltersSchema>;
+
+// Consulta del listado (US-01): page y limit, con 20 por página por defecto. Los filtros de
+// businessListFiltersSchema se suman con US-02 a US-06.
 export const businessListQuerySchema = paginationQuerySchema;
 
 export type BusinessListQuery = z.infer<typeof businessListQuerySchema>;
