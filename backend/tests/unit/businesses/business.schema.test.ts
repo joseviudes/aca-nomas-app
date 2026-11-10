@@ -1,9 +1,27 @@
 import { describe, expect, it } from 'vitest';
 import {
+  businessListQuerySchema,
   businessListResponseSchema,
   paymentMethodsSchema,
   type BusinessListItem,
 } from '../../../src/modules/businesses/schemas/business.schema.js';
+
+describe('businessListQuerySchema', () => {
+  it('pide la primera página de 20 negocios si no se indica nada', () => {
+    expect(businessListQuerySchema.parse({})).toEqual({ page: 1, limit: 20 });
+  });
+
+  it('convierte page y limit de texto a número', () => {
+    expect(businessListQuerySchema.parse({ page: '2', limit: '50' })).toEqual({
+      page: 2,
+      limit: 50,
+    });
+  });
+
+  it.each([{ page: '0' }, { page: 'dos' }, { limit: '101' }])('rechaza %o', (query) => {
+    expect(businessListQuerySchema.safeParse(query).success).toBe(false);
+  });
+});
 
 const openBusiness: BusinessListItem = {
   slug: 'panaderia-la-espiga',

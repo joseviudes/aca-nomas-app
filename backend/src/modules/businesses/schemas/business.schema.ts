@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { MAX_PAGE_SIZE } from '../../../shared/pagination/pagination.js';
+import { MAX_PAGE_SIZE, paginationQuerySchema } from '../../../shared/pagination/pagination.js';
 
 // Medios de pago permitidos (RF-18). La base guarda la lista en JSONB y no valida los valores (D-22).
 export const PAYMENT_METHODS = ['cash', 'transfer', 'card', 'mercado_pago'] as const;
@@ -49,6 +49,12 @@ export const businessListItemSchema = z
   .meta({ id: 'BusinessListItem' });
 
 export type BusinessListItem = z.infer<typeof businessListItemSchema>;
+
+// Consulta del listado (US-01): page y limit, con 20 por página por defecto. Los filtros (q,
+// category, openNow, lat y lng) se suman con US-02 a US-06 extendiendo este esquema.
+export const businessListQuerySchema = paginationQuerySchema;
+
+export type BusinessListQuery = z.infer<typeof businessListQuerySchema>;
 
 // Lista paginada (D-25): { data, page, limit, total }.
 export const businessListResponseSchema = z

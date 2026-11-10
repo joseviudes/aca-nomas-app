@@ -1,7 +1,6 @@
 import type { ZodOpenApiPathsObject } from 'zod-openapi';
 import { errorResponse } from '../../../shared/openapi/common.schemas.js';
-import { paginationQuerySchema } from '../../../shared/pagination/pagination.js';
-import { businessListResponseSchema } from '../schemas/business.schema.js';
+import { businessListQuerySchema, businessListResponseSchema } from '../schemas/business.schema.js';
 
 // Documentación del módulo (D-34), con los mismos esquemas Zod que validan la ruta.
 // Se registra en src/openapi.ts. Las rutas van sin /api.
@@ -12,7 +11,7 @@ export const businessesPaths: ZodOpenApiPathsObject = {
       summary: 'Lista los negocios de la localidad, paginados',
       description:
         'Público, sin sesión (US-01). Trae 20 negocios por página por defecto y 100 como máximo.',
-      requestParams: { query: paginationQuerySchema },
+      requestParams: { query: businessListQuerySchema },
       responses: {
         '200': {
           description: 'Una página del listado',
