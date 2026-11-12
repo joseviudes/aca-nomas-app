@@ -1,11 +1,14 @@
 import { prisma } from './infrastructure/database/prisma.js';
+import { AuthController } from './modules/auth/controllers/auth.controller.js';
+import { PrismaUserRepository } from './modules/auth/repositories/prisma-user.repository.js';
+import { AuthService } from './modules/auth/services/auth.service.js';
 
 // Raíz de composición (D-06): el único lugar que conoce las implementaciones concretas.
-// Cada módulo se conecta acá por constructor, de abajo hacia arriba. Por ejemplo:
-//   const businessRepository = new PrismaBusinessRepository(prisma);
-//   const businessService = new BusinessService(businessRepository);
-//   const businessController = new BusinessController(businessService);
-export const container = {};
+const userRepository = new PrismaUserRepository(prisma);
+const authService = new AuthService(userRepository);
+const authController = new AuthController(authService);
+
+export const container = { authController };
 
 export async function closeContainer(): Promise<void> {
   await prisma.$disconnect();

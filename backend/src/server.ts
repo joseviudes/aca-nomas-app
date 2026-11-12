@@ -1,8 +1,8 @@
 import { createApp } from './app.js';
 import { env } from './config/env.js';
-import { closeContainer } from './container.js';
+import { closeContainer, container } from './container.js';
 
-const app = createApp();
+const app = createApp({ authController: container.authController });
 
 const server = app.listen(env.PORT, () => {
   console.log(`API escuchando en http://localhost:${env.PORT}`);
