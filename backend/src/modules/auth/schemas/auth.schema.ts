@@ -2,8 +2,10 @@ import { z } from 'zod';
 
 // Cuerpo de POST /api/auth/register (US-12).
 export const registerBodySchema = z.object({
-  email: z.email().meta({ example: 'duena@ejemplo.com' }),
-  password: z.string().min(8).meta({ example: 'una-clave-segura' }),
+  // Se guarda siempre en minúsculas (lo pide el modelo User de schema.prisma).
+  email: z.email().toLowerCase().meta({ example: 'duena@ejemplo.com' }),
+  // bcrypt ignora lo que pase de 72 bytes, por eso el tope.
+  password: z.string().min(8).max(72).meta({ example: 'una-clave-segura' }),
 });
 
 // Respuesta 201. Nunca incluye passwordHash ni tokens (docs/api.md).
