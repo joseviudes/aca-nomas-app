@@ -191,4 +191,120 @@ describe('isOpenNow', () => {
       ).toThrow();
     });
   });
+
+  describe('hora de cierre', () => {
+    it('abierto informa la hora de fin del turno', () => {
+      const status = isOpenNow(hoursWith([MONDAY_MORNING]), at('2026-11-16T10:00'), TIMEZONE);
+      expect(status).toEqual({
+        state: 'open',
+        closesAt: at('2026-11-16T13:00'),
+        nextOpeningAt: null,
+      });
+    });
+
+    it('un turno que cruza la medianoche cierra al día siguiente', () => {
+      const hours = hoursWith([MONDAY_NIGHT]);
+      expect(isOpenNow(hours, at('2026-11-16T23:00'), TIMEZONE).closesAt).toEqual(
+        at('2026-11-17T03:00'),
+      );
+      expect(isOpenNow(hours, at('2026-11-17T01:00'), TIMEZONE).closesAt).toEqual(
+        at('2026-11-17T03:00'),
+      );
+    });
+
+    it('si un turno empieza justo cuando termina otro, cierra al final del segundo', () => {
+      const hours = hoursWith([
+        { dayOfWeek: 1, opensAt: '20:00', closesAt: '00:00' },
+        { dayOfWeek: 2, opensAt: '00:00', closesAt: '02:00' },
+      ]);
+      expect(isOpenNow(hours, at('2026-11-16T21:00'), TIMEZONE).closesAt).toEqual(
+        at('2026-11-17T02:00'),
+      );
+    });
+
+    it('abierto todos los días a toda hora no tiene hora de cierre', () => {
+      const allWeek = hoursWith(
+        ([1, 2, 3, 4, 5, 6, 7] as const).map((dayOfWeek) => ({
+          dayOfWeek,
+          opensAt: '00:00',
+          closesAt: '00:00',
+        })),
+      );
+      expect(isOpenNow(allWeek, at('2026-11-18T15:00'), TIMEZONE)).toEqual({
+        state: 'open',
+        closesAt: null,
+        nextOpeningAt: null,
+      });
+    });
+  });
+
+  describe('próxima apertura', () => {
+    it('antes de abrir informa el inicio del turno de hoy', () => {
+      const status = isOpenNow(hoursWith([MONDAY_MORNING]), at('2026-11-16T08:00'), TIMEZONE);
+      expect(status).toEqual({
+        state: 'closed',
+        closesAt: null,
+        nextOpeningAt: at('2026-11-16T09:00'),
+      });
+    });
+
+    it('entre dos turnos informa el inicio del segundo', () => {
+      const hours = hoursWith([MONDAY_MORNING, MONDAY_AFTERNOON]);
+      expect(isOpenNow(hours, at('2026-11-16T15:00'), TIMEZONE).nextOpeningAt).toEqual(
+        at('2026-11-16T17:00'),
+      );
+    });
+
+    it('después del último turno informa el del próximo día con turnos', () => {
+      const hours = hoursWith([
+        MONDAY_MORNING,
+        { dayOfWeek: 4, opensAt: '10:00', closesAt: '12:00' },
+      ]);
+      expect(isOpenNow(hours, at('2026-11-16T14:00'), TIMEZONE).nextOpeningAt).toEqual(
+        at('2026-11-19T10:00'),
+      );
+    });
+
+    it('si el único turno de la semana ya pasó, informa el de la semana que viene', () => {
+      expect(
+        isOpenNow(hoursWith([MONDAY_MORNING]), at('2026-11-16T14:00'), TIMEZONE).nextOpeningAt,
+      ).toEqual(at('2026-11-23T09:00'));
+    });
+
+    it('con "hoy no abro" saltea los turnos de hoy', () => {
+      const hours = hoursWith(
+        [MONDAY_MORNING, MONDAY_AFTERNOON, { dayOfWeek: 2, opensAt: '09:00', closesAt: '13:00' }],
+        { closedTodayDate: '2026-11-16' },
+      );
+      expect(isOpenNow(hours, at('2026-11-16T08:00'), TIMEZONE)).toEqual({
+        state: 'closed_today',
+        closesAt: null,
+        nextOpeningAt: at('2026-11-17T09:00'),
+      });
+    });
+
+    it('con "hoy no abro" y un solo turno en la semana, informa el de la semana que viene', () => {
+      const hours = hoursWith([MONDAY_MORNING], { closedTodayDate: '2026-11-16' });
+      expect(isOpenNow(hours, at('2026-11-16T08:00'), TIMEZONE).nextOpeningAt).toEqual(
+        at('2026-11-23T09:00'),
+      );
+    });
+
+    it('sin ningún turno no hay próxima apertura', () => {
+      expect(isOpenNow(hoursWith([]), at('2026-11-16T10:00'), TIMEZONE)).toEqual({
+        state: 'closed',
+        closesAt: null,
+        nextOpeningAt: null,
+      });
+    });
+
+    it('pausado no informa hora de cierre ni próxima apertura', () => {
+      const hours = hoursWith([MONDAY_MORNING], { isPaused: true });
+      expect(isOpenNow(hours, at('2026-11-16T08:00'), TIMEZONE)).toEqual({
+        state: 'paused',
+        closesAt: null,
+        nextOpeningAt: null,
+      });
+    });
+  });
 });

@@ -19,8 +19,13 @@ export interface OpeningHours {
   shifts: Shift[];
 }
 
-export type BusinessState = 'open' | 'closed' | 'closed_today' | 'paused';
+// Cada estado trae solo el dato que corresponde (RN-04). Los momentos son exactos, no horas locales.
+export type BusinessStatus =
+  // `closesAt` es null si el negocio está abierto la semana entera, sin cerrar nunca.
+  | { state: 'open'; closesAt: Date | null; nextOpeningAt: null }
+  // `nextOpeningAt` es null si el negocio no tiene ningún turno cargado.
+  | { state: 'closed' | 'closed_today'; closesAt: null; nextOpeningAt: Date | null }
+  // Pausado no tiene próxima apertura: depende de cuándo lo reactive el dueño.
+  | { state: 'paused'; closesAt: null; nextOpeningAt: null };
 
-export interface BusinessStatus {
-  state: BusinessState;
-}
+export type BusinessState = BusinessStatus['state'];

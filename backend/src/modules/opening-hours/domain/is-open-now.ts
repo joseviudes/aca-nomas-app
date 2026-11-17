@@ -6,29 +6,70 @@ interface ShiftInterval {
   end: DateTime;
 }
 
-// Estado del negocio en el instante `now`, visto desde la zona horaria de la localidad (RN-01).
-// Es una función pura: no lee el reloj del sistema (RN-10).
+const DAYS_IN_WEEK = 7;
+
+// Estado del negocio en el instante `now`, visto desde la zona horaria de la localidad (RN-01),
+// con la hora de cierre o la próxima apertura (RN-04). Es una función pura: no lee el reloj del sistema (RN-10).
 export function isOpenNow(hours: OpeningHours, now: Date, timezone: string): BusinessStatus {
   if (hours.isPaused) {
-    return { state: 'paused' };
+    return { state: 'paused', closesAt: null, nextOpeningAt: null };
   }
 
   const localNow = DateTime.fromJSDate(now, { zone: timezone });
+  // Desde ayer, por los turnos que cruzan la medianoche y siguen abiertos hoy (RN-02), hasta
+  // el mismo día de la semana que viene, por si el único turno de la semana ya pasó.
+  const intervals = shiftIntervals(hours.shifts, localNow, -1, DAYS_IN_WEEK);
 
   // Gana aunque siga corriendo un turno de ayer que cruzó la medianoche: el dueño avisó que hoy no abre.
-  if (hours.closedTodayDate === localNow.toISODate()) {
-    return { state: 'closed_today' };
+  const today = localNow.toISODate();
+  if (hours.closedTodayDate === today) {
+    return {
+      state: 'closed_today',
+      closesAt: null,
+      nextOpeningAt: nextOpening(intervals, localNow, today),
+    };
   }
 
-  // Ayer entra por los turnos que cruzan la medianoche y siguen abiertos hoy (RN-02).
-  const isOpen = shiftIntervals(hours.shifts, localNow, -1, 0).some(
-    ({ start, end }) => start <= localNow && localNow < end,
-  );
+  const current = intervals.find(({ start, end }) => start <= localNow && localNow < end);
+  if (current) {
+    return {
+      state: 'open',
+      closesAt: closingTime(intervals, current, localNow),
+      nextOpeningAt: null,
+    };
+  }
 
-  return { state: isOpen ? 'open' : 'closed' };
+  return { state: 'closed', closesAt: null, nextOpeningAt: nextOpening(intervals, localNow) };
 }
 
-// Ubica cada turno en las fechas reales entre `fromDay` y `toDay` (contados desde hoy), en orden.
+// Si un turno empieza justo cuando termina otro (20:00–00:00 y 00:00–02:00), el negocio no cierra
+// en el medio: la hora de cierre es la del último turno de la cadena.
+function closingTime(
+  intervals: ShiftInterval[],
+  current: ShiftInterval,
+  localNow: DateTime,
+): Date | null {
+  let end = current.end;
+  for (const interval of intervals) {
+    if (interval.start <= end && interval.end > end) {
+      end = interval.end;
+    }
+  }
+
+  // Una semana entera sin cerrar es un horario que no cierra nunca: se repite igual cada semana.
+  return end >= localNow.plus({ days: DAYS_IN_WEEK }) ? null : end.toJSDate();
+}
+
+function nextOpening(
+  intervals: ShiftInterval[],
+  localNow: DateTime,
+  skippedDate?: string,
+): Date | null {
+  const next = intervals.find(({ start }) => start > localNow && start.toISODate() !== skippedDate);
+  return next ? next.start.toJSDate() : null;
+}
+
+// Ubica cada turno en las fechas reales entre `fromDay` y `toDay` (contados desde hoy), ordenados por inicio.
 function shiftIntervals(
   shifts: Shift[],
   localNow: DateTime,
