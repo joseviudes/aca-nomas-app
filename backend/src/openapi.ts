@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { createDocument, type ZodOpenApiPathsObject } from 'zod-openapi';
+import { businessesPaths } from './modules/businesses/routes/businesses.openapi.js';
 import { errorResponseSchema } from './shared/openapi/common.schemas.js';
 
 // Registro central de la documentación (D-34), igual que routes.ts para las rutas (D-23).
@@ -35,8 +36,9 @@ export function createOpenApiDocument() {
     servers: [{ url: '/api' }],
     paths: {
       ...healthPaths,
+      ...businessesPaths,
     },
-    // Se registra siempre, aunque todavía ningún endpoint devuelva errores documentados.
+    // Se registra una vez y cada respuesta de error lo referencia.
     components: { schemas: { ErrorResponse: errorResponseSchema } },
   });
 }

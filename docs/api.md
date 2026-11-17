@@ -10,6 +10,8 @@ Las reglas comunes a todos los endpoints y la lista de endpoints del MVP. El det
 | 0.2 | 06/11/2026 | Tobias | Agrega CORS (D-28) y el `http-client` del frontend (D-30) a la autenticación |
 | 0.3 | 06/11/2026 | Tobias | El detalle de cada endpoint pasa a Swagger, generado desde los esquemas Zod (D-34) |
 | 0.4 | 06/11/2026 | Tobias | Postman queda para escenarios de varios pasos (D-35) |
+| 0.5 | 10/11/2026 | José | `errorResponse` acepta un ejemplo del error (sección 5) |
+| 0.6 | 10/11/2026 | José | Los mensajes de `details` salen en español (sección 3) |
 
 ## Índice
 
@@ -104,7 +106,7 @@ Formato único (D-11):
 
 - `code`: en inglés y `UPPER_SNAKE_CASE`. Es estable: el frontend decide qué hacer según el código, nunca según el mensaje.
 - `message`: en español, para mostrar o para depurar.
-- `details`: la lista de campos con error. Solo la completa `VALIDATION_ERROR`; en el resto queda vacía.
+- `details`: la lista de campos con error. Solo la completa `VALIDATION_ERROR`; en el resto queda vacía. Sus mensajes salen en español porque el backend configura el idioma de Zod en `backend/src/config/zod.ts` (D-43). Si el mensaje del idioma de Zod no se entiende bien, el esquema puede traer uno propio.
 
 ### Errores comunes
 
@@ -195,6 +197,6 @@ Cada endpoint declara:
 - **Qué hace** (`summary`) y su grupo (`tags`, uno por módulo).
 - **Petición:** parámetros, consulta y cuerpo, con los esquemas Zod de `schemas/`.
 - **Respuesta correcta:** código HTTP y esquema. Un ejemplo con `.meta({ example })`.
-- **Errores propios:** con `errorResponse('...')` de `shared/openapi/`, que usa el formato de la sección 3.
+- **Errores propios:** con `errorResponse('...')` de `shared/openapi/`, que usa el formato de la sección 3. Un segundo parámetro opcional agrega un ejemplo del error, copiado de una respuesta real de la API.
 
 **Swagger o Postman (D-35):** Swagger es el catálogo: sirve para ver y probar un endpoint mientras se programa. La colección de Postman en `docs/postman/` guarda **escenarios**, flujos de varios pasos con sesión (iniciar sesión → editar la ficha). Para probar un endpoint suelto en Postman, se importa `/api/openapi.json` en lugar de escribir la request. Las pruebas automáticas de la API son con Supertest y corren en la CI.

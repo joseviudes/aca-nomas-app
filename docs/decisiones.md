@@ -26,6 +26,8 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.18 | 07/11/2026 | Tobias | Agrega D-39 (ramas `develop` y `main`, una rama y un PR por historia) y D-40 (reparto por área y frontend con datos de ejemplo). Actualiza D-16 y D-17. Cierra la rama `develop` en D-20 |
 | 0.19 | 07/11/2026 | Tobias | D-39 suma las protecciones de las ramas en GitHub (`develop` sin aprobaciones, CI no obligatoria). D-16 remite a D-39 |
 | 0.20 | 17/11/2026 | Josi | Agrega D-41: Luxon como librería de fechas. Completa D-12. Suma "turno" y "próxima apertura" a la tabla de D-08 |
+| 0.21 | 10/11/2026 | José | Agrega D-42 como pendiente: si Swagger declara en cada endpoint los errores comunes. Se escribió como D-41 en la rama de US-01 y se renumeró al traer D-41 de `develop` |
+| 0.22 | 10/11/2026 | José | Agrega D-43: mensajes de validación de Zod en español. Se escribió como D-42 y se renumeró por lo mismo |
 
 ## Índice
 
@@ -72,6 +74,8 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-39 | Ramas `develop` y `main`, con una rama y un PR por historia | Aceptada |
 | D-40 | Reparto por área y frontend en paralelo con datos de ejemplo | Aceptada |
 | D-41 | Luxon como librería de fechas | Aceptada |
+| D-42 | Errores comunes en Swagger | Pendiente |
+| D-43 | Mensajes de validación de Zod en español | Aceptada |
 
 ---
 
@@ -457,3 +461,19 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Motivo:** Luxon trae las zonas horarias IANA integradas: "este instante en `America/Argentina/Buenos_Aires`" es una sola llamada (`setZone`). Numera los días de 1 (lunes) a 7 (domingo), igual que `opening_hours.day_of_week`, y sus fechas son inmutables: sumar un día devuelve una fecha nueva y no cambia la original.
 - **Descartado:** date-fns-tz, porque trabaja sobre `Date`, que siempre se muestra en la zona de la máquina, y es fácil mezclar la hora local con la de UTC. Además necesita date-fns y numera el domingo como 0. La API `Temporal` de JavaScript, porque Node 24 todavía no la trae sin una opción experimental.
 - **Nota:** `npm install` en Windows puede borrar del `package-lock.json` los binarios opcionales de otras plataformas (los de `@rolldown/binding-*` y `lightningcss-*`). Sin ellos, la CI en Linux no puede correr las pruebas. Antes de subir un cambio de dependencias, revisar con `git diff package-lock.json` que solo cambien los paquetes agregados.
+
+## D-42 Errores comunes en Swagger
+- **Decisión:** pendiente. Falta definir si cada endpoint declara en Swagger los errores comunes que vienen de los middlewares globales (`500 INTERNAL_ERROR` y `400 INVALID_JSON`) o solo sus errores propios. Las opciones son:
+  - **A. Solo los errores propios.** Los comunes quedan documentados una sola vez, en la sección 3 de `docs/api.md`.
+  - **B. Todos, sumados desde `src/openapi.ts`.** El registro central los agrega a cada endpoint, así ningún módulo los repite ni se olvida.
+- **Motivo:** cualquier endpoint puede devolver esos errores. Por ejemplo, un `GET /api/businesses` con un cuerpo JSON mal formado responde `INVALID_JSON`. Pero `docs/api.md` solo pide declarar los errores propios (sección 5), y la regla afecta a todos los módulos, así que no se resuelve desde una sola historia.
+- **Nota:** mientras no se decida, rige la opción A. Surgió al documentar el listado de negocios (US-01).
+
+## D-43 Mensajes de validación de Zod en español
+- **Decisión:**
+  - Cada app configura una sola vez el idioma español de Zod (`z.config(z.locales.es())`). En el backend está en `backend/src/config/zod.ts`: lo importa `app.ts` antes que cualquier esquema y Vitest lo carga en `setupFiles`.
+  - Ese idioma es la base: ningún mensaje de validación sale en inglés. Cuando el mensaje que arma Zod no se entiende bien, el esquema trae uno propio. Pasa sobre todo en los campos que la persona completa en un formulario.
+  - `web/` y `panel/` hacen lo mismo en su propia configuración cuando sumen el primer formulario.
+- **Motivo:** los mensajes de Zod llegan a la persona en el `details` de `VALIDATION_ERROR` y en los formularios, y los mensajes van en español (`docs/api.md`). Sin configurar nada, Zod los arma en inglés (`Too big: expected number to be <=100`).
+- **Descartado:** escribir un mensaje propio en cada regla de cada esquema, porque el que se olvida sale en inglés; traducir los mensajes en el middleware `validate`, porque repite lo que Zod ya trae.
+- **Nota:** algunos mensajes del idioma de Zod suenan forzados (`Inválido dirección de correo electrónico`). Por eso quedan permitidos los mensajes propios.
