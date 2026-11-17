@@ -1,20 +1,32 @@
-import { Card } from '@/shared/ui/Card';
+import { businessInitial } from '../domain/business-display';
 import type { BusinessListItem } from '../schemas/business-list.schema';
 import { BusinessStatusBadge } from './BusinessStatusBadge';
 
-// Tarjeta del listado (US-01). El enlace a la ficha se suma con US-08, cuando exista la página.
+// Negocio del listado (US-01). En el celular es una fila con la miniatura al costado; desde sm,
+// una tarjeta con la foto cuadrada arriba (mockup). El enlace a la ficha se suma con US-08,
+// cuando exista la página.
 export function BusinessCard({ business }: { business: BusinessListItem }) {
   return (
-    <Card as="article" className="flex h-full flex-col gap-4">
-      {/* Hasta US-19 no hay fotos: el lugar de la foto queda en mint (docs/diseno.md, sección 4). */}
-      <div aria-hidden="true" className="aspect-video w-full rounded-field bg-mint" />
-      <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-bold">{business.name}</h2>
-        <p className="font-display text-base text-muted">{business.category.name}</p>
+    <article className="flex items-center gap-3.5 border-b border-mint py-3.5 sm:flex-col sm:items-stretch sm:gap-0 sm:border-b-0 sm:py-0">
+      {/* Hasta US-19 no hay fotos: el lugar de la foto queda en mint con la inicial (docs/diseno.md, sección 4). */}
+      <div className="relative flex size-23 shrink-0 items-center justify-center rounded-card bg-mint sm:aspect-square sm:size-auto sm:w-full">
+        <span aria-hidden="true" className="font-display text-5xl text-brand sm:text-8xl">
+          {businessInitial(business.name)}
+        </span>
+        <span className="caps-label absolute bottom-3.5 left-4 hidden text-brand sm:block">
+          Sin foto
+        </span>
+        <div className="absolute top-3.5 left-3.5 hidden sm:block">
+          <BusinessStatusBadge state={business.status.state} />
+        </div>
       </div>
-      <div className="mt-auto">
-        <BusinessStatusBadge state={business.status.state} />
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5 break-words sm:pt-4">
+        <h3 className="text-base leading-tight font-bold sm:text-lg">{business.name}</h3>
+        <p className="text-sm text-muted">{business.category.name}</p>
+        <div className="sm:hidden">
+          <BusinessStatusBadge state={business.status.state} />
+        </div>
       </div>
-    </Card>
+    </article>
   );
 }
