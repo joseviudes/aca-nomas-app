@@ -24,6 +24,7 @@ aca-nomas-app/
 │   ├── api.md                 reglas comunes de la API y lista de endpoints (D-25)
 │   ├── entorno-local.md       el día a día con la base y el backend
 │   ├── diseno.md              el mockup y los tokens visuales (D-38)
+│   ├── mockup/                capturas y descripción de cada pantalla, por si el mockup no abre
 │   ├── diagramas/             diagrama entidad-relación (Mermaid)
 │   └── postman/               escenarios de Postman (D-35)
 ├── backend/
