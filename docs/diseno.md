@@ -12,6 +12,7 @@ La referencia visual de la web y el panel: dónde está el mockup, qué hay que 
 | 0.4 | 06/11/2026 | Tobias | El mockup se ajusta al MVP y suma las pantallas de celular y el listado sin ubicación. Agrega "Celular primero" |
 | 0.5 | 07/11/2026 | Tobias | Los tokens ya están en `theme.css` (HT-02): agrega las clases de cada uno, los tokens de esquinas y ancho, y los componentes base |
 | 0.6 | 17/11/2026 | Tobias | Agrega `docs/mockup/` como referencia de respaldo, con capturas de cada pantalla |
+| 0.7 | 17/11/2026 | Tobias | "Celular primero": fija los anchos (390, `sm:`, `lg:`, `xl:`), los anchos de revisión y que nada se desplace de costado |
 
 ## Índice
 
@@ -173,7 +174,17 @@ Todas las combinaciones del mockup cumplen el contraste mínimo (4,5 a 1 para te
 
 ## 9. Celular primero
 
-La mayoría de los vecinos y los dueños van a usar AcáNomás desde el celular. Por eso cada pantalla **se arma primero para 390 px** y después se agranda para escritorio, con las clases de Tailwind por tamaño (`md:`, `lg:`).
+La mayoría de los vecinos y los dueños van a usar AcáNomás desde el celular. Por eso cada pantalla **se arma primero para 390 px** y después se agranda. Nunca al revés: no se arma para escritorio y después se achica.
+
+| Paso | Ancho | Clases |
+|---|---|---|
+| 1. Celular | Se diseña a 390 px | Sin prefijo (`flex`, `gap-3`). Es la base y vale para todos los anchos |
+| 2. Tablet | Desde 640 px | `sm:` |
+| 3. Escritorio | Desde 1024 px | `lg:` |
+| 4. Escritorio ancho | Desde 1280 px, hasta `max-w-page` | `xl:` |
+
+- **Se revisa a 390, 768 y 1440 px.**
+- **Ningún ancho obliga a desplazarse de costado**, tampoco a 320 px.
 
 - **Panel:** en el celular, el menú lateral del escritorio pasa a una **barra de pestañas abajo** (Inicio, Mi ficha, Horarios). "Cerrar sesión" va en la barra de arriba.
 - **Botón principal a mano:** en Mi ficha y Horarios, "Guardar" queda fijo abajo, sobre la barra de pestañas. En la ficha pública, "Escribir por WhatsApp" va arriba, justo después del estado.
