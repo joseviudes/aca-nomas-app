@@ -1,6 +1,11 @@
 import type { ZodOpenApiPathsObject } from 'zod-openapi';
 import { errorResponse } from '../../../shared/openapi/common.schemas.js';
-import { businessListQuerySchema, businessListResponseSchema } from '../schemas/business.schema.js';
+import {
+  businessDetailSchema,
+  businessListQuerySchema,
+  businessListResponseSchema,
+  businessSlugParamsSchema,
+} from '../schemas/business.schema.js';
 
 // Documentación del módulo (D-34), con los mismos esquemas Zod que validan la ruta.
 // Se registra en src/openapi.ts. Las rutas van sin /api.
@@ -31,6 +36,30 @@ export const businessesPaths: ZodOpenApiPathsObject = {
                 message: 'Demasiado grande: se esperaba que número fuera <=100',
               },
             ],
+          },
+        }),
+      },
+    },
+  },
+  '/businesses/{slug}': {
+    get: {
+      tags: ['Negocios'],
+      summary: 'Devuelve la ficha pública de un negocio',
+      description:
+        'Público, sin sesión (US-08). La web la muestra en /negocios/[slug] (D-29). Si el negocio ' +
+        'no existe, responde 404 y la web muestra su página 404 (RF-08). Un slug mal escrito ' +
+        '(con mayúsculas o tildes) también da 404: ningún negocio lo tiene.',
+      requestParams: { path: businessSlugParamsSchema },
+      responses: {
+        '200': {
+          description: 'La ficha del negocio',
+          content: { 'application/json': { schema: businessDetailSchema } },
+        },
+        '404': errorResponse('No existe un negocio con ese slug (BUSINESS_NOT_FOUND)', {
+          error: {
+            code: 'BUSINESS_NOT_FOUND',
+            message: 'No se encontró el negocio',
+            details: [],
           },
         }),
       },

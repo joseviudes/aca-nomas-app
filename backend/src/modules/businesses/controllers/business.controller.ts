@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import type { BusinessListQuery } from '../schemas/business.schema.js';
+import type { BusinessListQuery, BusinessSlugParams } from '../schemas/business.schema.js';
 import type { BusinessService } from '../services/business.service.js';
 
 export class BusinessController {
@@ -11,5 +11,11 @@ export class BusinessController {
     // valores por defecto). Express no conoce ese tipo, por eso la conversión.
     const query = req.query as unknown as BusinessListQuery;
     res.json(await this.businessService.list(query));
+  };
+
+  getBySlug = async (req: Request, res: Response) => {
+    // validate ya comprobó que params trae el slug como texto.
+    const { slug } = req.params as BusinessSlugParams;
+    res.json(await this.businessService.getBySlug(slug));
   };
 }

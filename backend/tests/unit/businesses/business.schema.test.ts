@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
+  businessDetailSchema,
   businessListFiltersSchema,
+  businessSlugParamsSchema,
   businessListQuerySchema,
   businessListResponseSchema,
   MAX_SEARCH_LENGTH,
@@ -200,6 +202,39 @@ describe('businessListResponseSchema', () => {
     const example: unknown = businessListResponseSchema.meta()?.example;
 
     expect(businessListResponseSchema.safeParse(example).success).toBe(true);
+  });
+});
+
+describe('businessSlugParamsSchema', () => {
+  it('acepta un slug como los del seed', () => {
+    expect(businessSlugParamsSchema.parse({ slug: 'panaderia-la-espiga' })).toEqual({
+      slug: 'panaderia-la-espiga',
+    });
+  });
+
+  // Un slug mal escrito no es un error de validación: lo busca el servicio y responde 404.
+  it.each(['Panaderia-La-Espiga', 'panadería', 'pan la espiga'])('deja pasar %o', (slug) => {
+    expect(businessSlugParamsSchema.parse({ slug })).toEqual({ slug });
+  });
+});
+
+describe('businessDetailSchema', () => {
+  it('acepta un negocio sin descripción', () => {
+    const detail = {
+      slug: 'kiosco-la-esquina',
+      name: 'Kiosco La Esquina',
+      description: null,
+      category: { slug: 'kiosco', name: 'Kiosco' },
+      photoUrl: null,
+    };
+
+    expect(businessDetailSchema.parse(detail)).toEqual(detail);
+  });
+
+  it('el ejemplo que muestra Swagger cumple el esquema', () => {
+    const example: unknown = businessDetailSchema.meta()?.example;
+
+    expect(businessDetailSchema.safeParse(example).success).toBe(true);
   });
 });
 
