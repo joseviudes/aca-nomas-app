@@ -2,6 +2,7 @@ import type { PrismaClient } from '../../../generated/prisma/client.js';
 import type { DayOfWeek } from '../../opening-hours/domain/opening-hours.types.js';
 import { toOffset, type PaginationQuery } from '../../../shared/pagination/pagination.js';
 import type {
+  BusinessDetailEntry,
   BusinessListPage,
   BusinessRepository,
 } from '../../../shared/ports/business.repository.js';
@@ -57,5 +58,18 @@ export class PrismaBusinessRepository implements BusinessRepository {
     }));
 
     return { items, total };
+  }
+
+  findBySlug(slug: string): Promise<BusinessDetailEntry | null> {
+    return this.prisma.business.findUnique({
+      where: { slug },
+      select: {
+        slug: true,
+        name: true,
+        description: true,
+        photoKey: true,
+        category: { select: { slug: true, name: true } },
+      },
+    });
   }
 }

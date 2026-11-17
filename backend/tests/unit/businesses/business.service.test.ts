@@ -1,20 +1,33 @@
 import { describe, expect, it } from 'vitest';
-import { businessListResponseSchema } from '../../../src/modules/businesses/schemas/business.schema.js';
+import {
+  businessDetailSchema,
+  businessListResponseSchema,
+} from '../../../src/modules/businesses/schemas/business.schema.js';
 import { BusinessService } from '../../../src/modules/businesses/services/business.service.js';
 import type { OpeningHours } from '../../../src/modules/opening-hours/domain/opening-hours.types.js';
 import { OpeningHoursService } from '../../../src/modules/opening-hours/services/opening-hours.service.js';
 import { toOffset, type PaginationQuery } from '../../../src/shared/pagination/pagination.js';
+import { NotFoundError } from '../../../src/shared/errors/http-errors.js';
 import type {
+  BusinessDetailEntry,
   BusinessListEntry,
   BusinessListPage,
   BusinessRepository,
 } from '../../../src/shared/ports/business.repository.js';
 
 // Repositorio falso en memoria: pagina la lista que recibe y guarda con qué página lo llamaron.
+// Las fichas van aparte porque llevan datos que el listado no trae, como la descripción.
 class InMemoryBusinessRepository implements BusinessRepository {
   lastPagination: PaginationQuery | undefined;
 
-  constructor(private readonly entries: BusinessListEntry[]) {}
+  constructor(
+    private readonly entries: BusinessListEntry[],
+    private readonly details: BusinessDetailEntry[] = [],
+  ) {}
+
+  findBySlug(slug: string): Promise<BusinessDetailEntry | null> {
+    return Promise.resolve(this.details.find((detail) => detail.slug === slug) ?? null);
+  }
 
   findPage(pagination: PaginationQuery): Promise<BusinessListPage> {
     this.lastPagination = pagination;
@@ -196,9 +209,84 @@ describe('BusinessService.list', () => {
   // llegar al middleware de errores (500), no convertirse en una lista vacía que diga "no hay negocios".
   it('deja pasar el error del repositorio en vez de devolver una lista vacía', async () => {
     const failure = new Error('Se cortó la conexión con la base');
-    const failingRepository: BusinessRepository = { findPage: () => Promise.reject(failure) };
+    const failingRepository: BusinessRepository = {
+      findPage: () => Promise.reject(failure),
+      findBySlug: () => Promise.reject(failure),
+    };
     const service = new BusinessService(failingRepository, new OpeningHoursService());
 
     await expect(service.list({ page: 1, limit: 20 })).rejects.toBe(failure);
+  });
+});
+
+describe('BusinessService.getBySlug', () => {
+  const bakeryDetail: BusinessDetailEntry = {
+    slug: 'panaderia-la-espiga',
+    name: 'Panadería La Espiga',
+    description: 'Pan casero, facturas y tortas por encargo.',
+    photoKey: 'businesses/la-espiga.webp',
+    category: { slug: 'panaderia', name: 'Panadería' },
+  };
+
+  function serviceWithDetails(details: BusinessDetailEntry[]) {
+    return new BusinessService(
+      new InMemoryBusinessRepository([], details),
+      new OpeningHoursService(() => TUESDAY_10_AM),
+    );
+  }
+
+  it('devuelve la ficha del negocio con ese slug', async () => {
+    const service = serviceWithDetails([bakeryDetail]);
+
+    const detail = await service.getBySlug('panaderia-la-espiga');
+
+    expect(detail).toEqual({
+      slug: 'panaderia-la-espiga',
+      name: 'Panadería La Espiga',
+      description: 'Pan casero, facturas y tortas por encargo.',
+      category: { slug: 'panaderia', name: 'Panadería' },
+      photoUrl: null,
+    });
+    expect(businessDetailSchema.safeParse(detail).success).toBe(true);
+  });
+
+  it('devuelve la descripción en null si el negocio no tiene', async () => {
+    const service = serviceWithDetails([{ ...bakeryDetail, description: null }]);
+
+    const detail = await service.getBySlug('panaderia-la-espiga');
+
+    expect(detail.description).toBeNull();
+  });
+
+  it('no expone la clave de la foto mientras no haya almacenamiento', async () => {
+    const service = serviceWithDetails([bakeryDetail]);
+
+    const detail = await service.getBySlug('panaderia-la-espiga');
+
+    expect(detail.photoUrl).toBeNull();
+    expect(detail).not.toHaveProperty('photoKey');
+  });
+
+  it.each(['panaderia-el-trigo', 'Panaderia-La-Espiga', 'panadería-la-espiga'])(
+    'responde BUSINESS_NOT_FOUND con %o, que ningún negocio tiene',
+    async (slug) => {
+      const service = serviceWithDetails([bakeryDetail]);
+
+      const error: unknown = await service.getBySlug(slug).catch((caught: unknown) => caught);
+
+      expect(error).toBeInstanceOf(NotFoundError);
+      expect(error).toMatchObject({ statusCode: 404, code: 'BUSINESS_NOT_FOUND' });
+    },
+  );
+
+  it('deja pasar el error del repositorio en vez de responder 404', async () => {
+    const failure = new Error('Se cortó la conexión con la base');
+    const failingRepository: BusinessRepository = {
+      findPage: () => Promise.reject(failure),
+      findBySlug: () => Promise.reject(failure),
+    };
+    const service = new BusinessService(failingRepository, new OpeningHoursService());
+
+    await expect(service.getBySlug('panaderia-la-espiga')).rejects.toBe(failure);
   });
 });
