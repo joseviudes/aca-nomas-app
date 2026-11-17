@@ -22,6 +22,8 @@ Las **URLs que ve el usuario** en la web y el panel van en español (`/negocios/
 | abierto ahora | `isOpenNow` |
 | hoy no abro | `closedToday` |
 | pausa | `isPaused` |
+| turno | `shift` |
+| próxima apertura | `nextOpeningAt` |
 
 Si falta una palabra, agregarla a esta tabla en el mismo PR.
 
