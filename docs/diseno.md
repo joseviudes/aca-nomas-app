@@ -13,6 +13,7 @@ La referencia visual de la web y el panel: dónde está el mockup, qué hay que 
 | 0.5 | 07/11/2026 | Tobias | Los tokens ya están en `theme.css` (HT-02): agrega las clases de cada uno, los tokens de esquinas y ancho, y los componentes base |
 | 0.6 | 17/11/2026 | Tobias | Agrega `docs/mockup/` como referencia de respaldo, con capturas de cada pantalla |
 | 0.7 | 17/11/2026 | Tobias | "Celular primero": fija los anchos (390, `sm:`, `lg:`, `xl:`), los anchos de revisión y que nada se desplace de costado |
+| 0.8 | 17/11/2026 | Tobias | "Celular primero": suma `md:` como paso opcional para espacios y letra, y une las reglas repetidas |
 
 ## Índice
 
@@ -183,14 +184,12 @@ La mayoría de los vecinos y los dueños van a usar AcáNomás desde el celular.
 | 3. Escritorio | Desde 1024 px | `lg:` |
 | 4. Escritorio ancho | Desde 1280 px, hasta `max-w-page` | `xl:` |
 
-- **Se revisa a 390, 768 y 1440 px.**
-- **Ningún ancho obliga a desplazarse de costado**, tampoco a 320 px.
-
+- **Paso intermedio opcional:** `md:` (desde 768 px) sirve solo para ajustar espacios y tamaños de letra (por ejemplo, `md:px-8` o `md:text-4xl`). Los cambios de distribución (columnas, filas, menú) van en `sm:`, `lg:` y `xl:`.
 - **Panel:** en el celular, el menú lateral del escritorio pasa a una **barra de pestañas abajo** (Inicio, Mi ficha, Horarios). "Cerrar sesión" va en la barra de arriba.
 - **Botón principal a mano:** en Mi ficha y Horarios, "Guardar" queda fijo abajo, sobre la barra de pestañas. En la ficha pública, "Escribir por WhatsApp" va arriba, justo después del estado.
-- **Nada de desplazarse de costado:** las tablas se convierten en tarjetas (por ejemplo, un día del horario por tarjeta) y las listas largas de botones pasan a una grilla.
+- **Ningún ancho, tampoco 320 px, obliga a desplazarse de costado:** las tablas se convierten en tarjetas (por ejemplo, un día del horario por tarjeta) y las listas largas de botones pasan a una grilla.
 - **Campos cómodos:** al menos 48 px de alto y texto de 16 px, para que el celular no haga zoom al escribir. Cada campo usa su tipo (`email`, `tel`, `time`) para que aparezca el teclado correcto.
-- **Revisión:** el PR de una pantalla lleva una captura a 390 px y otra en escritorio (sección 3).
+- **Revisión:** cada pantalla se revisa a 390, 768 y 1440 px, y el PR lleva una captura a 390 px y otra en escritorio (sección 3).
 
 ## 10. Componentes base
 

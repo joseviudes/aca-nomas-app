@@ -7,6 +7,7 @@ Capturas y descripción de cada pantalla del mockup, para armar una pantalla cua
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 17/11/2026 | Tobias | Versión inicial: capturas de las 19 pantallas y su descripción |
+| 0.2 | 17/11/2026 | Tobias | Renombra las capturas del listado y de los filtros en celular para seguir la convención (`inicio-y-listado-movil`, `filtros-movil`) |
 
 ## Índice
 
@@ -55,10 +56,10 @@ En las capturas de celular, la pantalla de 390 px queda a la izquierda y el rest
 | Pantalla (nombre en el lienzo) | App | Dispositivo | Historias | MVP | Capturas |
 |---|---|---|---|---|---|
 | Inicio y listado | web | Escritorio | US-01 a US-06, US-11 | Sí | [principal](capturas/inicio-y-listado.jpg), [1](capturas/inicio-y-listado-1.jpg), [2](capturas/inicio-y-listado-2.jpg), [3](capturas/inicio-y-listado-3.jpg), [4](capturas/inicio-y-listado-4.jpg) |
-| Listado en celular | web | Celular | US-01 a US-06, US-11 | Sí | [principal](capturas/movil.jpg), [1](capturas/movil-1.jpg), [2](capturas/movil-2.jpg), [3](capturas/movil-3.jpg) |
+| Listado en celular | web | Celular | US-01 a US-06, US-11 | Sí | [principal](capturas/inicio-y-listado-movil.jpg), [1](capturas/inicio-y-listado-movil-1.jpg), [2](capturas/inicio-y-listado-movil-2.jpg), [3](capturas/inicio-y-listado-movil-3.jpg) |
 | Listado sin ubicación | web | Escritorio | US-05 y US-06 | Sí | [principal](capturas/sin-ubicacion.jpg), [1](capturas/sin-ubicacion-1.jpg), [2](capturas/sin-ubicacion-2.jpg), [3](capturas/sin-ubicacion-3.jpg), [4](capturas/sin-ubicacion-4.jpg), [5](capturas/sin-ubicacion-5.jpg) |
 | Nada abierto ahora | web | Escritorio | US-04 | Sí | [principal](capturas/vacio.jpg), [1](capturas/vacio-1.jpg), [2](capturas/vacio-2.jpg) |
-| Panel de filtros | web | Celular | US-03 y US-04 | Sí | [principal](capturas/filtros.jpg), [1](capturas/filtros-1.jpg), [2](capturas/filtros-2.jpg) |
+| Panel de filtros | web | Celular | US-03 y US-04 | Sí | [principal](capturas/filtros-movil.jpg), [1](capturas/filtros-movil-1.jpg), [2](capturas/filtros-movil-2.jpg) |
 | Ficha del negocio | web | Escritorio | US-08 a US-11, US-17 | Sí | [principal](capturas/ficha.jpg), [1](capturas/ficha-1.jpg), [2](capturas/ficha-2.jpg), [3](capturas/ficha-3.jpg) |
 | Ficha en celular | web | Celular | US-08 a US-11, US-17 | Sí | [principal](capturas/ficha-movil.jpg), [1](capturas/ficha-movil-1.jpg), [2](capturas/ficha-movil-2.jpg), [3](capturas/ficha-movil-3.jpg), [4](capturas/ficha-movil-4.jpg) |
 | Explorar — Oficios (fase 2) | web | Escritorio | — | No | [principal](capturas/oficios.jpg), [1](capturas/oficios-1.jpg), [2](capturas/oficios-2.jpg), [3](capturas/oficios-3.jpg) |

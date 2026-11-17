@@ -7,6 +7,7 @@ Qué muestra cada pantalla de la web pública en el mockup, con el detalle del l
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 17/11/2026 | Tobias | Versión inicial: pantallas de la web y detalle del listado |
+| 0.2 | 17/11/2026 | Tobias | Actualiza los enlaces a las capturas renombradas del listado y de los filtros en celular |
 
 ## Índice
 
@@ -23,9 +24,9 @@ Qué muestra cada pantalla de la web pública en el mockup, con el detalle del l
 
 ![Inicio y listado en escritorio](capturas/inicio-y-listado.jpg)
 
-![Listado en celular](capturas/movil.jpg)
+![Listado en celular](capturas/inicio-y-listado-movil.jpg)
 
-**Partes legibles:** escritorio [1](capturas/inicio-y-listado-1.jpg) (encabezado y portada), [2](capturas/inicio-y-listado-2.jpg) (rubros y primeras tarjetas), [3](capturas/inicio-y-listado-3.jpg) (tarjetas), [4](capturas/inicio-y-listado-4.jpg) (últimas tarjetas, banda para dueños y pie). Celular [1](capturas/movil-1.jpg) (encabezado, buscador y rubros), [2](capturas/movil-2.jpg) (filas), [3](capturas/movil-3.jpg) (última fila y pie).
+**Partes legibles:** escritorio [1](capturas/inicio-y-listado-1.jpg) (encabezado y portada), [2](capturas/inicio-y-listado-2.jpg) (rubros y primeras tarjetas), [3](capturas/inicio-y-listado-3.jpg) (tarjetas), [4](capturas/inicio-y-listado-4.jpg) (últimas tarjetas, banda para dueños y pie). Celular [1](capturas/inicio-y-listado-movil-1.jpg) (encabezado, buscador y rubros), [2](capturas/inicio-y-listado-movil-2.jpg) (filas), [3](capturas/inicio-y-listado-movil-3.jpg) (última fila y pie).
 
 ### Estructura, de arriba hacia abajo
 
@@ -140,9 +141,9 @@ Estado vacío del filtro "Abierto ahora" (US-04).
 
 ## 4. Panel de filtros
 
-![Panel de filtros](capturas/filtros.jpg)
+![Panel de filtros](capturas/filtros-movil.jpg)
 
-**Partes legibles:** [1](capturas/filtros-1.jpg), [2](capturas/filtros-2.jpg).
+**Partes legibles:** [1](capturas/filtros-movil-1.jpg), [2](capturas/filtros-movil-2.jpg).
 
 Panel con ancho de celular que se abre desde "Filtros" (US-03 y US-04).
 

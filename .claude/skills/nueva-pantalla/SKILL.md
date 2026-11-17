@@ -27,7 +27,7 @@ Seguir los pasos en orden. Es el equivalente de `nuevo-endpoint` para el fronten
    }
    ```
 3. **Hook** en `hooks/use-<algo>.ts` (sobre todo en el panel): llama a la función de `api/` y maneja **cargando**, **error** y **datos**. Después de guardar, navega o refresca. En la web, si la página pide los datos en el servidor, este paso no hace falta.
-4. **Celular primero** (obligatorio, `docs/diseno.md` sección 9): los componentes y la página se escriben para 390 px con clases sin prefijo, y después se agrandan con `sm:` (640), `lg:` (1024) y `xl:` (1280). Nunca se arma para escritorio y después se achica.
+4. **Celular primero** (obligatorio, `docs/diseno.md` sección 9): los componentes y la página se escriben para 390 px con clases sin prefijo, y después se agrandan con `sm:` (640), `lg:` (1024) y `xl:` (1280). `md:` (768) es opcional y solo ajusta espacios y tamaños de letra. Nunca se arma para escritorio y después se achica.
 5. **Componentes** en `components/`: solo vista. Reciben datos y funciones por props (`onSubmit`, `onChange`) y no conocen la API. Un componente genérico que sirva para varios módulos va en `shared/ui/`.
 6. **Página** en `pages/` (panel) o en `app/<ruta>/page.tsx` (web): arma la pantalla con el hook y los componentes. Contempla los cuatro estados: **cargando**, **error**, **vacío** y **con datos**. En la web, solo lo interactivo lleva `'use client'`, en el componente más chico posible.
 7. **Ruta:** en el panel, registrarla en `src/app/router.tsx` (D-32), importando la página desde el `index.ts` del módulo. En la web, la carpeta en `src/app/`. En los dos casos, **la URL va en español** (`/negocios/[slug]`, `/mis-negocios`) (D-29).
