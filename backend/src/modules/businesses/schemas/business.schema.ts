@@ -13,8 +13,7 @@ export const paymentMethodsSchema = z
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
 // Estado actual del negocio (RN-01). Lo calcula isOpenNow (HT-01) y no se guarda en la base (D-22).
-// PROVISORIO: la forma se confirma con quien hace HT-01. Hasta entonces el listado devuelve un
-// estado de ejemplo, para que la web pueda armar la etiqueta de cada tarjeta.
+// Es la misma forma que devuelve isOpenNow, con los momentos en texto ISO en lugar de Date.
 export const BUSINESS_STATES = ['open', 'closed', 'closed_today', 'paused'] as const;
 
 export const businessStatusSchema = z
@@ -117,8 +116,8 @@ export const businessListResponseSchema = z
   })
   .meta({
     id: 'BusinessListResponse',
-    // Lo que devuelve hoy ?page=3&limit=2 con el seed. Hasta HT-01 no sale ningún negocio abierto:
-    // cuando esté isOpenNow, sumar uno con state open y su closesAt.
+    // Lo que devuelve ?page=3&limit=2 con el seed un martes a las 10:00 de Mantilla (13:00 UTC):
+    // la ferretería está en pausa y el kiosco, abierto hasta las 23:30 (02:30 UTC del miércoles).
     example: {
       data: [
         {
@@ -133,7 +132,7 @@ export const businessListResponseSchema = z
           name: 'Kiosco La Esquina',
           category: { slug: 'kiosco', name: 'Kiosco' },
           photoUrl: null,
-          status: { state: 'closed', closesAt: null, nextOpeningAt: null },
+          status: { state: 'open', closesAt: '2026-11-18T02:30:00.000Z', nextOpeningAt: null },
         },
       ],
       page: 3,
