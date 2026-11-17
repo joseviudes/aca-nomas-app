@@ -142,3 +142,38 @@ export const businessListResponseSchema = z
   });
 
 export type BusinessListResponse = z.infer<typeof businessListResponseSchema>;
+
+// Parámetro de GET /api/businesses/:slug (US-08). El slug identifica al negocio y nunca cambia (RN-05).
+// No se valida el formato: un slug mal escrito es un negocio que no existe, y la web muestra su
+// página 404 (RF-08). Con un 400 tendría que tratar dos respuestas distintas para el mismo caso.
+export const businessSlugParamsSchema = z.object({
+  slug: z.string(),
+});
+
+export type BusinessSlugParams = z.infer<typeof businessSlugParamsSchema>;
+
+// Ficha pública de un negocio (US-08). Un recurso va sin envoltorio (D-25). El estado, el horario
+// semanal (US-09), los canales visibles (US-10 y US-16) y los medios de pago y entregas (US-17) se
+// suman con sus historias, cuando el backend los resuelva.
+export const businessDetailSchema = z
+  .object({
+    slug: z.string(),
+    name: z.string(),
+    description: z.string().max(80).nullable().meta({ description: 'Hasta 80 caracteres (RF-16)' }),
+    category: z.object({ slug: z.string(), name: z.string() }),
+    // Como en el listado: hasta US-19 no hay almacenamiento, así que viene siempre en null (D-14).
+    photoUrl: z.url().nullable(),
+  })
+  .meta({
+    id: 'BusinessDetail',
+    // Lo que devuelve /businesses/panaderia-la-espiga con el seed.
+    example: {
+      slug: 'panaderia-la-espiga',
+      name: 'Panadería La Espiga',
+      description: 'Pan casero, facturas y tortas por encargo.',
+      category: { slug: 'panaderia', name: 'Panadería' },
+      photoUrl: null,
+    },
+  });
+
+export type BusinessDetail = z.infer<typeof businessDetailSchema>;
