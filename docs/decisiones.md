@@ -28,6 +28,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.20 | 17/11/2026 | Josi | Agrega D-41: Luxon como librería de fechas. Completa D-12. Suma "turno" y "próxima apertura" a la tabla de D-08 |
 | 0.21 | 10/11/2026 | José | Agrega D-42 como pendiente: si Swagger declara en cada endpoint los errores comunes. Se escribió como D-41 en la rama de US-01 y se renumeró al traer D-41 de `develop` |
 | 0.22 | 10/11/2026 | José | Agrega D-43: mensajes de validación de Zod en español. Se escribió como D-42 y se renumeró por lo mismo |
+| 0.23 | 17/11/2026 | Tobias | Agrega D-44 y D-45 como pendientes: parámetros de la URL de la web en español y `pages/` con componentes de servidor en la web. Se escribieron como D-43 y D-44 y se renumeraron al traer las decisiones de `develop` |
 
 ## Índice
 
@@ -76,6 +77,8 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-41 | Luxon como librería de fechas | Aceptada |
 | D-42 | Errores comunes en Swagger | Pendiente |
 | D-43 | Mensajes de validación de Zod en español | Aceptada |
+| D-44 | Parámetros de la URL de la web en español | Pendiente |
+| D-45 | `pages/` con componentes de servidor en los módulos de la web | Pendiente |
 
 ---
 
@@ -477,3 +480,17 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Motivo:** los mensajes de Zod llegan a la persona en el `details` de `VALIDATION_ERROR` y en los formularios, y los mensajes van en español (`docs/api.md`). Sin configurar nada, Zod los arma en inglés (`Too big: expected number to be <=100`).
 - **Descartado:** escribir un mensaje propio en cada regla de cada esquema, porque el que se olvida sale en inglés; traducir los mensajes en el middleware `validate`, porque repite lo que Zod ya trae.
 - **Nota:** algunos mensajes del idioma de Zod suenan forzados (`Inválido dirección de correo electrónico`). Por eso quedan permitidos los mensajes propios.
+
+## D-44 Parámetros de la URL de la web en español
+- **Decisión:** pendiente. Falta definir en qué idioma van los parámetros de la URL de la web pública (lo que va después del `?`). D-29 cubre las rutas, pero no los parámetros. Las opciones son:
+  - **A. En español.** `/?pagina=2`, `/?q=pan&rubro=panaderia`. La web los traduce a los nombres de la API (`page`, `category`) al pedir los datos.
+  - **B. En inglés, iguales a la API.** `/?page=2&category=panaderia`. No hay traducción, pero la URL que ve el vecino mezcla idiomas.
+- **Motivo:** el vecino ve y comparte esas URLs, igual que las rutas (D-29). La regla afecta a los filtros de US-02 a US-06 (`q`, rubro, abierto ahora, distancia), así que conviene fijarla antes de que cada historia elija la suya.
+- **Nota:** mientras no se decida, rige la opción A. El listado de US-01 ya usa `?pagina=`.
+
+## D-45 `pages/` con componentes de servidor en los módulos de la web
+- **Decisión:** pendiente. Falta definir si un módulo de `web/` puede tener una carpeta `pages/` con un componente de servidor asíncrono (un componente que pide los datos en el servidor con `await`) que la ruta de `app/` usa dentro de un `<Suspense>`. Las opciones son:
+  - **A. Se permite.** La ruta de `app/` queda fina: lee `searchParams` dentro del `<Suspense>` y le pasa el valor al componente de `pages/`, que pide los datos y arma la pantalla. Se suma `pages/` al árbol de la web en la skill `estructura-del-frontend`.
+  - **B. No se permite.** La ruta de `app/` pide los datos y arma la pantalla, y el módulo solo aporta `api`, `components` y `schemas`.
+- **Motivo:** la web tiene `cacheComponents: true` y no hay un `loading.tsx` global. Con esa configuración, leer `searchParams` fuera de un `<Suspense>` bloquea el prerender (que Next arme la página antes de que alguien la pida). D-31 lista `pages` como capa de los módulos, pero el árbol de la web en `estructura-del-frontend` no la incluye, y dice que en la web esa capa es `app/`.
+- **Nota:** mientras no se decida, rige la opción A. El listado de US-01 ya la usa: `app/page.tsx` y `modules/businesses/pages/BusinessListPage.tsx`.
