@@ -3,6 +3,7 @@ import { listBusinesses } from '../api/businesses.api';
 import { BusinessList } from '../components/BusinessList';
 import { BusinessListEmpty } from '../components/BusinessListEmpty';
 import { BusinessListError } from '../components/BusinessListError';
+import { BusinessListHeader } from '../components/BusinessListHeader';
 import { ListPagination } from '../components/ListPagination';
 import { pageHref } from '../domain/pagination';
 
@@ -26,7 +27,11 @@ export async function BusinessListPage({ page }: { page: number }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <BusinessList businesses={result.data} />
+      {/* Títulos en orden: h1 de la ruta, h2 con la cantidad y h3 por negocio. */}
+      <section className="flex flex-col sm:gap-7">
+        <BusinessListHeader total={result.total} />
+        <BusinessList businesses={result.data} />
+      </section>
       <ListPagination page={result.page} limit={result.limit} total={result.total} />
     </div>
   );
