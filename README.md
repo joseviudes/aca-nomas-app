@@ -152,6 +152,8 @@ Las dos apps llaman a la API en `http://localhost:3000/api` sin configurar nada.
 - [Épicas e historias](docs/epicas-e-historias.md)
 - [Modelo de datos](docs/diagramas/modelo-de-datos.md)
 - [Diseño de la API](docs/api.md)
+- [Diseño visual: mockup y tokens](docs/diseno.md)
+- [Referencia del mockup: capturas de cada pantalla](docs/mockup/README.md)
 - [Entorno local: el día a día](docs/entorno-local.md)
 - [Cómo contribuir](CONTRIBUTING.md)
 

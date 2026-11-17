@@ -11,6 +11,7 @@ La referencia visual de la web y el panel: dónde está el mockup, qué hay que 
 | 0.3 | 06/11/2026 | Tobias | Mockup nuevo: cambian los colores, las fuentes y las formas. Agrega lo que el mockup muestra pero no entra en el MVP |
 | 0.4 | 06/11/2026 | Tobias | El mockup se ajusta al MVP y suma las pantallas de celular y el listado sin ubicación. Agrega "Celular primero" |
 | 0.5 | 07/11/2026 | Tobias | Los tokens ya están en `theme.css` (HT-02): agrega las clases de cada uno, los tokens de esquinas y ancho, y los componentes base |
+| 0.6 | 17/11/2026 | Tobias | Agrega `docs/mockup/` como referencia de respaldo, con capturas de cada pantalla |
 
 ## Índice
 
@@ -30,6 +31,8 @@ La referencia visual de la web y el panel: dónde está el mockup, qué hay que 
 ## 1. El mockup
 
 Está en Claude, como un lienzo de diseño: [AcáNomás — Mockup](https://claude.ai/artifact/XbXNuhzCf3bs7SycUqCXim). Reemplaza al mockup anterior ("Emprendimientos Local").
+
+Si el lienzo no se puede abrir, la referencia de respaldo es [`docs/mockup/`](mockup/README.md): capturas y descripción de cada pantalla, tomadas el 17/11/2026. Ante una diferencia, vale el lienzo.
 
 | Pantalla | Escritorio | Celular | Historias |
 |---|---|---|---|
