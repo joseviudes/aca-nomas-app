@@ -32,7 +32,7 @@ Seguir los pasos en orden. Es el equivalente de `nuevo-endpoint` para el fronten
 6. **Página** en `pages/` (panel) o en `app/<ruta>/page.tsx` (web): arma la pantalla con el hook y los componentes. Contempla los cuatro estados: **cargando**, **error**, **vacío** y **con datos**. En la web, solo lo interactivo lleva `'use client'`, en el componente más chico posible.
 7. **Ruta:** en el panel, registrarla en `src/app/router.tsx` (D-32), importando la página desde el `index.ts` del módulo. En la web, la carpeta en `src/app/`. En los dos casos, **la URL va en español** (`/negocios/[slug]`, `/mis-negocios`) (D-29).
 8. **Exportar** desde `index.ts` del módulo lo que usan otros: la página para el router y lo que otro módulo necesite. Lo demás queda privado (D-31).
-9. **Pruebas** en `tests/unit/<módulo>/` con Vitest: la función de `api/` (con `fetch` simulado por `vi.stubGlobal`), el hook y las funciones de `domain/`. Probar el caso feliz y cada error que la pantalla trata distinto.
+9. **Pruebas** en `tests/unit/`, replicando la ruta de `src/` (por ejemplo, `tests/unit/modules/<módulo>/api/...`), con Vitest: la función de `api/` (con `fetch` simulado por `vi.stubGlobal`), el hook y las funciones de `domain/`. Probar el caso feliz y cada error que la pantalla trata distinto.
 10. **Conectar con la API** (la última tarea de la pantalla, cuando el backend de la historia está listo): la función de `api/` pasa a usar `http` de `shared/api/http-client.ts`, con el esquema en `schema`. Nunca `fetch` directo. El archivo de `fixtures` puede quedar para las pruebas.
    ```ts
    export function getBusiness(slug: string) {
