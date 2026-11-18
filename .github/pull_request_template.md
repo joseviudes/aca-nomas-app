@@ -14,4 +14,5 @@
 - [ ] Documenté el endpoint en `routes/<módulo>.openapi.ts` y se ve bien en Swagger (`/api/docs`) (si toca la API)
 - [ ] Actualicé los escenarios de Postman en `docs/postman/` (si cambia un flujo de varios pasos, D-35)
 - [ ] La pantalla usa la API real, no los datos de ejemplo (si tiene pantalla, D-40)
+- [ ] La pantalla sigue el mockup o el PR explica los desvíos, con capturas a 390 px y en escritorio (si tiene pantalla)
 - [ ] Actualicé la documentación (si cambia una decisión)
