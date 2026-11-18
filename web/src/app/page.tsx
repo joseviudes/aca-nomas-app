@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { BusinessListPage, BusinessListSkeleton, listPageParamSchema } from '@/modules/businesses';
 
-// Inicio: el listado de negocios (US-01). La página va en ?pagina= (D-29).
+// Inicio: el listado de negocios (US-01). La página va en ?pagina= (D-44).
 export default function Home({ searchParams }: PageProps<'/'>) {
   return (
     <main className="mx-auto flex w-full max-w-page flex-col gap-6 px-5 py-6 md:px-8 md:py-10">

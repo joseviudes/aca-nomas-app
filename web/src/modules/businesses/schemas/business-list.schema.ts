@@ -37,7 +37,7 @@ export const businessListResponseSchema = z.object({
 
 export type BusinessListResponse = z.infer<typeof businessListResponseSchema>;
 
-// El parámetro ?pagina= de la URL (D-29). Cualquier valor que no sea un entero desde 1 vuelve a
+// El parámetro ?pagina= de la URL (D-44). Cualquier valor que no sea un entero desde 1 vuelve a
 // la primera página: es un enlace que alguien escribió o copió mal, no un error para mostrar.
 // Si llega repetido (?pagina=2&pagina=3), Next lo entrega como lista y vale el primero.
 export const listPageParamSchema = z

@@ -13,7 +13,7 @@ export function hasNextPage(info: PageInfo): boolean {
   return info.page < totalPages(info);
 }
 
-// La página va en ?pagina= (D-29). La primera queda en "/", sin parámetro.
+// La página va en ?pagina= (D-44). La primera queda en "/", sin parámetro.
 export function pageHref(page: number): string {
   return page <= 1 ? '/' : `/?pagina=${page}`;
 }
