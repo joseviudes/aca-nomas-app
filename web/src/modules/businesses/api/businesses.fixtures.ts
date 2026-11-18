@@ -1,8 +1,8 @@
 import type { BusinessListItem, BusinessListResponse } from '../schemas/business-list.schema';
 
-// Datos de ejemplo con la forma del contrato (D-40). Nombres inventados; los rubros son los del
-// seed. Como hace la API hasta HT-01, el estado es paused o closed y sin horarios. La web ya usa
-// la API: quedan solo para las pruebas.
+// Datos de ejemplo con la forma del contrato (D-40). La web ya usa la API: quedan solo para las
+// pruebas. Nombres inventados; los rubros son los del seed. El estado es una muestra fija: paused
+// o closed, sin horarios.
 const CATEGORIES = {
   panaderia: 'Panadería',
   almacen: 'Almacén',
@@ -46,7 +46,7 @@ const BUSINESSES: Array<[slug: string, name: string, category: CategorySlug, pau
   ['cafe-de-la-estacion', 'Café de la Estación', 'cafeteria'],
 ];
 
-export const businessListItemsFixture: BusinessListItem[] = BUSINESSES.map(
+const businessListItemsFixture: BusinessListItem[] = BUSINESSES.map(
   ([slug, name, category, paused]) => ({
     slug,
     name,
