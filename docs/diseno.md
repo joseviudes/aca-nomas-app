@@ -14,6 +14,7 @@ La referencia visual de la web y el panel: dónde está el mockup, qué hay que 
 | 0.6 | 17/11/2026 | Tobias | Agrega `docs/mockup/` como referencia de respaldo, con capturas de cada pantalla |
 | 0.7 | 17/11/2026 | Tobias | "Celular primero": fija los anchos (390, `sm:`, `lg:`, `xl:`), los anchos de revisión y que nada se desplace de costado |
 | 0.8 | 17/11/2026 | Tobias | "Celular primero": suma `md:` como paso opcional para espacios y letra, y une las reglas repetidas |
+| 0.9 | 18/11/2026 | Tobias | El PR ya no lleva capturas de la pantalla: alcanza con explicar los desvíos del mockup |
 
 ## Índice
 
@@ -97,9 +98,9 @@ El mockup es una **referencia, no un plano**.
 - la distribución, el orden de los bloques, los textos y los tamaños;
 - un componente que en el mockup no queda claro o no funciona bien en el celular.
 
-El cambio se explica en el PR, con una captura.
+El cambio se explica en el PR.
 
-**Si la pantalla no está en el mockup**, la plantea quien la arma: con los tokens y los componentes de `shared/ui`, siguiendo el tono de las pantallas que sí están. En el PR va una captura en escritorio y otra a 390 px, para que el equipo la vea antes de aprobarla.
+**Si la pantalla no está en el mockup**, la plantea quien la arma: con los tokens y los componentes de `shared/ui`, siguiendo el tono de las pantallas que sí están. El PR explica cómo se armó, para que el equipo la revise antes de aprobarla.
 
 En los dos casos, si hace falta un color o un tamaño que no está en los tokens, **no se inventa en la pantalla**: se agrega al token en las dos apps y a este documento, en el mismo PR.
 
@@ -189,7 +190,7 @@ La mayoría de los vecinos y los dueños van a usar AcáNomás desde el celular.
 - **Botón principal a mano:** en Mi ficha y Horarios, "Guardar" queda fijo abajo, sobre la barra de pestañas. En la ficha pública, "Escribir por WhatsApp" va arriba, justo después del estado.
 - **Ningún ancho, tampoco 320 px, obliga a desplazarse de costado:** las tablas se convierten en tarjetas (por ejemplo, un día del horario por tarjeta) y las listas largas de botones pasan a una grilla.
 - **Campos cómodos:** al menos 48 px de alto y texto de 16 px, para que el celular no haga zoom al escribir. Cada campo usa su tipo (`email`, `tel`, `time`) para que aparezca el teclado correcto.
-- **Revisión:** cada pantalla se revisa a 390, 768 y 1440 px, y el PR lleva una captura a 390 px y otra en escritorio (sección 3).
+- **Revisión:** cada pantalla se revisa a 390, 768 y 1440 px.
 
 ## 10. Componentes base
 

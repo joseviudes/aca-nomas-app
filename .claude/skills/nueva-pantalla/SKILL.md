@@ -10,7 +10,7 @@ Seguir los pasos en orden. Es el equivalente de `nuevo-endpoint` para el fronten
 ## Antes de escribir código
 
 - **Leer los criterios de aceptación** de la historia en Trello.
-- **Mirar la pantalla en el mockup** (enlace en `docs/diseno.md`). Se construye **solo lo que entra en el MVP**: la sección 2 de `docs/diseno.md` lista lo que el mockup muestra pero no se hace. Es una referencia: los tokens (colores, fuentes, formas) se respetan siempre; la distribución puede cambiar si queda mejor, y se explica en el PR (D-38). Si la pantalla no está en el mockup, la plantea quien la arma con los tokens y los componentes de `shared/ui`, y muestra capturas en escritorio y a 390 px en el PR.
+- **Mirar la pantalla en el mockup** (enlace en `docs/diseno.md`). Se construye **solo lo que entra en el MVP**: la sección 2 de `docs/diseno.md` lista lo que el mockup muestra pero no se hace. Es una referencia: los tokens (colores, fuentes, formas) se respetan siempre; la distribución puede cambiar si queda mejor, y se explica en el PR (D-38). Si la pantalla no está en el mockup, la plantea quien la arma con los tokens y los componentes de `shared/ui`, y la explica en el PR.
 - **Si el mockup no abre**, usar `docs/mockup/`: la descripción y las capturas de cada pantalla. Si la pantalla tampoco está ahí, no adivinar la distribución: preguntarle al equipo. El PR lista cada desvío del mockup y por qué.
 - **¿Está el contrato?** La pantalla **no espera al backend**, pero sí al contrato: el primer commit del backend en la rama de la historia (D-40). Hacer `git pull` en la rama y mirarlo en Swagger (`http://localhost:3000/api/docs`) o en el esquema de `schemas/` del módulo del backend. Si la tarea "[BE] Contrato" no está tildada, no inventar la forma de los datos: preguntarle a quien hace el backend.
 - **¿El módulo ya existe** en `src/modules/`? Si no, crearlo con el mismo nombre que en el backend (`businesses`, `auth`, `opening-hours`).
@@ -40,7 +40,7 @@ Seguir los pasos en orden. Es el equivalente de `nuevo-endpoint` para el fronten
    }
    ```
 11. **Verla funcionando:** con la API levantada, abrir la pantalla en el navegador (web en `localhost:3001`, panel en `localhost:3002`) y recorrer los criterios de aceptación con los datos del seed. Revisarla a 390, 768 y 1440 px: en ningún ancho hay que desplazarse de costado. Probar también un error: la API apagada (`NETWORK_ERROR`) y un recurso que no existe.
-12. **Cierre:** `lint`, `typecheck` y `test` en verde y tildar la tarea en el checklist. El PR es uno por historia (D-39): se abre con el backend y la pantalla completos, con una captura de la pantalla en la descripción (`git-y-pr`).
+12. **Cierre:** `lint`, `typecheck` y `test` en verde y tildar la tarea en el checklist. El PR es uno por historia (D-39): se abre con el backend y la pantalla completos (`git-y-pr`).
 
 ## Controles de calidad
 
@@ -52,7 +52,7 @@ Seguir los pasos en orden. Es el equivalente de `nuevo-endpoint` para el fronten
 - [ ] Usa solo los tokens de `shared/ui/theme.css`: ningún color ni medida escrita a mano (D-38).
 - [ ] No construye nada de la lista "no entra" de `docs/diseno.md` (sección 2).
 - [ ] Está armada celular primero (paso 4) y se revisó a 390, 768 y 1440 px, sin desplazarse de costado (`docs/diseno.md`, sección 9).
-- [ ] El PR lista los desvíos del mockup, con capturas a 390 px y en escritorio.
+- [ ] El PR lista los desvíos del mockup.
 - [ ] "Abierto ahora" sale de la API (`isOpenNow`): no se calcula en el frontend.
 - [ ] Un canal de contacto oculto no se muestra en la web pública.
 - [ ] Los botones y campos tienen texto o `label` (se usan con teclado y lector de pantalla).
