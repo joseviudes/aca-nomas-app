@@ -101,7 +101,7 @@ US-01 arma el listado: encabezado del listado con la cantidad, la grilla o las f
 | Mapa (no está en el mockup) | US-07 |
 | "Ver ficha" y el enlace de la fila | US-08 |
 | Foto del negocio | US-11 (la sube el dueño en US-19) |
-| Texto de estado ("Cierra a las…", "Vuelve mañana…") | HT-01, que calcula la hora de cierre o la próxima apertura |
+| Texto de estado ("Cierra a las…", "Vuelve mañana…") | Fuera de US-01. HT-01 calcula la hora de cierre o la próxima apertura; mostrarla en el listado se define con US-09 o con una historia propia |
 | Carrusel "Abiertos ahora cerca tuyo" | Sin historia propia: muestra los primeros resultados del listado (sección 2 de `diseno.md`) |
 
 **Paginación:** el mockup no la muestra, pero la API devuelve de a 20 negocios (D-25). Por eso el listado suma "Anterior" y "Siguiente" debajo de la grilla.
