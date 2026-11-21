@@ -3,17 +3,17 @@ import { businessDetailPath, businessInitial } from '../domain/business-display'
 import type { BusinessDetail as BusinessDetailData } from '../schemas/business-detail.schema';
 import { CopyLinkButton } from './CopyLinkButton';
 
-// Ficha pública (US-08). En el celular, una columna; desde lg, la foto y los datos lado a lado.
+// Ficha pública (US-08). En el celular, una columna; desde sm, la foto y los datos lado a lado.
 // Estado, horario, contacto y pagos se suman con US-09, US-10 y US-17 (docs/mockup/web.md).
 export function BusinessDetail({ business }: { business: BusinessDetailData }) {
   return (
     <Card
       as="article"
       tone="sand"
-      className="flex flex-col gap-5 lg:flex-row lg:items-center lg:gap-8"
+      className="flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8"
     >
       {/* Hasta US-19 no hay fotos: el lugar de la foto queda en mint con la inicial (docs/diseno.md, sección 4). */}
-      <div className="relative flex aspect-4/3 w-full shrink-0 items-center justify-center rounded-card bg-mint lg:w-1/2">
+      <div className="relative flex aspect-4/3 w-full shrink-0 items-center justify-center rounded-card bg-mint sm:w-1/2">
         <span aria-hidden="true" className="font-display text-8xl text-brand">
           {businessInitial(business.name)}
         </span>
