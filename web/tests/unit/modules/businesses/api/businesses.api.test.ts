@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { businessDetailFixture } from '@/modules/businesses/api/business-detail.fixtures';
-import { businessListFixture } from '@/modules/businesses/api/businesses.fixtures';
+import {
+  businessDetailFixture,
+  businessListFixture,
+} from '@/modules/businesses/api/businesses.fixtures';
 import { getBusiness, listBusinesses } from '@/modules/businesses/api/businesses.api';
 import { ApiError } from '@/shared/api/api-error';
 
