@@ -1,8 +1,6 @@
-import { ApiError } from '@/shared/api/api-error';
 import { http } from '@/shared/api/http-client';
 import { businessDetailSchema } from '../schemas/business-detail.schema';
 import { businessListResponseSchema } from '../schemas/business-list.schema';
-import { businessDetailFixture } from './business-detail.fixtures';
 
 // No se manda limit: se usan los 20 por página que la API trae por defecto.
 // Sin caché: el estado de cada negocio (abierto, cerrado) cambia con la hora.
@@ -13,12 +11,12 @@ export function listBusinesses({ page = 1 }: { page?: number } = {}) {
   });
 }
 
-// Datos de ejemplo hasta conectar con la API (D-40). Imita el 404 del contrato, así la página ya
-// trata el negocio que no existe igual que después.
-export async function getBusiness(slug: string) {
-  const fixture = businessDetailFixture(slug);
-  if (!fixture) {
-    throw new ApiError(404, 'BUSINESS_NOT_FOUND', 'No se encontró el negocio');
-  }
-  return businessDetailSchema.parse(fixture);
+// Si el negocio no existe, la API responde 404 y el http-client lanza BUSINESS_NOT_FOUND.
+// Se codifica el slug para que un carácter raro no pida otra ruta. Sin caché, como el listado:
+// con US-09 la ficha suma el estado, que cambia con la hora.
+export function getBusiness(slug: string) {
+  return http.get(`/businesses/${encodeURIComponent(slug)}`, {
+    schema: businessDetailSchema,
+    cache: 'no-store',
+  });
 }

@@ -1,7 +1,7 @@
 import type { BusinessDetail } from '../schemas/business-detail.schema';
 
-// Fichas de ejemplo con la forma del contrato (D-40). La primera es el ejemplo de Swagger; la
-// segunda cubre un negocio sin descripción. Nombres inventados.
+// Fichas de ejemplo con la forma del contrato (D-40). La web ya usa la API: quedan solo para las
+// pruebas. La primera es el ejemplo de Swagger; la segunda, un negocio sin descripción.
 const BUSINESS_DETAILS: BusinessDetail[] = [
   {
     slug: 'panaderia-la-espiga',
