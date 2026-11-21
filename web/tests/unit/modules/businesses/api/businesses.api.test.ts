@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { businessDetailFixture } from '@/modules/businesses/api/business-detail.fixtures';
 import { businessListFixture } from '@/modules/businesses/api/businesses.fixtures';
-import { listBusinesses } from '@/modules/businesses/api/businesses.api';
+import { getBusiness, listBusinesses } from '@/modules/businesses/api/businesses.api';
 import { ApiError } from '@/shared/api/api-error';
 
 // En desarrollo y en pruebas, NEXT_PUBLIC_API_URL vale http://localhost:3000/api (config/env.ts).
@@ -80,5 +81,17 @@ describe('listBusinesses', () => {
     );
 
     await expectApiError(listBusinesses({ page: 1 }), 400, 'VALIDATION_ERROR');
+  });
+});
+
+describe('getBusiness', () => {
+  it('returns the validated listing', async () => {
+    await expect(getBusiness('panaderia-la-espiga')).resolves.toEqual(
+      businessDetailFixture('panaderia-la-espiga'),
+    );
+  });
+
+  it('throws BUSINESS_NOT_FOUND with a 404 when the business does not exist', async () => {
+    await expectApiError(getBusiness('no-existe'), 404, 'BUSINESS_NOT_FOUND');
   });
 });
