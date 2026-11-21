@@ -1,6 +1,7 @@
 import { Card } from '@/shared/ui/Card';
-import { businessInitial } from '../domain/business-display';
+import { businessDetailPath, businessInitial } from '../domain/business-display';
 import type { BusinessDetail as BusinessDetailData } from '../schemas/business-detail.schema';
+import { CopyLinkButton } from './CopyLinkButton';
 
 // Ficha pública (US-08). En el celular, una columna; desde lg, la foto y los datos lado a lado.
 // Estado, horario, contacto y pagos se suman con US-09, US-10 y US-17 (docs/mockup/web.md).
@@ -24,6 +25,10 @@ export function BusinessDetail({ business }: { business: BusinessDetailData }) {
         {business.description && (
           <p className="text-base text-muted-strong">{business.description}</p>
         )}
+        {/* El mockup lo pone en el bloque de contacto, que llega con US-10 (desvío explicado en el PR). */}
+        <div className="pt-2">
+          <CopyLinkButton path={businessDetailPath(business.slug)} />
+        </div>
       </div>
     </Card>
   );
