@@ -29,6 +29,8 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.21 | 10/11/2026 | José | Agrega D-42 como pendiente: si Swagger declara en cada endpoint los errores comunes. Se escribió como D-41 en la rama de US-01 y se renumeró al traer D-41 de `develop` |
 | 0.22 | 10/11/2026 | José | Agrega D-43: mensajes de validación de Zod en español. Se escribió como D-42 y se renumeró por lo mismo |
 | 0.23 | 17/11/2026 | Tobias | Agrega D-44 y D-45 como pendientes: parámetros de la URL de la web en español y `pages/` con componentes de servidor en la web. Se escribieron como D-43 y D-44 y se renumeraron al traer las decisiones de `develop` |
+| 0.24 | 21/11/2026 | Tobias | Agrega D-46 como pendiente: código HTTP de la página 404 de la ficha. La nota de D-45 suma la ficha de US-08 |
+| 0.25 | 21/11/2026 | Tobias | Acepta D-45 (opción A: `pages/` con componentes de servidor en la web) y D-46 (opción A: la 404 de la ficha responde 200 con `noindex`) |
 
 ## Índice
 
@@ -78,7 +80,8 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-42 | Errores comunes en Swagger | Pendiente |
 | D-43 | Mensajes de validación de Zod en español | Aceptada |
 | D-44 | Parámetros de la URL de la web en español | Pendiente |
-| D-45 | `pages/` con componentes de servidor en los módulos de la web | Pendiente |
+| D-45 | `pages/` con componentes de servidor en los módulos de la web | Aceptada |
+| D-46 | Código HTTP de la página 404 de la ficha | Aceptada |
 
 ---
 
@@ -489,8 +492,15 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 - **Nota:** mientras no se decida, rige la opción A. El listado de US-01 ya usa `?pagina=`.
 
 ## D-45 `pages/` con componentes de servidor en los módulos de la web
-- **Decisión:** pendiente. Falta definir si un módulo de `web/` puede tener una carpeta `pages/` con un componente de servidor asíncrono (un componente que pide los datos en el servidor con `await`) que la ruta de `app/` usa dentro de un `<Suspense>`. Las opciones son:
-  - **A. Se permite.** La ruta de `app/` queda fina: lee `searchParams` dentro del `<Suspense>` y le pasa el valor al componente de `pages/`, que pide los datos y arma la pantalla. Se suma `pages/` al árbol de la web en la skill `estructura-del-frontend`.
-  - **B. No se permite.** La ruta de `app/` pide los datos y arma la pantalla, y el módulo solo aporta `api`, `components` y `schemas`.
+- **Decisión:** opción A. Un módulo de `web/` tiene una carpeta `pages/` con componentes de servidor asíncronos (componentes que piden los datos en el servidor con `await`). La ruta de `app/` queda fina: lee `params` o `searchParams` dentro de un `<Suspense>` y le pasa los valores al componente de `pages/`, que pide los datos y arma la pantalla. La skill `estructura-del-frontend` suma `pages/` al árbol de la web.
+- **Descartado:** B, que la ruta de `app/` pida los datos y arme la pantalla, y el módulo solo aporte `api`, `components` y `schemas`. Llena `app/` de lógica, cuando D-29 y la skill la dejan solo para rutas, y deja a la web sin la capa `pages` que D-31 da a todos los módulos.
 - **Motivo:** la web tiene `cacheComponents: true` y no hay un `loading.tsx` global. Con esa configuración, leer `searchParams` fuera de un `<Suspense>` bloquea el prerender (que Next arme la página antes de que alguien la pida). D-31 lista `pages` como capa de los módulos, pero el árbol de la web en `estructura-del-frontend` no la incluye, y dice que en la web esa capa es `app/`.
-- **Nota:** mientras no se decida, rige la opción A. El listado de US-01 ya la usa: `app/page.tsx` y `modules/businesses/pages/BusinessListPage.tsx`.
+- **Nota:** el listado de US-01 la usa: `app/page.tsx` y `modules/businesses/pages/BusinessListPage.tsx`. La ficha de US-08 también: `app/negocios/[slug]/page.tsx` lee `params` dentro del `<Suspense>` y usa `modules/businesses/pages/BusinessDetailPage.tsx`. Con `params` pasa lo mismo que con `searchParams`.
+
+## D-46 Código HTTP de la página 404 de la ficha
+- **Decisión:** opción A. La página 404 de una ficha que no existe (`/negocios/[slug]`, US-08) responde con código HTTP 200 y lleva `<meta name="robots" content="noindex">`. El visitante ve la página 404 y los buscadores no la guardan.
+- **Descartado:**
+  - Responder 404 a todos. Obliga a pedir el negocio antes de empezar a mandar la página: sacar el `<Suspense>` (se pierde el esqueleto de carga y se bloquea el prerender, D-45) o consultar la API desde el proxy, con dos pedidos por visita.
+  - Llamar a `notFound()` también en `generateMetadata`. Se probó: solo da 404 a los bots que leen el HTML sin JavaScript (WhatsApp); Chrome y Googlebot siguen recibiendo 200, porque a ellos Next les manda la metadata después de empezar la página. No cambia nada importante y suma un caso más.
+- **Motivo:** la web tiene `cacheComponents: true`, y la ficha se pide dentro de un `<Suspense>` (D-45). Cuando `notFound()` se llama ahí, Next ya empezó a mandar la página con código 200, así que no lo puede cambiar: muestra `not-found.tsx` y agrega el `noindex`. El criterio de US-08 se cumple para el visitante, y la API sí responde 404 (RF-08). Lo que cambia es lo que ven los buscadores y las herramientas que miran el código HTTP.
+- **Nota:** surgió al armar la ficha de US-08. Googlebot respeta el `noindex`, así que una ficha que no existe no queda en el buscador. Si más adelante hace falta el 404 HTTP en la web (por ejemplo, para un monitor de enlaces rotos), se revisa con esta decisión.

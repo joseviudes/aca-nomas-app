@@ -11,7 +11,7 @@ Misma idea que el backend: **carpetas por módulo, y dentro de cada módulo, cap
 
 | Capa | Hace | No hace | En el backend sería |
 |---|---|---|---|
-| `pages/` (en la web, `app/`) | Arma la pantalla: usa hooks y pasa datos a los componentes | Llamar a la API directo, reglas de negocio | `routes` + `controllers` |
+| `pages/` (en la web, con la ruta fina en `app/`, D-45) | Arma la pantalla: usa hooks y pasa datos a los componentes | Llamar a la API directo, reglas de negocio | `routes` + `controllers` |
 | `components/` | Muestra lo que recibe por props y avisa eventos (`onSubmit`, `onChange`) | Pedir datos, conocer la API | — (la vista) |
 | `hooks/` | Estado, carga, errores, qué pasa al guardar | Dibujar HTML | `services` |
 | `api/` | Las llamadas HTTP del módulo, con el `http-client`. Mientras el backend no está, devuelven los datos de ejemplo de `<módulo>.fixtures.ts` (D-40) | Estado, lógica de pantalla | `repositories` |
@@ -53,12 +53,15 @@ web/src/
 │   ├── layout.tsx
 │   ├── page.tsx             listado: usa modules/businesses
 │   └── negocios/[slug]/
-│       └── page.tsx         ficha + generateMetadata (vista previa al compartir)
+│       ├── page.tsx         ficha + generateMetadata (vista previa al compartir)
+│       └── not-found.tsx    la 404 de una ficha que no existe (D-46)
 ├── config/
 │   └── env.ts               NEXT_PUBLIC_API_URL validada con Zod
 ├── modules/
 │   └── businesses/
 │       ├── api/  components/  hooks/  schemas/  domain/
+│       ├── pages/           componentes de servidor que piden los datos y arman la
+│       │                    pantalla; la ruta de app/ los usa dentro de un <Suspense> (D-45)
 │       └── index.ts
 └── shared/
     ├── api/                 http-client.ts y api-error.ts (D-30)
@@ -68,7 +71,8 @@ web/src/
 
 En la web hay una decisión más por componente: **servidor o cliente**.
 
-- Los datos se piden en el servidor, en el `page.tsx`. Así la ficha llega armada y la vista previa en WhatsApp funciona (D-27).
+- Los datos se piden en el servidor, en el componente de `pages/` del módulo. Así la ficha llega armada y la vista previa en WhatsApp funciona (D-27).
+- El `page.tsx` de `app/` queda fino: lee `params` o `searchParams` dentro de un `<Suspense>` y le pasa los valores al componente de `pages/`. Con `cacheComponents`, leerlos fuera del `<Suspense>` bloquea el prerender (D-45). Ejemplos: `app/page.tsx` y `app/negocios/[slug]/page.tsx`.
 - Solo lo interactivo (filtros, mapa, botones con estado) lleva `'use client'`, y en el componente más chico posible.
 - Para cachear una respuesta, se pasan las opciones de Next al `http-client`: `http.get('/categories', { next: { revalidate: 3600 } })`.
 
@@ -115,7 +119,7 @@ Si mañana cambia el endpoint, se toca solo `auth.api.ts`.
 El orden para armar una pantalla completa (esquema, API, hook, componentes, página, ruta y prueba) está en la skill `nueva-pantalla`. Toda pantalla se arma celular primero: 390 px sin prefijo y después `sm:`, `lg:` y `xl:` (`docs/diseno.md`, sección 9).
 
 - ¿Cómo se ve una pantalla? → el mockup (`docs/diseno.md`, sección 1), o `docs/mockup/` si no abre.
-- ¿Una pantalla nueva? → `pages/` del módulo y su ruta en `router.tsx` (panel) o una carpeta en `app/` (web).
+- ¿Una pantalla nueva? → `pages/` del módulo y su ruta en `router.tsx` (panel) o una carpeta en `app/` (web, D-45).
 - ¿Una llamada a un endpoint? → `api/` del módulo, con `http`.
 - ¿Estado de un formulario o "cargando"? → un hook en `hooks/`.
 - ¿Un botón genérico? → `shared/ui/`. ¿Una tarjeta de negocio? → `components/` de `businesses`.

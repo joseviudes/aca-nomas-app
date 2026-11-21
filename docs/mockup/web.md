@@ -8,6 +8,7 @@ Qué muestra cada pantalla de la web pública en el mockup, con el detalle del l
 |---|---|---|---|
 | 0.1 | 17/11/2026 | Tobias | Versión inicial: pantallas de la web y detalle del listado |
 | 0.2 | 17/11/2026 | Tobias | Actualiza los enlaces a las capturas renombradas del listado y de los filtros en celular |
+| 0.3 | 21/11/2026 | Tobias | Sección 5: qué arma US-08 en la ficha, qué queda para otras historias y cómo es la página 404 |
 
 ## Índice
 
@@ -174,6 +175,22 @@ Historias: US-08 a US-11 y US-17.
 | Pie | Logo y "Mantilla, Corrientes" | Igual |
 
 **Lo que el MVP pide y el mockup no muestra:** la página 404 de una ficha que no existe (US-08). Las partes de la ficha que no entran ("Compartir por WhatsApp", el mapa, "Reclamá la ficha", "Horario confirmado") ya no están.
+
+### Qué hace US-08 y qué queda para otras historias
+
+US-08 arma la ficha en `/negocios/[slug]`: "Volver al listado" y el bloque `sand` con el lugar de la foto, el rubro, el nombre y la descripción. Si el negocio no tiene descripción, no se muestra nada en su lugar.
+
+| Parte del mockup | Historia |
+|---|---|
+| "Volver al listado", rubro, nombre y descripción | US-08 |
+| "Copiar el enlace" | US-08. Mientras no exista el bloque de contacto, va en el bloque de datos, debajo de la descripción |
+| Etiqueta de estado, texto de estado y horario de la semana | US-09 |
+| Bloque de contacto: WhatsApp, Instagram y "Cómo llegar" | US-10. Al armarlo, "Copiar el enlace" pasa a ese bloque, como en el mockup |
+| Foto del negocio | US-11 (la sube el dueño en US-19). Hasta entonces, la inicial sobre `mint` y "Sin foto" |
+| Pagos y entregas | US-17 |
+| Distancia | Sin historia: US-06 la pide solo para el listado |
+
+**Página 404:** el mockup no la muestra. Es un bloque `mint` con "Error 404", el título "No encontramos este negocio", un texto corto y el botón "Ver todos los negocios", que lleva al listado. Ver D-46 en `docs/decisiones.md` sobre el código HTTP que devuelve.
 
 ## 6. Explorar — Oficios y Eventos (fase 2)
 
