@@ -1,3 +1,4 @@
+import type { BusinessDetail } from '../schemas/business-detail.schema';
 import type { BusinessListItem, BusinessListResponse } from '../schemas/business-list.schema';
 
 // Datos de ejemplo con la forma del contrato (D-40). La web ya usa la API: quedan solo para las
@@ -71,4 +72,28 @@ export function businessListFixture({
     limit,
     total: businessListItemsFixture.length,
   };
+}
+
+// Fichas (GET /businesses/:slug). La primera es el ejemplo de Swagger; la segunda, un negocio sin
+// descripción.
+const businessDetailsFixture: BusinessDetail[] = [
+  {
+    slug: 'panaderia-la-espiga',
+    name: 'Panadería La Espiga',
+    description: 'Pan casero, facturas y tortas por encargo.',
+    category: { slug: 'panaderia', name: CATEGORIES.panaderia },
+    photoUrl: null,
+  },
+  {
+    slug: 'kiosco-el-recreo',
+    name: 'Kiosco El Recreo',
+    description: null,
+    category: { slug: 'kiosco', name: CATEGORIES.kiosco },
+    photoUrl: null,
+  },
+];
+
+// undefined es un negocio que no existe: la API responde 404.
+export function businessDetailFixture(slug: string): BusinessDetail | undefined {
+  return businessDetailsFixture.find((business) => business.slug === slug);
 }
