@@ -62,6 +62,7 @@ web/src/
 │       ├── api/  components/  hooks/  schemas/  domain/
 │       ├── pages/           componentes de servidor que piden los datos y arman la
 │       │                    pantalla; la ruta de app/ los usa dentro de un <Suspense> (D-45)
+│       ├── metadata/        título y vista previa al compartir de cada pantalla (D-47)
 │       └── index.ts
 └── shared/
     ├── api/                 http-client.ts y api-error.ts (D-30)
@@ -73,6 +74,7 @@ En la web hay una decisión más por componente: **servidor o cliente**.
 
 - Los datos se piden en el servidor, en el componente de `pages/` del módulo. Así la ficha llega armada y la vista previa en WhatsApp funciona (D-27).
 - El `page.tsx` de `app/` queda fino: lee `params` o `searchParams` dentro de un `<Suspense>` y le pasa los valores al componente de `pages/`. Con `cacheComponents`, leerlos fuera del `<Suspense>` bloquea el prerender (D-45). Ejemplos: `app/page.tsx` y `app/negocios/[slug]/page.tsx`.
+- La metadata de una pantalla (título y vista previa al compartir) va en `metadata/` del módulo, en un archivo `<pantalla>.metadata.ts` que exporta `<pantalla>Metadata`. La ruta de `app/` la llama desde `generateMetadata`. Si es fija y no depende de datos, va directo en la ruta con `export const metadata` (D-47).
 - Solo lo interactivo (filtros, mapa, botones con estado) lleva `'use client'`, y en el componente más chico posible.
 - Para cachear una respuesta, se pasan las opciones de Next al `http-client`: `http.get('/categories', { next: { revalidate: 3600 } })`.
 
@@ -121,6 +123,7 @@ El orden para armar una pantalla completa (esquema, API, hook, componentes, pág
 - ¿Cómo se ve una pantalla? → el mockup (`docs/diseno.md`, sección 1), o `docs/mockup/` si no abre.
 - ¿Una pantalla nueva? → `pages/` del módulo y su ruta en `router.tsx` (panel) o una carpeta en `app/` (web, D-45).
 - ¿Una llamada a un endpoint? → `api/` del módulo, con `http`.
+- ¿El título o la vista previa al compartir de una pantalla de la web? → `metadata/` del módulo (D-47).
 - ¿Estado de un formulario o "cargando"? → un hook en `hooks/`.
 - ¿Un botón genérico? → `shared/ui/`. ¿Una tarjeta de negocio? → `components/` de `businesses`.
 - ¿Un color, una fuente o una sombra? → token en `shared/ui/theme.css` de las dos apps y en `docs/diseno.md`. Nunca un valor suelto en la pantalla.

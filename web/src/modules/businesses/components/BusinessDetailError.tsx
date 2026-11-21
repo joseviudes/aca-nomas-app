@@ -5,6 +5,7 @@ function errorMessage(code: string): string {
   if (code === 'NETWORK_ERROR') {
     return 'No pudimos conectarnos. Revisá tu conexión e intentá de nuevo.';
   }
+
   return 'No pudimos cargar este negocio. Intentá de nuevo en un rato.';
 }
 
