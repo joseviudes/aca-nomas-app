@@ -10,6 +10,7 @@ import { pageHref } from '../domain/pagination';
 // Listado del inicio (US-01). Se pide en el servidor; la carga la muestra el <Suspense> de la ruta.
 export async function BusinessListPage({ page }: { page: number }) {
   let result;
+
   try {
     result = await listBusinesses({ page });
   } catch (error) {
@@ -18,6 +19,7 @@ export async function BusinessListPage({ page }: { page: number }) {
     if (error instanceof ApiError) {
       return <BusinessListError code={error.code} retryHref={pageHref(page)} />;
     }
+
     throw error;
   }
 

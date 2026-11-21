@@ -16,6 +16,7 @@ export default function Home({ searchParams }: PageProps<'/'>) {
 
 async function BusinessListForPage({ searchParams }: Pick<PageProps<'/'>, 'searchParams'>) {
   const page = listPageParamSchema.parse((await searchParams).pagina);
+
   // La key hace que al cambiar de página se vea la carga, en lugar de la página anterior.
   return (
     <Suspense key={page} fallback={<BusinessListSkeleton />}>
