@@ -17,7 +17,11 @@ export function BusinessCard({ business }: { business: BusinessListItem }) {
           <span aria-hidden="true" className="font-display text-5xl text-brand sm:text-8xl">
             {businessInitial(business.name)}
           </span>
-          <span className="caps-label absolute bottom-3.5 left-4 hidden text-brand sm:block">
+          {/* aria-hidden: el enlace se anuncia por el nombre del negocio, no por "Sin foto". */}
+          <span
+            aria-hidden="true"
+            className="caps-label absolute bottom-3.5 left-4 hidden text-brand sm:block"
+          >
             Sin foto
           </span>
           <div className="absolute top-3.5 left-3.5 hidden sm:block">

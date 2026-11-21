@@ -13,7 +13,7 @@ export function BusinessDetail({ business }: { business: BusinessDetailData }) {
       className="flex flex-col gap-5 lg:flex-row lg:items-center lg:gap-8"
     >
       {/* Hasta US-19 no hay fotos: el lugar de la foto queda en mint con la inicial (docs/diseno.md, sección 4). */}
-      <div className="relative flex aspect-[4/3] w-full shrink-0 items-center justify-center rounded-card bg-mint lg:w-1/2">
+      <div className="relative flex aspect-4/3 w-full shrink-0 items-center justify-center rounded-card bg-mint lg:w-1/2">
         <span aria-hidden="true" className="font-display text-8xl text-brand">
           {businessInitial(business.name)}
         </span>

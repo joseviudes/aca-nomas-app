@@ -23,6 +23,8 @@ export function CopyLinkButton({ path }: { path: string }) {
 
   async function copy() {
     clearTimeout(timeout.current);
+    // Se vacía antes de copiar: si se toca dos veces seguidas, el lector de pantalla lo anuncia de nuevo.
+    setState('idle');
     try {
       // navigator.clipboard solo existe en https o en localhost.
       if (!navigator.clipboard) throw new Error('Clipboard API unavailable');
@@ -40,7 +42,7 @@ export function CopyLinkButton({ path }: { path: string }) {
         Copiar el enlace
       </Button>
       {/* Siempre montado: el lector de pantalla anuncia el cambio de texto. */}
-      <p role="status" aria-live="polite" className="text-sm font-bold text-brand">
+      <p role="status" className="text-sm font-bold text-brand">
         {notices[state]}
       </p>
     </div>
