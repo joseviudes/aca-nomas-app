@@ -31,6 +31,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.23 | 17/11/2026 | Tobias | Agrega D-44 y D-45 como pendientes: parámetros de la URL de la web en español y `pages/` con componentes de servidor en la web. Se escribieron como D-43 y D-44 y se renumeraron al traer las decisiones de `develop` |
 | 0.24 | 21/11/2026 | Tobias | Agrega D-46 como pendiente: código HTTP de la página 404 de la ficha. La nota de D-45 suma la ficha de US-08 |
 | 0.25 | 21/11/2026 | Tobias | Acepta D-45 (opción A: `pages/` con componentes de servidor en la web) y D-46 (opción A: la 404 de la ficha responde 200 con `noindex`) |
+| 0.26 | 21/11/2026 | Tobias | Agrega y acepta D-47: carpeta `metadata/` en los módulos de la web, para la vista previa de cada pantalla |
 
 ## Índice
 
@@ -82,6 +83,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-44 | Parámetros de la URL de la web en español | Pendiente |
 | D-45 | `pages/` con componentes de servidor en los módulos de la web | Aceptada |
 | D-46 | Código HTTP de la página 404 de la ficha | Aceptada |
+| D-47 | Carpeta `metadata/` en los módulos de la web | Aceptada |
 
 ---
 
@@ -504,3 +506,11 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
   - Llamar a `notFound()` también en `generateMetadata`. Se probó: solo da 404 a los bots que leen el HTML sin JavaScript (WhatsApp); Chrome y Googlebot siguen recibiendo 200, porque a ellos Next les manda la metadata después de empezar la página. No cambia nada importante y suma un caso más.
 - **Motivo:** la web tiene `cacheComponents: true`, y la ficha se pide dentro de un `<Suspense>` (D-45). Cuando `notFound()` se llama ahí, Next ya empezó a mandar la página con código 200, así que no lo puede cambiar: muestra `not-found.tsx` y agrega el `noindex`. El criterio de US-08 se cumple para el visitante, y la API sí responde 404 (RF-08). Lo que cambia es lo que ven los buscadores y las herramientas que miran el código HTTP.
 - **Nota:** surgió al armar la ficha de US-08. Googlebot respeta el `noindex`, así que una ficha que no existe no queda en el buscador. Si más adelante hace falta el 404 HTTP en la web (por ejemplo, para un monitor de enlaces rotos), se revisa con esta decisión.
+
+## D-47 Carpeta `metadata/` en los módulos de la web
+- **Decisión:** un módulo de `web/` tiene una carpeta `metadata/` con las funciones que arman la metadata de una pantalla (título y vista previa al compartir, D-27). Cada archivo se llama `<pantalla>.metadata.ts` y exporta una función `<pantalla>Metadata`, que la ruta de `app/` llama desde `generateMetadata`. Puede usar `api/` y `domain/`, y nunca lanza un `ApiError`. La metadata fija de una ruta, que no depende de datos, se escribe directo en la ruta con `export const metadata`, sin archivo aparte. La skill `estructura-del-frontend` suma `metadata/` al árbol de la web.
+- **Descartado:**
+  - Dejarla en `pages/`, junto al componente de la pantalla. Funcionaba, pero esa carpeta es para componentes que arman la pantalla, y la metadata no lo es.
+  - Escribirla dentro de `app/<ruta>/page.tsx`. Es lo que muestra la documentación de Next, pero engorda la ruta, que D-45 deja fina.
+- **Motivo:** la metadata de una pantalla pide datos a la API, así que no puede ir en `domain/` (funciones puras). Se espera más de una (por ejemplo, otras pantallas públicas), y una carpeta propia evita mezclarlas con los componentes.
+- **Nota:** surgió al revisar la ficha de US-08, donde `business-detail.metadata.ts` estaba en `pages/`. Hoy hay una sola; si queda como la única, se sigue pudiendo escribir directo en la ruta.
