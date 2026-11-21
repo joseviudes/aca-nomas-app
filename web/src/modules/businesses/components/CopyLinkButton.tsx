@@ -23,12 +23,16 @@ export function CopyLinkButton({ path }: { path: string }) {
 
   async function copy() {
     clearTimeout(timeout.current);
+
     // Se vacía antes de copiar: si se toca dos veces seguidas, el lector de pantalla lo anuncia de nuevo.
     setState('idle');
+
     try {
       // navigator.clipboard solo existe en https o en localhost.
       if (!navigator.clipboard) throw new Error('Clipboard API unavailable');
+
       await navigator.clipboard.writeText(`${window.location.origin}${path}`);
+
       setState('copied');
       timeout.current = setTimeout(() => setState('idle'), NOTICE_MS);
     } catch {
