@@ -30,7 +30,11 @@ export class BusinessService {
   ) {}
 
   async list(query: BusinessListQuery): Promise<BusinessListResponse> {
-    const { items, total } = await this.businessRepository.findPage(query);
+    const { items, total } = await this.businessRepository.findPage({
+      page: query.page,
+      limit: query.limit,
+      category: query.category,
+    });
     return toPage(
       items.map((entry) => this.toListItem(entry)),
       total,

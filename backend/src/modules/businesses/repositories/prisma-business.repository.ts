@@ -1,8 +1,9 @@
 import type { PrismaClient } from '../../../generated/prisma/client.js';
 import type { DayOfWeek } from '../../opening-hours/domain/opening-hours.types.js';
-import { toOffset, type PaginationQuery } from '../../../shared/pagination/pagination.js';
+import { toOffset } from '../../../shared/pagination/pagination.js';
 import type {
   BusinessDetailEntry,
+  BusinessListCriteria,
   BusinessListPage,
   BusinessRepository,
 } from '../../../shared/ports/business.repository.js';
@@ -15,10 +16,14 @@ const toDate = (value: Date): string => value.toISOString().slice(0, 10);
 export class PrismaBusinessRepository implements BusinessRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async findPage(pagination: PaginationQuery): Promise<BusinessListPage> {
+  async findPage(criteria: BusinessListCriteria): Promise<BusinessListPage> {
+    // El mismo where para la página y para el total, así el total cuenta lo que se filtró.
+    const where = criteria.category ? { category: { slug: criteria.category } } : {};
+
     // En una transacción, para que el total y la página se lean de la misma foto de la base.
     const [rows, total] = await this.prisma.$transaction([
       this.prisma.business.findMany({
+        where,
         select: {
           slug: true,
           name: true,
@@ -33,10 +38,10 @@ export class PrismaBusinessRepository implements BusinessRepository {
         // dos negocios con el mismo nombre, así ninguno se repite ni se pierde entre páginas.
         // "Abiertos primero" se suma con US-05.
         orderBy: [{ name: 'asc' }, { slug: 'asc' }],
-        skip: toOffset(pagination),
-        take: pagination.limit,
+        skip: toOffset(criteria),
+        take: criteria.limit,
       }),
-      this.prisma.business.count(),
+      this.prisma.business.count({ where }),
     ]);
 
     const items = rows.map((row) => ({

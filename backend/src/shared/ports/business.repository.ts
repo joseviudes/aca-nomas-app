@@ -30,9 +30,17 @@ export interface BusinessDetailEntry {
   category: { slug: string; name: string };
 }
 
+// Qué página del listado pedir y con qué filtros. Cada filtro nuevo (US-02, US-04, US-06) se suma acá.
+export interface BusinessListCriteria extends PaginationQuery {
+  // US-03: slug del rubro. Sin él, no se filtra por rubro. Un rubro que no existe no da error:
+  // ningún negocio lo tiene, así que la lista queda vacía.
+  category?: string | undefined;
+}
+
 export interface BusinessRepository {
   // Ordenados por nombre. Una página fuera de rango devuelve items vacío, no un error.
-  findPage(pagination: PaginationQuery): Promise<BusinessListPage>;
+  // El total cuenta solo los negocios que cumplen los filtros.
+  findPage(criteria: BusinessListCriteria): Promise<BusinessListPage>;
   // null si ningún negocio tiene ese slug.
   findBySlug(slug: string): Promise<BusinessDetailEntry | null>;
 }
