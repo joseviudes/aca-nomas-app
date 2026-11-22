@@ -21,16 +21,18 @@ export function WeeklySchedule({ schedule }: { schedule: WeeklyScheduleData }) {
               key={day.dayOfWeek}
               // El lector de pantalla anuncia la fila de hoy sin depender del color.
               aria-current={today ? 'date' : undefined}
+              // flex-wrap: a 320 px, "Miércoles", "Hoy" y un turno no entran en un renglón, y las
+              // horas pasan abajo, alineadas a la derecha, en lugar de salirse de la fila.
               className={cx(
-                'flex items-baseline justify-between gap-3 rounded-field px-3.5 py-2.5 text-base',
+                'flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-field px-3.5 py-2.5 text-base',
                 today ? 'bg-brand text-paper' : 'bg-paper text-ink',
               )}
             >
-              <span className="flex shrink-0 items-baseline gap-2 font-bold">
+              <span className="flex items-baseline gap-2 font-bold">
                 {dayName(day.dayOfWeek)}
                 {today && <span className="caps-label text-accent">Hoy</span>}
               </span>
-              <span className="min-w-0 text-right">{shiftsLabel(day.shifts)}</span>
+              <span className="ml-auto text-right">{shiftsLabel(day.shifts)}</span>
             </li>
           );
         })}
