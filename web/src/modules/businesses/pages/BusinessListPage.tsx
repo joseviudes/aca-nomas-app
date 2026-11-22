@@ -25,7 +25,7 @@ export async function BusinessListPage({ page, category }: { page: number; categ
   }
 
   if (result.data.length === 0) {
-    return <BusinessListEmpty total={result.total} />;
+    return <BusinessListEmpty total={result.total} category={category} />;
   }
 
   return (
