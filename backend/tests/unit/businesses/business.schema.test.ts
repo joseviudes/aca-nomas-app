@@ -26,11 +26,16 @@ describe('businessListQuerySchema', () => {
     expect(businessListQuerySchema.safeParse(query).success).toBe(false);
   });
 
-  it('todavía no acepta filtros: los descarta hasta que el repositorio los aplique', () => {
-    expect(businessListQuerySchema.parse({ category: 'panaderia', openNow: 'true' })).toEqual({
+  it('acepta category (US-03) y descarta los filtros que el repositorio todavía no aplica', () => {
+    expect(businessListQuerySchema.parse({ category: 'Panaderia', openNow: 'true' })).toEqual({
       page: 1,
       limit: 20,
+      category: 'panaderia',
     });
+  });
+
+  it('rechaza un category que no es un slug', () => {
+    expect(businessListQuerySchema.safeParse({ category: 'Pan y más' }).success).toBe(false);
   });
 });
 

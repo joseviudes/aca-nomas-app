@@ -100,9 +100,12 @@ export const businessListFiltersSchema = z
 
 export type BusinessListFilters = z.infer<typeof businessListFiltersSchema>;
 
-// Consulta del listado (US-01): page y limit, con 20 por página por defecto. Los filtros de
-// businessListFiltersSchema se suman con US-02 a US-06.
-export const businessListQuerySchema = paginationQuerySchema;
+// Consulta del listado: page y limit (US-01), con 20 por página por defecto, y los filtros de
+// businessListFiltersSchema que ya aplica el repositorio. Hoy, category (US-03); q, openNow, lat y
+// lng se suman con US-02, US-04 y US-06, cuando el repositorio los filtre.
+export const businessListQuerySchema = paginationQuerySchema.extend({
+  category: businessListFiltersSchema.shape.category,
+});
 
 export type BusinessListQuery = z.infer<typeof businessListQuerySchema>;
 
