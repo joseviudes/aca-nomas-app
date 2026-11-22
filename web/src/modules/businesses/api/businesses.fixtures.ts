@@ -66,20 +66,26 @@ const businessListItemsFixture: BusinessListItem[] = BUSINESSES.map(
   }),
 );
 
-// Igual que la API: una página fuera de rango devuelve data vacía, no un error.
+// Igual que la API: una página fuera de rango o un rubro que no existe devuelven data vacía, no un
+// error. Con rubro, total cuenta solo los negocios de ese rubro.
 export function businessListFixture({
   page,
   limit,
+  category,
 }: {
   page: number;
   limit: number;
+  category?: string;
 }): BusinessListResponse {
+  const items = category
+    ? businessListItemsFixture.filter((business) => business.category.slug === category)
+    : businessListItemsFixture;
   const start = (page - 1) * limit;
   return {
-    data: businessListItemsFixture.slice(start, start + limit),
+    data: items.slice(start, start + limit),
     page,
     limit,
-    total: businessListItemsFixture.length,
+    total: items.length,
   };
 }
 

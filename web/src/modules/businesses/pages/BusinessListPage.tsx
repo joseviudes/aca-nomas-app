@@ -7,17 +7,18 @@ import { BusinessListHeader } from '../components/BusinessListHeader';
 import { ListPagination } from '../components/ListPagination';
 import { listHref } from '../domain/list-href';
 
-// Listado del inicio (US-01). Se pide en el servidor; la carga la muestra el <Suspense> de la ruta.
-export async function BusinessListPage({ page }: { page: number }) {
+// Listado del inicio (US-01), filtrado por rubro si hay uno (US-03). Se pide en el servidor; la
+// carga la muestra el <Suspense> de la ruta.
+export async function BusinessListPage({ page, category }: { page: number; category?: string }) {
   let result;
 
   try {
-    result = await listBusinesses({ page });
+    result = await listBusinesses({ page, category });
   } catch (error) {
     // Un ApiError es un caso previsto (sin conexión, respuesta inválida). Lo demás es un error
     // de programación y tiene que llegar al manejador de errores de Next.
     if (error instanceof ApiError) {
-      return <BusinessListError code={error.code} retryHref={listHref({ page })} />;
+      return <BusinessListError code={error.code} retryHref={listHref({ page, category })} />;
     }
 
     throw error;
@@ -34,7 +35,12 @@ export async function BusinessListPage({ page }: { page: number }) {
         <BusinessListHeader total={result.total} />
         <BusinessList businesses={result.data} />
       </section>
-      <ListPagination page={result.page} limit={result.limit} total={result.total} />
+      <ListPagination
+        page={result.page}
+        limit={result.limit}
+        total={result.total}
+        category={category}
+      />
     </div>
   );
 }
