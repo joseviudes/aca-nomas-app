@@ -16,17 +16,21 @@ describe('dayName', () => {
 });
 
 describe('shiftsLabel', () => {
+  // Dentro de un turno los espacios son de no separación; se comparan como espacios comunes.
+  const label = (...args: Parameters<typeof shiftsLabel>) =>
+    shiftsLabel(...args).replaceAll('\u00A0', ' ');
+
   it('says "Cerrado" for a day without shifts', () => {
     expect(shiftsLabel([])).toBe('Cerrado');
   });
 
   it('shows a single shift', () => {
-    expect(shiftsLabel([{ opensAt: '08:00', closesAt: '20:00' }])).toBe('08:00 – 20:00');
+    expect(label([{ opensAt: '08:00', closesAt: '20:00' }])).toBe('08:00 – 20:00');
   });
 
   it('joins a split shift in order', () => {
     expect(
-      shiftsLabel([
+      label([
         { opensAt: '08:00', closesAt: '13:00' },
         { opensAt: '17:00', closesAt: '21:30' },
       ]),
@@ -34,7 +38,16 @@ describe('shiftsLabel', () => {
   });
 
   it('keeps a shift that crosses midnight as it comes', () => {
-    expect(shiftsLabel([{ opensAt: '19:00', closesAt: '01:00' }])).toBe('19:00 – 01:00');
+    expect(label([{ opensAt: '19:00', closesAt: '01:00' }])).toBe('19:00 – 01:00');
+  });
+
+  it('only allows a line break between shifts', () => {
+    expect(
+      shiftsLabel([
+        { opensAt: '08:00', closesAt: '13:00' },
+        { opensAt: '17:00', closesAt: '21:30' },
+      ]),
+    ).toBe('08:00\u00A0–\u00A013:00 · 17:00\u00A0–\u00A021:30');
   });
 });
 
