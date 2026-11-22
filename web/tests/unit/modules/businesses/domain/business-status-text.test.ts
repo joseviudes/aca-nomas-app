@@ -116,6 +116,14 @@ describe('statusText', () => {
       expect(statusText(at('closed', null, null), NOW, LOCALITY_TIME_ZONE)).toBeNull();
     });
 
+    it('says "en N min" instead of "mañana" when it opens soon after midnight', () => {
+      // 23:45 del martes local; abre a las 00:15 del miércoles.
+      const now = new Date('2026-11-18T02:45:00Z');
+      expect(
+        statusText(at('closed', null, '2026-11-18T03:15:00Z'), now, LOCALITY_TIME_ZONE),
+      ).toEqual({ text: 'Abre en 30 min · 00:15', emphasized: true });
+    });
+
     it('uses the local calendar day, not the UTC one', () => {
       // 22:00 del lunes local ya es el martes en UTC; la apertura es martes 09:00 local.
       const now = new Date('2026-11-17T01:00:00Z');
@@ -161,6 +169,40 @@ describe('statusText', () => {
       const status = at('open', '2026-11-17T20:00:00Z', null);
       expect(statusText(status, NOW, 'UTC')?.text).toBe('Cierra a las 20:00');
       expect(statusText(status, NOW, LOCALITY_TIME_ZONE)?.text).toBe('Cierra a las 17:00');
+    });
+  });
+
+  // Santiago de Chile tiene horario de verano. La noche del sábado 5 al domingo 6 de septiembre
+  // de 2026 la medianoche salta a la 01:00 (UTC-4 a UTC-3); la del 4 al 5 de abril, las 00:00
+  // vuelven a las 23:00 (UTC-3 a UTC-4). El día se compara por fecha local, no contando 24 horas.
+  describe('daylight saving time', () => {
+    const SANTIAGO = 'America/Santiago';
+
+    it('says "mañana" across the night the clock moves forward', () => {
+      // Sábado 22:00 (UTC-4); abre el domingo a las 09:00 (UTC-3), 10 horas reales después.
+      const now = new Date('2026-09-06T02:00:00Z');
+      expect(statusText(at('closed', null, '2026-09-06T12:00:00Z'), now, SANTIAGO)).toEqual({
+        text: 'Abre mañana a las 09:00',
+        emphasized: false,
+      });
+    });
+
+    it('counts real minutes across the skipped hour', () => {
+      // Sábado 23:30 (UTC-4); abre el domingo a las 01:15 (UTC-3): faltan 45 minutos, no 105.
+      const now = new Date('2026-09-06T03:30:00Z');
+      expect(statusText(at('closed', null, '2026-09-06T04:15:00Z'), now, SANTIAGO)).toEqual({
+        text: 'Abre en 45 min · 01:15',
+        emphasized: true,
+      });
+    });
+
+    it('says "mañana" across the night the clock moves back', () => {
+      // El segundo sábado 23:30 (UTC-4, la hora se repite); cierra el domingo a las 09:00.
+      const now = new Date('2026-04-05T03:30:00Z');
+      expect(statusText(at('open', '2026-04-05T13:00:00Z', null), now, SANTIAGO)).toEqual({
+        text: 'Cierra mañana a las 09:00',
+        emphasized: false,
+      });
     });
   });
 
