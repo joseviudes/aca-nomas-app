@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { hasNextPage, hasPreviousPage, pageHref, totalPages } from '../domain/pagination';
+import { listHref } from '../domain/list-href';
+import { hasNextPage, hasPreviousPage, totalPages } from '../domain/pagination';
 
 // Al menos 44 px de alto (docs/diseno.md, sección 6), con el estilo del botón secundario.
 const linkClass =
@@ -9,10 +10,13 @@ export function ListPagination({
   page,
   limit,
   total,
+  category,
 }: {
   page: number;
   limit: number;
   total: number;
+  // El rubro elegido: al cambiar de página se mantiene.
+  category?: string;
 }) {
   const pages = totalPages({ limit, total });
   if (pages <= 1) return null;
@@ -23,7 +27,7 @@ export function ListPagination({
     <nav aria-label="Paginación" className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
       <div className="justify-self-start">
         {hasPreviousPage({ page }) && (
-          <Link href={pageHref(page - 1)} className={linkClass}>
+          <Link href={listHref({ page: page - 1, category })} className={linkClass}>
             Anterior
           </Link>
         )}
@@ -33,7 +37,7 @@ export function ListPagination({
       </span>
       <div className="justify-self-end">
         {hasNextPage({ page, limit, total }) && (
-          <Link href={pageHref(page + 1)} className={linkClass}>
+          <Link href={listHref({ page: page + 1, category })} className={linkClass}>
             Siguiente
           </Link>
         )}

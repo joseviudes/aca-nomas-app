@@ -5,7 +5,7 @@ import { BusinessListEmpty } from '../components/BusinessListEmpty';
 import { BusinessListError } from '../components/BusinessListError';
 import { BusinessListHeader } from '../components/BusinessListHeader';
 import { ListPagination } from '../components/ListPagination';
-import { pageHref } from '../domain/pagination';
+import { listHref } from '../domain/list-href';
 
 // Listado del inicio (US-01). Se pide en el servidor; la carga la muestra el <Suspense> de la ruta.
 export async function BusinessListPage({ page }: { page: number }) {
@@ -17,7 +17,7 @@ export async function BusinessListPage({ page }: { page: number }) {
     // Un ApiError es un caso previsto (sin conexión, respuesta inválida). Lo demás es un error
     // de programación y tiene que llegar al manejador de errores de Next.
     if (error instanceof ApiError) {
-      return <BusinessListError code={error.code} retryHref={pageHref(page)} />;
+      return <BusinessListError code={error.code} retryHref={listHref({ page })} />;
     }
 
     throw error;

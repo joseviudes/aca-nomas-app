@@ -12,8 +12,3 @@ export function hasPreviousPage({ page }: Pick<PageInfo, 'page'>): boolean {
 export function hasNextPage(info: PageInfo): boolean {
   return info.page < totalPages(info);
 }
-
-// La página va en ?pagina= (D-44). La primera queda en "/", sin parámetro.
-export function pageHref(page: number): string {
-  return page <= 1 ? '/' : `/?pagina=${page}`;
-}
