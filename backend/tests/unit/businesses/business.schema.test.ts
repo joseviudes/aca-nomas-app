@@ -231,9 +231,51 @@ describe('businessDetailSchema', () => {
       description: null,
       category: { slug: 'kiosco', name: 'Kiosco' },
       photoUrl: null,
+      status: { state: 'closed', closesAt: null, nextOpeningAt: null },
+      schedule: {
+        timezone: 'America/Argentina/Buenos_Aires',
+        today: 1,
+        days: [1, 2, 3, 4, 5, 6, 7].map((dayOfWeek) => ({ dayOfWeek, shifts: [] })),
+      },
     };
 
     expect(businessDetailSchema.parse(detail)).toEqual(detail);
+  });
+
+  describe('schedule', () => {
+    const example = businessDetailSchema.meta()?.example as {
+      schedule: { days: unknown[] };
+    };
+    const parse = (schedule: unknown) =>
+      businessDetailSchema.safeParse({ ...example, schedule }).success;
+    const valid = example.schedule;
+
+    it('acepta el horario del ejemplo', () => {
+      expect(parse(valid)).toBe(true);
+    });
+
+    it('exige los 7 días de la semana', () => {
+      expect(parse({ ...valid, days: valid.days.slice(0, 6) })).toBe(false);
+    });
+
+    it('acepta turnos que cruzan la medianoche', () => {
+      const days = [1, 2, 3, 4, 5, 6, 7].map((dayOfWeek) => ({
+        dayOfWeek,
+        shifts: [{ opensAt: '19:00', closesAt: '01:00' }],
+      }));
+
+      expect(parse({ ...valid, days })).toBe(true);
+    });
+
+    it.each(['8:00', '24:00', '08:60', '08:00:00', 'ocho'])('rechaza la hora %o', (opensAt) => {
+      const days = [{ dayOfWeek: 1, shifts: [{ opensAt, closesAt: '12:00' }] }];
+
+      expect(parse({ ...valid, days: [...days, ...valid.days.slice(1)] })).toBe(false);
+    });
+
+    it.each([0, 8])('rechaza el día de la semana %o', (today) => {
+      expect(parse({ ...valid, today })).toBe(false);
+    });
   });
 
   it('el ejemplo que muestra Swagger cumple el esquema', () => {

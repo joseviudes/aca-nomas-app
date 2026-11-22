@@ -155,9 +155,45 @@ export const businessSlugParamsSchema = z.object({
 
 export type BusinessSlugParams = z.infer<typeof businessSlugParamsSchema>;
 
-// Ficha pública de un negocio (US-08). Un recurso va sin envoltorio (D-25). El estado, el horario
-// semanal (US-09), los canales visibles (US-10 y US-16) y los medios de pago y entregas (US-17) se
-// suman con sus historias, cuando el backend los resuelva.
+// Hora local de la localidad en `HH:mm` (D-11). Un turno cuyo fin es menor o igual al inicio cruza
+// la medianoche (RN-02): 19:00–01:00 cierra a la 1:00 del día siguiente.
+const localTimeSchema = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, {
+  message: 'Tiene que ser una hora HH:mm, por ejemplo 08:30',
+});
+
+export const shiftSchema = z
+  .object({ opensAt: localTimeSchema, closesAt: localTimeSchema })
+  .meta({ id: 'Shift' });
+
+export const dayScheduleSchema = z
+  .object({
+    // 1 es lunes y 7 es domingo, como en la base.
+    dayOfWeek: z.number().int().min(1).max(7),
+    // Ordenados por hora de inicio. Vacío si ese día no abre.
+    shifts: z.array(shiftSchema),
+  })
+  .meta({ id: 'DaySchedule' });
+
+// Horario semanal para mostrar en la ficha (US-09). Las horas son locales de la localidad, no UTC:
+// el visitante ve el horario tal como lo vive el negocio. El estado de ahora sale de `status`.
+export const weeklyScheduleSchema = z
+  .object({
+    timezone: z.string().meta({ description: 'Zona horaria IANA de la localidad (D-12)' }),
+    today: z.number().int().min(1).max(7).meta({
+      description:
+        'Día de la semana de hoy en la localidad (1 lunes a 7 domingo), para marcar "Hoy"',
+    }),
+    days: z.array(dayScheduleSchema).length(7).meta({
+      description: 'Siempre 7 días, de lunes (1) a domingo (7), aunque no tengan turnos',
+    }),
+  })
+  .meta({ id: 'WeeklySchedule' });
+
+export type WeeklySchedule = z.infer<typeof weeklyScheduleSchema>;
+
+// Ficha pública de un negocio (US-08 y US-09). Un recurso va sin envoltorio (D-25). Los canales
+// visibles (US-10 y US-16) y los medios de pago y entregas (US-17) se suman con sus historias,
+// cuando el backend los resuelva.
 export const businessDetailSchema = z
   .object({
     slug: z.string(),
@@ -166,16 +202,34 @@ export const businessDetailSchema = z
     category: z.object({ slug: z.string(), name: z.string() }),
     // Como en el listado: hasta US-19 no hay almacenamiento, así que viene siempre en null (D-14).
     photoUrl: z.url().nullable(),
+    // Mismo cálculo que en el listado (RN-01): con closesAt si está abierto y nextOpeningAt si no.
+    status: businessStatusSchema,
+    schedule: weeklyScheduleSchema,
   })
   .meta({
     id: 'BusinessDetail',
-    // Lo que devuelve /businesses/panaderia-la-espiga con el seed.
+    // Lo que devuelve /businesses/panaderia-la-espiga con el seed un martes a las 10:00 de Mantilla
+    // (13:00 UTC): abierta hasta las 20:00 (23:00 UTC), de lunes a viernes, y los sábados hasta las 13:00.
     example: {
       slug: 'panaderia-la-espiga',
       name: 'Panadería La Espiga',
       description: 'Pan casero, facturas y tortas por encargo.',
       category: { slug: 'panaderia', name: 'Panadería' },
       photoUrl: null,
+      status: { state: 'open', closesAt: '2026-11-17T23:00:00.000Z', nextOpeningAt: null },
+      schedule: {
+        timezone: 'America/Argentina/Buenos_Aires',
+        today: 2,
+        days: [
+          { dayOfWeek: 1, shifts: [{ opensAt: '08:00', closesAt: '20:00' }] },
+          { dayOfWeek: 2, shifts: [{ opensAt: '08:00', closesAt: '20:00' }] },
+          { dayOfWeek: 3, shifts: [{ opensAt: '08:00', closesAt: '20:00' }] },
+          { dayOfWeek: 4, shifts: [{ opensAt: '08:00', closesAt: '20:00' }] },
+          { dayOfWeek: 5, shifts: [{ opensAt: '08:00', closesAt: '20:00' }] },
+          { dayOfWeek: 6, shifts: [{ opensAt: '09:00', closesAt: '13:00' }] },
+          { dayOfWeek: 7, shifts: [] },
+        ],
+      },
     },
   });
 

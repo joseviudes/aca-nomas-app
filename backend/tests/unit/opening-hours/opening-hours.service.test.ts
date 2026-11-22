@@ -33,3 +33,25 @@ describe('OpeningHoursService.currentStatus', () => {
     expect(service.currentStatus(TUESDAY_MORNING, TIMEZONE).state).toBe('closed');
   });
 });
+
+describe('OpeningHoursService.weeklySchedule', () => {
+  it('arma el horario semanal con el día de hoy que da el reloj', () => {
+    const service = new OpeningHoursService(() => new Date('2026-11-17T13:00:00Z'));
+
+    const schedule = service.weeklySchedule(TUESDAY_MORNING, TIMEZONE);
+
+    expect(schedule.today).toBe(2);
+    expect(schedule.days[1]).toEqual({
+      dayOfWeek: 2,
+      shifts: [{ opensAt: '07:00', closesAt: '13:00' }],
+    });
+  });
+
+  it('conserva el horario de un negocio en pausa', () => {
+    const service = new OpeningHoursService(() => new Date('2026-11-17T13:00:00Z'));
+
+    const schedule = service.weeklySchedule({ ...TUESDAY_MORNING, isPaused: true }, TIMEZONE);
+
+    expect(schedule.days[1]?.shifts).toHaveLength(1);
+  });
+});

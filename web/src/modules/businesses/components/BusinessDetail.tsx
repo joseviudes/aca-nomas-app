@@ -1,11 +1,24 @@
 import { Card } from '@/shared/ui/Card';
+import { cx } from '@/shared/ui/class-names';
 import { businessDetailPath, businessInitial } from '../domain/business-display';
+import { statusText } from '../domain/business-status-text';
 import type { BusinessDetail as BusinessDetailData } from '../schemas/business-detail.schema';
+import { BusinessStatusBadge } from './BusinessStatusBadge';
 import { CopyLinkButton } from './CopyLinkButton';
 
-// Ficha pública (US-08). En el celular, una columna; desde sm, la foto y los datos lado a lado.
-// Estado, horario, contacto y pagos se suman con US-09, US-10 y US-17 (docs/mockup/web.md).
-export function BusinessDetail({ business }: { business: BusinessDetailData }) {
+type BusinessDetailProps = {
+  business: BusinessDetailData;
+  // Hora del servidor al armar la ficha: el texto "Cierra en 40 min" se calcula con ella, nunca
+  // con el reloj del navegador, para que la página llegue armada igual que la pidió la API.
+  now: Date;
+};
+
+// Ficha pública (US-08 y US-09). En el celular, una columna; desde sm, la foto y los datos lado a
+// lado. Contacto y pagos se suman con US-10 y US-17 (docs/mockup/web.md).
+export function BusinessDetail({ business, now }: BusinessDetailProps) {
+  // El estado lo decide la API; la web solo dice cuándo cambia, en la hora de la localidad.
+  const line = statusText(business.status, now, business.schedule.timezone);
+
   return (
     <Card
       as="article"
@@ -18,10 +31,16 @@ export function BusinessDetail({ business }: { business: BusinessDetailData }) {
           {businessInitial(business.name)}
         </span>
         <span className="caps-label absolute bottom-3.5 left-4 text-brand">Sin foto</span>
+        {/* Como en el mockup, la etiqueta va sobre la foto, en todos los anchos. */}
+        <div className="absolute top-3.5 left-3.5">
+          <BusinessStatusBadge state={business.status.state} />
+        </div>
       </div>
       <div className="flex min-w-0 flex-col gap-3 break-words">
         <p className="caps-label text-brand">{business.category.name}</p>
         <h1 className="font-display text-4xl leading-none md:text-5xl">{business.name}</h1>
+        {/* Sin línea si está en pausa o falta el dato: la etiqueta ya dice el estado. */}
+        {line && <p className={cx('text-base', line.emphasized && 'font-bold')}>{line.text}</p>}
         {business.description && (
           <p className="text-base text-muted-strong">{business.description}</p>
         )}

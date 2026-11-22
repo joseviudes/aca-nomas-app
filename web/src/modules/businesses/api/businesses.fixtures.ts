@@ -1,9 +1,9 @@
-import type { BusinessDetail } from '../schemas/business-detail.schema';
+import type { BusinessDetail, DaySchedule, Shift } from '../schemas/business-detail.schema';
 import type { BusinessListItem, BusinessListResponse } from '../schemas/business-list.schema';
 
 // Datos de ejemplo con la forma del contrato (D-40). La web ya usa la API: quedan solo para las
-// pruebas. Nombres inventados; los rubros son los del seed. El estado es una muestra fija: paused
-// o closed, sin horarios.
+// pruebas. Nombres inventados; los rubros son los del seed. En el listado, el estado es una muestra
+// fija: paused o closed, sin horarios.
 const CATEGORIES = {
   panaderia: 'Panadería',
   almacen: 'Almacén',
@@ -74,8 +74,30 @@ export function businessListFixture({
   };
 }
 
-// Fichas (GET /businesses/:slug). La primera es el ejemplo de Swagger; la segunda, un negocio sin
-// descripción.
+const TIME_ZONE = 'America/Argentina/Buenos_Aires';
+
+// Arma los 7 días de lunes a domingo; el día que no aparece queda sin turnos (no abre).
+function week(shiftsByDay: Partial<Record<DaySchedule['dayOfWeek'], Shift[]>>): DaySchedule[] {
+  return [1, 2, 3, 4, 5, 6, 7].map((dayOfWeek) => ({
+    dayOfWeek,
+    shifts: shiftsByDay[dayOfWeek] ?? [],
+  }));
+}
+
+const PANADERIA_WEEKDAY: Shift[] = [{ opensAt: '08:00', closesAt: '20:00' }];
+const KIOSCO_NIGHT: Shift[] = [{ opensAt: '19:00', closesAt: '01:00' }];
+const PELUQUERIA_SPLIT: Shift[] = [
+  { opensAt: '09:00', closesAt: '13:00' },
+  { opensAt: '16:00', closesAt: '20:00' },
+];
+const VERDULERIA_MORNING: Shift[] = [{ opensAt: '08:00', closesAt: '13:00' }];
+
+// Fichas (GET /businesses/:slug), todas un martes a las 10:00 de Mantilla (13:00 UTC), como el
+// ejemplo de Swagger. Cubren los casos de horario que la ficha muestra distinto:
+// - la panadería es el ejemplo de Swagger: abierta, con un domingo sin turnos;
+// - el kiosco, sin descripción y cerrado, tiene un turno que cruza la medianoche (19:00–01:00);
+// - la peluquería marcó "hoy no abro" y tiene turno partido;
+// - la verdulería está en pausa y conserva su horario.
 const businessDetailsFixture: BusinessDetail[] = [
   {
     slug: 'panaderia-la-espiga',
@@ -83,6 +105,19 @@ const businessDetailsFixture: BusinessDetail[] = [
     description: 'Pan casero, facturas y tortas por encargo.',
     category: { slug: 'panaderia', name: CATEGORIES.panaderia },
     photoUrl: null,
+    status: { state: 'open', closesAt: '2026-11-17T23:00:00.000Z', nextOpeningAt: null },
+    schedule: {
+      timezone: TIME_ZONE,
+      today: 2,
+      days: week({
+        1: PANADERIA_WEEKDAY,
+        2: PANADERIA_WEEKDAY,
+        3: PANADERIA_WEEKDAY,
+        4: PANADERIA_WEEKDAY,
+        5: PANADERIA_WEEKDAY,
+        6: [{ opensAt: '09:00', closesAt: '13:00' }],
+      }),
+    },
   },
   {
     slug: 'kiosco-el-recreo',
@@ -90,6 +125,59 @@ const businessDetailsFixture: BusinessDetail[] = [
     description: null,
     category: { slug: 'kiosco', name: CATEGORIES.kiosco },
     photoUrl: null,
+    status: { state: 'closed', closesAt: null, nextOpeningAt: '2026-11-17T22:00:00.000Z' },
+    schedule: {
+      timezone: TIME_ZONE,
+      today: 2,
+      days: week({
+        1: KIOSCO_NIGHT,
+        2: KIOSCO_NIGHT,
+        3: KIOSCO_NIGHT,
+        4: KIOSCO_NIGHT,
+        5: KIOSCO_NIGHT,
+        6: KIOSCO_NIGHT,
+        7: KIOSCO_NIGHT,
+      }),
+    },
+  },
+  {
+    slug: 'peluqueria-tijeras',
+    name: 'Peluquería Tijeras',
+    description: 'Cortes, color y peinados.',
+    category: { slug: 'peluqueria', name: CATEGORIES.peluqueria },
+    photoUrl: null,
+    status: { state: 'closed_today', closesAt: null, nextOpeningAt: '2026-11-18T12:00:00.000Z' },
+    schedule: {
+      timezone: TIME_ZONE,
+      today: 2,
+      days: week({
+        2: PELUQUERIA_SPLIT,
+        3: PELUQUERIA_SPLIT,
+        4: PELUQUERIA_SPLIT,
+        5: PELUQUERIA_SPLIT,
+        6: PELUQUERIA_SPLIT,
+      }),
+    },
+  },
+  {
+    slug: 'verduleria-campo-fresco',
+    name: 'Verdulería Campo Fresco',
+    description: null,
+    category: { slug: 'verduleria', name: CATEGORIES.verduleria },
+    photoUrl: null,
+    status: { state: 'paused', closesAt: null, nextOpeningAt: null },
+    schedule: {
+      timezone: TIME_ZONE,
+      today: 2,
+      days: week({
+        1: VERDULERIA_MORNING,
+        2: VERDULERIA_MORNING,
+        3: VERDULERIA_MORNING,
+        4: VERDULERIA_MORNING,
+        5: VERDULERIA_MORNING,
+        6: VERDULERIA_MORNING,
+      }),
+    },
   },
 ];
 

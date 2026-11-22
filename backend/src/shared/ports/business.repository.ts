@@ -21,13 +21,18 @@ export interface BusinessListPage {
 }
 
 // Lo que la ficha (US-08) necesita del negocio guardado. Como en el listado, la clave de la foto y
-// no la URL (D-14). El horario, los canales y los pagos se suman con US-09, US-10 y US-17.
+// no la URL (D-14). Con el horario, no el estado calculado (D-22), igual que el listado (US-09).
+// Los canales y los pagos se suman con US-10 y US-17.
 export interface BusinessDetailEntry {
   slug: string;
   name: string;
   description: string | null;
   photoKey: string | null;
   category: { slug: string; name: string };
+  // Pausa, "hoy no abro" y turnos, en la forma que recibe isOpenNow.
+  openingHours: OpeningHours;
+  // Zona horaria IANA de la localidad del negocio (D-12).
+  timezone: string;
 }
 
 // Qué página del listado pedir y con qué filtros. Cada filtro nuevo (US-02, US-04, US-06) se suma acá.
