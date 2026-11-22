@@ -46,9 +46,13 @@ export const businessesPaths: ZodOpenApiPathsObject = {
       tags: ['Negocios'],
       summary: 'Devuelve la ficha pública de un negocio',
       description:
-        'Público, sin sesión (US-08). La web la muestra en /negocios/[slug] (D-29). Si el negocio ' +
-        'no existe, responde 404 y la web muestra su página 404 (RF-08). Un slug mal escrito ' +
-        '(con mayúsculas o tildes) también da 404: ningún negocio lo tiene.',
+        'Público, sin sesión (US-08 y US-09). La web la muestra en /negocios/[slug] (D-29). Si el ' +
+        'negocio no existe, responde 404 y la web muestra su página 404 (RF-08). Un slug mal ' +
+        'escrito (con mayúsculas o tildes) también da 404: ningún negocio lo tiene. status es el ' +
+        'estado en el momento de la consulta (RN-01), con la hora de cierre si está abierto y la ' +
+        'próxima apertura si no, en UTC. schedule es el horario semanal en hora local de la ' +
+        'localidad: siempre 7 días de lunes a domingo, con today para marcar el día de hoy. La ' +
+        'web no calcula nada: muestra lo que devuelve la API.',
       requestParams: { path: businessSlugParamsSchema },
       responses: {
         '200': {

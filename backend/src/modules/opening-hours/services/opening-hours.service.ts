@@ -1,5 +1,6 @@
 import { isOpenNow } from '../domain/is-open-now.js';
 import type { BusinessStatus, OpeningHours } from '../domain/opening-hours.types.js';
+import { weeklySchedule, type WeeklySchedule } from '../domain/weekly-schedule.js';
 
 // Puerta de entrada de otros módulos al cálculo de "abierto ahora": lo usan por este servicio,
 // no por el dominio. isOpenNow no lee el reloj (RN-10); acá se le pasa la hora actual.
@@ -9,5 +10,10 @@ export class OpeningHoursService {
 
   currentStatus(hours: OpeningHours, timezone: string): BusinessStatus {
     return isOpenNow(hours, this.now(), timezone);
+  }
+
+  // El horario de los 7 días en hora local, con el día de hoy de la localidad (US-09).
+  weeklySchedule(hours: OpeningHours, timezone: string): WeeklySchedule {
+    return weeklySchedule(hours.shifts, this.now(), timezone);
   }
 }

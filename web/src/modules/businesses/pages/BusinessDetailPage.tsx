@@ -3,9 +3,10 @@ import { ApiError } from '@/shared/api/api-error';
 import { getBusiness } from '../api/businesses.api';
 import { BusinessDetail } from '../components/BusinessDetail';
 import { BusinessDetailError } from '../components/BusinessDetailError';
+import { WeeklySchedule } from '../components/WeeklySchedule';
 import { businessDetailPath } from '../domain/business-display';
 
-// Ficha pública (US-08). Se pide en el servidor (D-27); la carga la muestra el <Suspense> de la ruta.
+// Ficha pública (US-08 y US-09). Se pide en el servidor (D-27); la carga la muestra el <Suspense> de la ruta.
 export async function BusinessDetailPage({ slug }: { slug: string }) {
   let business;
 
@@ -22,5 +23,15 @@ export async function BusinessDetailPage({ slug }: { slug: string }) {
     return <BusinessDetailError code={error.code} retryHref={businessDetailPath(slug)} />;
   }
 
-  return <BusinessDetail business={business} />;
+  // La hora se lee recién acá, después del pedido sin caché: con cacheComponents, leer el reloj
+  // antes de algo dinámico haría que Next la congele al prerenderizar. Va por parámetro a los
+  // componentes para que el texto de estado salga de una sola hora, la del servidor.
+  const now = new Date();
+
+  return (
+    <>
+      <BusinessDetail business={business} now={now} />
+      <WeeklySchedule schedule={business.schedule} />
+    </>
+  );
 }

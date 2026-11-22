@@ -134,6 +134,7 @@ describe('getBusiness', () => {
   it.each([
     ['without category', { ...espiga, category: undefined }],
     ['with a description over 80 characters', { ...espiga, description: 'a'.repeat(81) }],
+    ['without status (contract before US-09)', { ...espiga, status: undefined }],
   ])('throws INVALID_RESPONSE for a listing %s', async (_case, body) => {
     mockFetch(json(body));
 
