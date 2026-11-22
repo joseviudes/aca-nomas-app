@@ -3,13 +3,7 @@ import type { BusinessStatus } from '../schemas/business-list.schema';
 // Hasta cuántos minutos el cambio se considera cercano y se muestra "en N min" en negrita.
 export const SOON_MINUTES = 60;
 
-export type StatusText = {
-  // Línea completa ("Cierra el jueves a las 02:00").
-  text: string;
-  // Versión corta, para mostrar al lado de la etiqueta en el celular ("Cierra jueves 02:00").
-  shortText: string;
-  emphasized: boolean;
-};
+export type StatusText = { text: string; emphasized: boolean };
 
 const MS_PER_MINUTE = 60_000;
 const MS_PER_DAY = 86_400_000;
@@ -25,9 +19,9 @@ const MS_PER_DAY = 86_400_000;
 export function statusText(status: BusinessStatus, now: Date, timeZone: string): StatusText | null {
   switch (status.state) {
     case 'open':
-      return openText(status.closesAt, now, timeZone);
+      return soonOrWhen('Cierra', status.closesAt, now, timeZone);
     case 'closed':
-      return closedText(status.nextOpeningAt, now, timeZone);
+      return soonOrWhen('Abre', status.nextOpeningAt, now, timeZone);
     case 'closed_today':
       return closedTodayText(status.nextOpeningAt, now, timeZone);
     case 'paused':
@@ -37,75 +31,25 @@ export function statusText(status: BusinessStatus, now: Date, timeZone: string):
 
 type Moment = { minutes: number; time: string; dayDiff: number; weekday: string };
 
-function openText(closesAt: string | null, now: Date, timeZone: string): StatusText | null {
-  const moment = momentFrom(closesAt, now, timeZone);
+// Abierto o cerrado: si el cambio está cerca, "en N min" en negrita; si no, cuándo.
+function soonOrWhen(
+  verb: 'Cierra' | 'Abre',
+  iso: string | null,
+  now: Date,
+  timeZone: string,
+): StatusText | null {
+  const moment = momentFrom(iso, now, timeZone);
   if (!moment) return null;
 
   if (moment.minutes <= SOON_MINUTES) {
-    return {
-      text: `Cierra en ${moment.minutes} min · ${moment.time}`,
-      shortText: `Cierra en ${moment.minutes} min`,
-      emphasized: true,
-    };
+    return { text: `${verb} en ${moment.minutes} min · ${moment.time}`, emphasized: true };
   }
-  if (moment.dayDiff === 0) {
-    return {
-      text: `Cierra a las ${moment.time}`,
-      shortText: `Cierra ${moment.time}`,
-      emphasized: false,
-    };
-  }
-  // Si cierra otro día se dice siempre, aunque el mockup muestre "Cierra a las 02:00" pasada la
-  // medianoche: con turnos encadenados el cierre de mañana puede ser más tarde que la hora actual,
-  // y sin "mañana" se leería como de hoy.
-  if (moment.dayDiff === 1) {
-    return {
-      text: `Cierra mañana a las ${moment.time}`,
-      shortText: `Cierra mañana ${moment.time}`,
-      emphasized: false,
-    };
-  }
-  return {
-    text: `Cierra ${longDayWord(moment)} a las ${moment.time}`,
-    shortText: `Cierra ${shortDayWord(moment)} ${moment.time}`,
-    emphasized: false,
-  };
+  return { text: whenText(verb, moment), emphasized: false };
 }
 
-function closedText(nextOpeningAt: string | null, now: Date, timeZone: string): StatusText | null {
-  const moment = momentFrom(nextOpeningAt, now, timeZone);
-  if (!moment) return null;
-
-  if (moment.minutes <= SOON_MINUTES) {
-    return {
-      text: `Abre en ${moment.minutes} min · ${moment.time}`,
-      shortText: `Abre en ${moment.minutes} min`,
-      emphasized: true,
-    };
-  }
-  if (moment.dayDiff === 0) {
-    return {
-      text: `Abre a las ${moment.time}`,
-      shortText: `Abre ${moment.time}`,
-      emphasized: false,
-    };
-  }
-  if (moment.dayDiff === 1) {
-    return {
-      text: `Abre mañana a las ${moment.time}`,
-      shortText: `Abre mañana ${moment.time}`,
-      emphasized: false,
-    };
-  }
-  return {
-    text: `Abre ${longDayWord(moment)} a las ${moment.time}`,
-    shortText: `Abre ${shortDayWord(moment)} ${moment.time}`,
-    emphasized: false,
-  };
-}
-
-// "Hoy no abre": la API salta el día de hoy al buscar la próxima apertura, así que siempre es de
-// otro día. Por eso nunca se dice "en N min" ni va en negrita, aunque falte poco para la medianoche.
+// "Hoy no abre" ya lo dice la etiqueta, así que la línea solo dice cuándo vuelve. La API salta el
+// día de hoy al buscar la próxima apertura: nunca se dice "en N min" ni va en negrita, aunque
+// falte poco para la medianoche.
 function closedTodayText(
   nextOpeningAt: string | null,
   now: Date,
@@ -113,40 +57,22 @@ function closedTodayText(
 ): StatusText | null {
   const moment = momentFrom(nextOpeningAt, now, timeZone);
   if (!moment) return null;
+  return { text: whenText('Vuelve', moment), emphasized: false };
+}
 
-  // Un día 0 no debería llegar (ver arriba); si llega, no se dice "Hoy no abre" para no contradecir
-  // la hora de hoy que sigue.
-  if (moment.dayDiff === 0) {
-    return {
-      text: `Vuelve a las ${moment.time}`,
-      shortText: `Vuelve ${moment.time}`,
-      emphasized: false,
-    };
-  }
-  if (moment.dayDiff === 1) {
-    return {
-      text: `Hoy no abre. Vuelve mañana a las ${moment.time}`,
-      shortText: `Vuelve mañana ${moment.time}`,
-      emphasized: false,
-    };
-  }
-  return {
-    text: `Hoy no abre. Vuelve ${longDayWord(moment)} a las ${moment.time}`,
-    shortText: `Vuelve ${shortDayWord(moment)} ${moment.time}`,
-    emphasized: false,
-  };
+// Si es otro día se dice siempre, aunque el mockup muestre "Cierra a las 02:00" pasada la
+// medianoche: con turnos encadenados el cierre de mañana puede ser más tarde que la hora actual,
+// y sin "mañana" se leería como de hoy.
+function whenText(verb: string, moment: Moment): string {
+  if (moment.dayDiff === 0) return `${verb} a las ${moment.time}`;
+  if (moment.dayDiff === 1) return `${verb} mañana a las ${moment.time}`;
+  return `${verb} ${dayWord(moment)} a las ${moment.time}`;
 }
 
 // "el jueves" dentro de la semana; "el próximo jueves" desde los 7 días, para no confundirlo con
 // el jueves de esta semana.
-function longDayWord({ dayDiff, weekday }: Moment): string {
+function dayWord({ dayDiff, weekday }: Moment): string {
   return dayDiff >= 7 ? `el próximo ${weekday}` : `el ${weekday}`;
-}
-
-// La versión corta también lleva "próximo" desde los 7 días: sin él, "Abre martes 09:00" dicho un
-// martes no aclara si es hoy o la semana que viene.
-function shortDayWord({ dayDiff, weekday }: Moment): string {
-  return dayDiff >= 7 ? `próximo ${weekday}` : weekday;
 }
 
 function momentFrom(iso: string | null, now: Date, timeZone: string): Moment | null {
