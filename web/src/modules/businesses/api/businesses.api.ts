@@ -1,6 +1,8 @@
 import { http } from '@/shared/api/http-client';
 import { businessDetailSchema } from '../schemas/business-detail.schema';
 import { businessListResponseSchema } from '../schemas/business-list.schema';
+import { categoryListResponseSchema } from '../schemas/category-list.schema';
+import { categoryListFixture } from './businesses.fixtures';
 
 // No se manda limit: se usan los 20 por página que la API trae por defecto.
 // Sin caché: el estado de cada negocio (abierto, cerrado) cambia con la hora.
@@ -19,4 +21,9 @@ export function getBusiness(slug: string) {
     schema: businessDetailSchema,
     cache: 'no-store',
   });
+}
+
+// Datos de ejemplo hasta conectar con la API (D-40).
+export async function listCategories() {
+  return categoryListResponseSchema.parse(categoryListFixture());
 }
