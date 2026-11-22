@@ -77,8 +77,14 @@ describe('statusText', () => {
       });
     });
 
+    it('says it is open 24 hours when it never closes (closesAt null)', () => {
+      expect(statusText(at('open', null, null), NOW, LOCALITY_TIME_ZONE)).toEqual({
+        text: 'Abierto las 24 horas',
+        emphasized: false,
+      });
+    });
+
     it.each([
-      ['no closing time', null],
       ['closing time equal to now', '2026-11-17T15:00:00Z'],
       ['closing time in the past (stale response)', '2026-11-17T14:00:00Z'],
     ])('has no line with %s', (_name, closesAt) => {

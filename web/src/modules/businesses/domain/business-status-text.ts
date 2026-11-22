@@ -13,12 +13,15 @@ const MS_PER_DAY = 86_400_000;
 // (schedule.timezone) entran por parámetro, así se prueba con cualquier fecha y no depende del
 // reloj ni de la zona del navegador. Devuelve null cuando no hay línea que mostrar:
 // - pausado: la API no guarda el motivo de la pausa, y inventarlo ("por vacaciones") sería mentir;
-// - falta el dato (closesAt o nextOpeningAt en null, por ejemplo un negocio sin turnos);
+// - cerrado sin nextOpeningAt (por ejemplo, un negocio sin turnos cargados);
 // - el instante ya pasó (la respuesta quedó vieja) o no es una fecha válida;
 // - la zona horaria no es válida.
 export function statusText(status: BusinessStatus, now: Date, timeZone: string): StatusText | null {
   switch (status.state) {
     case 'open':
+      // Abierto con closesAt en null es un horario que no cierra en toda la semana: la API
+      // (closingTime de isOpenNow) no tiene una hora de cierre que dar.
+      if (status.closesAt === null) return { text: 'Abierto las 24 horas', emphasized: false };
       return soonOrWhen('Cierra', status.closesAt, now, timeZone);
     case 'closed':
       return soonOrWhen('Abre', status.nextOpeningAt, now, timeZone);
