@@ -20,7 +20,8 @@ const MS_PER_DAY = 86_400_000;
 // reloj ni de la zona del navegador. Devuelve null cuando no hay línea que mostrar:
 // - pausado: la API no guarda el motivo de la pausa, y inventarlo ("por vacaciones") sería mentir;
 // - falta el dato (closesAt o nextOpeningAt en null, por ejemplo un negocio sin turnos);
-// - el instante ya pasó (la respuesta quedó vieja) o no es una fecha válida.
+// - el instante ya pasó (la respuesta quedó vieja) o no es una fecha válida;
+// - la zona horaria no es válida.
 export function statusText(status: BusinessStatus, now: Date, timeZone: string): StatusText | null {
   switch (status.state) {
     case 'open':
@@ -157,12 +158,19 @@ function momentFrom(iso: string | null, now: Date, timeZone: string): Moment | n
   const minutes = Math.ceil((instant.getTime() - now.getTime()) / MS_PER_MINUTE);
   if (minutes <= 0) return null;
 
-  return {
-    minutes,
-    time: formatTime(instant, timeZone),
-    dayDiff: localDayNumber(instant, timeZone) - localDayNumber(now, timeZone),
-    weekday: formatWeekday(instant, timeZone),
-  };
+  try {
+    return {
+      minutes,
+      time: formatTime(instant, timeZone),
+      dayDiff: localDayNumber(instant, timeZone) - localDayNumber(now, timeZone),
+      weekday: formatWeekday(instant, timeZone),
+    };
+  } catch (error) {
+    // Intl lanza RangeError con una zona que no conoce: sin esta línea la ficha se ve igual, pero
+    // un error acá rompería la página entera (500). Cualquier otro error sí tiene que llegar.
+    if (error instanceof RangeError) return null;
+    throw error;
+  }
 }
 
 // hourCycle h23 evita el "24:00" de la medianoche.

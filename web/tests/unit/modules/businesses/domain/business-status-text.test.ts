@@ -228,5 +228,16 @@ describe('statusText', () => {
         ).toBeNull();
       },
     );
+
+    it.each([
+      ['open', '2026-11-17T15:40:00Z', null],
+      ['closed', null, '2026-11-17T15:40:00Z'],
+      ['closed_today', null, '2026-11-18T12:00:00Z'],
+    ] as const)(
+      'returns null for an invalid time zone in %s without throwing',
+      (state, closesAt, nextOpeningAt) => {
+        expect(statusText(at(state, closesAt, nextOpeningAt), NOW, 'Foo/Bar')).toBeNull();
+      },
+    );
   });
 });
