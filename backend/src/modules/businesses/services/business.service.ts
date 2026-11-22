@@ -50,6 +50,10 @@ export class BusinessService {
       category: entry.category,
       // Como en el listado: hasta US-19 no hay adaptador que convierta photoKey en una URL (D-14).
       photoUrl: null,
+      status: toStatusResponse(
+        this.openingHoursService.currentStatus(entry.openingHours, entry.timezone),
+      ),
+      schedule: this.openingHoursService.weeklySchedule(entry.openingHours, entry.timezone),
     };
   }
 

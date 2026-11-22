@@ -1,5 +1,5 @@
 import type { PrismaClient } from '../../../generated/prisma/client.js';
-import type { DayOfWeek } from '../../opening-hours/domain/opening-hours.types.js';
+import type { DayOfWeek, OpeningHours } from '../../opening-hours/domain/opening-hours.types.js';
 import { toOffset, type PaginationQuery } from '../../../shared/pagination/pagination.js';
 import type {
   BusinessDetailEntry,
@@ -12,6 +12,34 @@ import type {
 const toTime = (value: Date): string => value.toISOString().slice(11, 16);
 const toDate = (value: Date): string => value.toISOString().slice(0, 10);
 
+// Lo que hay que leer de la base para saber el estado y el horario de un negocio. Lo comparten el
+// listado y la ficha: así los dos calculan el estado con los mismos datos.
+const OPENING_HOURS_SELECT = {
+  isPaused: true,
+  closedTodayDate: true,
+  locality: { select: { timezone: true } },
+  openingHours: { select: { dayOfWeek: true, opensAt: true, closesAt: true } },
+} as const;
+
+interface OpeningHoursRow {
+  isPaused: boolean;
+  closedTodayDate: Date | null;
+  openingHours: { dayOfWeek: number; opensAt: Date; closesAt: Date }[];
+}
+
+function toOpeningHours(row: OpeningHoursRow): OpeningHours {
+  return {
+    isPaused: row.isPaused,
+    closedTodayDate: row.closedTodayDate ? toDate(row.closedTodayDate) : null,
+    shifts: row.openingHours.map((shift) => ({
+      // La base solo acepta de 1 a 7 (opening_hours_day_of_week_check).
+      dayOfWeek: shift.dayOfWeek as DayOfWeek,
+      opensAt: toTime(shift.opensAt),
+      closesAt: toTime(shift.closesAt),
+    })),
+  };
+}
+
 export class PrismaBusinessRepository implements BusinessRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
@@ -23,11 +51,8 @@ export class PrismaBusinessRepository implements BusinessRepository {
           slug: true,
           name: true,
           photoKey: true,
-          isPaused: true,
-          closedTodayDate: true,
           category: { select: { slug: true, name: true } },
-          locality: { select: { timezone: true } },
-          openingHours: { select: { dayOfWeek: true, opensAt: true, closesAt: true } },
+          ...OPENING_HOURS_SELECT,
         },
         // RF-05: sin ubicación del visitante, el orden es por nombre. El slug es único y desempata
         // dos negocios con el mismo nombre, así ninguno se repite ni se pierde entre páginas.
@@ -45,23 +70,14 @@ export class PrismaBusinessRepository implements BusinessRepository {
       photoKey: row.photoKey,
       category: row.category,
       timezone: row.locality.timezone,
-      openingHours: {
-        isPaused: row.isPaused,
-        closedTodayDate: row.closedTodayDate ? toDate(row.closedTodayDate) : null,
-        shifts: row.openingHours.map((shift) => ({
-          // La base solo acepta de 1 a 7 (opening_hours_day_of_week_check).
-          dayOfWeek: shift.dayOfWeek as DayOfWeek,
-          opensAt: toTime(shift.opensAt),
-          closesAt: toTime(shift.closesAt),
-        })),
-      },
+      openingHours: toOpeningHours(row),
     }));
 
     return { items, total };
   }
 
-  findBySlug(slug: string): Promise<BusinessDetailEntry | null> {
-    return this.prisma.business.findUnique({
+  async findBySlug(slug: string): Promise<BusinessDetailEntry | null> {
+    const row = await this.prisma.business.findUnique({
       where: { slug },
       select: {
         slug: true,
@@ -69,7 +85,19 @@ export class PrismaBusinessRepository implements BusinessRepository {
         description: true,
         photoKey: true,
         category: { select: { slug: true, name: true } },
+        ...OPENING_HOURS_SELECT,
       },
     });
+    if (!row) return null;
+
+    return {
+      slug: row.slug,
+      name: row.name,
+      description: row.description,
+      photoKey: row.photoKey,
+      category: row.category,
+      timezone: row.locality.timezone,
+      openingHours: toOpeningHours(row),
+    };
   }
 }

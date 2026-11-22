@@ -226,6 +226,8 @@ describe('BusinessService.getBySlug', () => {
     description: 'Pan casero, facturas y tortas por encargo.',
     photoKey: 'businesses/la-espiga.webp',
     category: { slug: 'panaderia', name: 'Panadería' },
+    openingHours: MORNING_SHIFTS,
+    timezone: TIMEZONE,
   };
 
   function serviceWithDetails(details: BusinessDetailEntry[]) {
@@ -246,8 +248,98 @@ describe('BusinessService.getBySlug', () => {
       description: 'Pan casero, facturas y tortas por encargo.',
       category: { slug: 'panaderia', name: 'Panadería' },
       photoUrl: null,
+      status: { state: 'open', closesAt: '2026-11-17T16:00:00.000Z', nextOpeningAt: null },
+      schedule: expect.objectContaining({ timezone: TIMEZONE, today: 2 }) as unknown,
     });
     expect(businessDetailSchema.safeParse(detail).success).toBe(true);
+  });
+
+  describe('estado', () => {
+    it('está abierto con la hora de cierre dentro del turno', async () => {
+      const detail = await serviceWithDetails([bakeryDetail]).getBySlug('panaderia-la-espiga');
+
+      expect(detail.status).toEqual({
+        state: 'open',
+        closesAt: '2026-11-17T16:00:00.000Z',
+        nextOpeningAt: null,
+      });
+    });
+
+    it('está cerrado con la próxima apertura fuera del turno', async () => {
+      const afternoon = new Date('2026-11-17T20:00:00Z');
+      const service = new BusinessService(
+        new InMemoryBusinessRepository([], [bakeryDetail]),
+        new OpeningHoursService(() => afternoon),
+      );
+
+      const detail = await service.getBySlug('panaderia-la-espiga');
+
+      expect(detail.status).toEqual({
+        state: 'closed',
+        closesAt: null,
+        nextOpeningAt: '2026-11-18T10:00:00.000Z',
+      });
+    });
+
+    it('un negocio en pausa figura pausado aunque esté dentro del horario', async () => {
+      const paused = { ...bakeryDetail, openingHours: { ...MORNING_SHIFTS, isPaused: true } };
+
+      const detail = await serviceWithDetails([paused]).getBySlug('panaderia-la-espiga');
+
+      expect(detail.status).toEqual({ state: 'paused', closesAt: null, nextOpeningAt: null });
+    });
+
+    it('si el dueño avisó que hoy no abre, figura "hoy no abre"', async () => {
+      const closedToday = {
+        ...bakeryDetail,
+        openingHours: { ...MORNING_SHIFTS, closedTodayDate: '2026-11-17' },
+      };
+
+      const detail = await serviceWithDetails([closedToday]).getBySlug('panaderia-la-espiga');
+
+      expect(detail.status).toMatchObject({ state: 'closed_today', closesAt: null });
+    });
+
+    it('un negocio sin turnos cargados está cerrado y sin próxima apertura', async () => {
+      const empty = { ...bakeryDetail, openingHours: hours() };
+
+      const detail = await serviceWithDetails([empty]).getBySlug('panaderia-la-espiga');
+
+      expect(detail.status).toEqual({ state: 'closed', closesAt: null, nextOpeningAt: null });
+    });
+  });
+
+  describe('horario semanal', () => {
+    it('trae los 7 días con los turnos en hora local de la localidad', async () => {
+      const detail = await serviceWithDetails([bakeryDetail]).getBySlug('panaderia-la-espiga');
+
+      expect(detail.schedule.days).toHaveLength(7);
+      expect(detail.schedule.days[1]).toEqual({
+        dayOfWeek: 2,
+        shifts: [{ opensAt: '07:00', closesAt: '13:00' }],
+      });
+      expect(detail.schedule.days[0]?.shifts).toEqual([]);
+    });
+
+    it('marca como hoy el día de la localidad, no el del servidor', async () => {
+      // 01:00 UTC del miércoles es todavía martes 22:00 en Mantilla.
+      const service = new BusinessService(
+        new InMemoryBusinessRepository([], [bakeryDetail]),
+        new OpeningHoursService(() => new Date('2026-11-18T01:00:00Z')),
+      );
+
+      const detail = await service.getBySlug('panaderia-la-espiga');
+
+      expect(detail.schedule.today).toBe(2);
+    });
+
+    it('un negocio en pausa conserva su horario', async () => {
+      const paused = { ...bakeryDetail, openingHours: { ...MORNING_SHIFTS, isPaused: true } };
+
+      const detail = await serviceWithDetails([paused]).getBySlug('panaderia-la-espiga');
+
+      expect(detail.schedule.days[1]?.shifts).toHaveLength(1);
+    });
   });
 
   it('devuelve la descripción en null si el negocio no tiene', async () => {
