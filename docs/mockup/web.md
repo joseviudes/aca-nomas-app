@@ -9,7 +9,7 @@ Qué muestra cada pantalla de la web pública en el mockup, con el detalle del l
 | 0.1 | 17/11/2026 | Tobias | Versión inicial: pantallas de la web y detalle del listado |
 | 0.2 | 17/11/2026 | Tobias | Actualiza los enlaces a las capturas renombradas del listado y de los filtros en celular |
 | 0.3 | 21/11/2026 | Tobias | Sección 5: qué arma US-08 en la ficha, qué queda para otras historias y cómo es la página 404 |
-| 0.4 | 22/11/2026 | Tobias | US-09 define el texto de estado de la ficha (D-49). Sección 5: qué arma US-09 y en qué se aparta del mockup |
+| 0.4 | 22/11/2026 | Tobias | US-09 define el texto de estado de la ficha (D-49). Sección 5: qué arma US-09 y en qué se aparta del mockup, incluida la distribución del horario en escritorio |
 
 ## Índice
 
@@ -203,6 +203,9 @@ Diferencias con el mockup:
 |---|---|---|
 | Turnos "08–13 y 16:30–21:30" | "08:00 – 13:00 · 17:00 – 21:30" | Todas las horas con minutos, iguales en todos los días |
 | "Cierra a las 02:00" pasada la medianoche | "Cierra mañana a las 02:00" | Sin "mañana" se leería como de hoy (D-49) |
+| Horario en escritorio: banda `mint` de borde a borde | Bloque `mint` con esquinas redondeadas, dentro del ancho del contenido | Sigue el resto de los bloques de la ficha, que son tarjetas dentro de `max-w-page` |
+| "HOY" al final de la fila en escritorio | "HOY" al lado del nombre del día en todos los anchos | Igual que el celular del mockup: una sola distribución para todos los anchos |
+| Turnos en columna, alineados a la izquierda, en escritorio | Turnos alineados a la derecha en todos los anchos | Igual que el celular del mockup. Si no entran al lado del día, pasan al renglón de abajo sin desplazarse de costado |
 
 ## 6. Explorar — Oficios y Eventos (fase 2)
 

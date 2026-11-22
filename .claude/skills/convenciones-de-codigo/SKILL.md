@@ -19,6 +19,9 @@ Las **URLs que ve el usuario** en la web y el panel van en español (`/negocios/
 | localidad | `locality` |
 | dueño | `owner` |
 | horario | `openingHours` |
+| horario de la semana (para mostrar en la ficha) | `schedule` (`WeeklySchedule`) |
+| estado (abierto, cerrado, hoy no abre, pausado) | `status` |
+| hoy (día de la semana en la localidad) | `today` |
 | abierto ahora | `isOpenNow` |
 | hoy no abro | `closedToday` |
 | pausa | `isPaused` |

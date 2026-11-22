@@ -86,7 +86,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-46 | Código HTTP de la página 404 de la ficha | Aceptada |
 | D-47 | Carpeta `metadata/` en los módulos de la web | Aceptada |
 | D-48 | Zona horaria y hora actual en la ficha | Aceptada |
-| D-49 | Texto de estado de la ficha | Aceptada |
+| D-49 | Texto de estado y horario de la semana de la ficha | Aceptada |
 
 ---
 
@@ -531,7 +531,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
   - Sumar a la API un campo `todayDate` con la fecha local, porque agrega un campo al contrato para algo que la web resuelve con la hora y la zona.
 - **Nota:** el texto relativo ("en 40 min") puede quedar desfasado si la pestaña queda abierta mucho tiempo; la hora absoluta ("· 12:40") sigue siendo correcta. El listado no usa esto todavía. Surgió al armar la ficha de US-09.
 
-## D-49 Texto de estado de la ficha
+## D-49 Texto de estado y horario de la semana de la ficha
 - **Decisión:** la línea de texto bajo la etiqueta de estado de la ficha sigue estas reglas (`domain/business-status-text.ts`):
 
   | Estado | Texto |
