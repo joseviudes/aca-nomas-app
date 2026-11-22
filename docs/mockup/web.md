@@ -9,6 +9,7 @@ Qué muestra cada pantalla de la web pública en el mockup, con el detalle del l
 | 0.1 | 17/11/2026 | Tobias | Versión inicial: pantallas de la web y detalle del listado |
 | 0.2 | 17/11/2026 | Tobias | Actualiza los enlaces a las capturas renombradas del listado y de los filtros en celular |
 | 0.3 | 21/11/2026 | Tobias | Sección 5: qué arma US-08 en la ficha, qué queda para otras historias y cómo es la página 404 |
+| 0.4 | 22/11/2026 | Tobias | US-09 define el texto de estado de la ficha (D-49). Sección 5: qué arma US-09 y en qué se aparta del mockup |
 
 ## Índice
 
@@ -102,7 +103,7 @@ US-01 arma el listado: encabezado del listado con la cantidad, la grilla o las f
 | Mapa (no está en el mockup) | US-07 |
 | "Ver ficha" y el enlace de la fila | US-08 |
 | Foto del negocio | US-11 (la sube el dueño en US-19) |
-| Texto de estado ("Cierra a las…", "Vuelve mañana…") | Fuera de US-01. HT-01 calcula la hora de cierre o la próxima apertura; mostrarla en el listado se define con US-09 o con una historia propia |
+| Texto de estado ("Cierra a las…", "Vuelve mañana…") | Fuera de US-01. HT-01 calcula la hora de cierre o la próxima apertura. US-09 define el texto de la ficha (D-49); el del listado, con el texto corto de la fila, queda para una historia propia |
 | Carrusel "Abiertos ahora cerca tuyo" | Sin historia propia: muestra los primeros resultados del listado (sección 2 de `diseno.md`) |
 
 **Paginación:** el mockup no la muestra, pero la API devuelve de a 20 negocios (D-25). Por eso el listado suma "Anterior" y "Siguiente" debajo de la grilla.
@@ -184,13 +185,24 @@ US-08 arma la ficha en `/negocios/[slug]`: "Volver al listado" y el bloque `sand
 |---|---|
 | "Volver al listado", rubro, nombre y descripción | US-08 |
 | "Copiar el enlace" | US-08. Mientras no exista el bloque de contacto, va en el bloque de datos, debajo de la descripción |
-| Etiqueta de estado, texto de estado y horario de la semana | US-09 |
+| Etiqueta de estado, texto de estado y horario de la semana | US-09. Ver abajo |
 | Bloque de contacto: WhatsApp, Instagram y "Cómo llegar" | US-10. Al armarlo, "Copiar el enlace" pasa a ese bloque, como en el mockup |
 | Foto del negocio | US-11 (la sube el dueño en US-19). Hasta entonces, la inicial sobre `mint` y "Sin foto" |
 | Pagos y entregas | US-17 |
 | Distancia | Sin historia: US-06 la pide solo para el listado |
 
 **Página 404:** el mockup no la muestra. Es un bloque `mint` con "Error 404", el título "No encontramos este negocio", un texto corto y el botón "Ver todos los negocios", que lleva al listado. Ver D-46 en `docs/decisiones.md` sobre el código HTTP que devuelve.
+
+### Qué hace US-09
+
+US-09 suma a la ficha la etiqueta de estado, el texto de estado y el horario de la semana. Las reglas del texto y del horario están en D-49 de `docs/decisiones.md`; de dónde salen la zona horaria y la hora, en D-48.
+
+Diferencias con el mockup:
+
+| Mockup | Ficha | Por qué |
+|---|---|---|
+| Turnos "08–13 y 16:30–21:30" | "08:00 – 13:00 · 17:00 – 21:30" | Todas las horas con minutos, iguales en todos los días |
+| "Cierra a las 02:00" pasada la medianoche | "Cierra mañana a las 02:00" | Sin "mañana" se leería como de hoy (D-49) |
 
 ## 6. Explorar — Oficios y Eventos (fase 2)
 

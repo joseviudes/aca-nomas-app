@@ -32,6 +32,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.24 | 21/11/2026 | Tobias | Agrega D-46 como pendiente: código HTTP de la página 404 de la ficha. La nota de D-45 suma la ficha de US-08 |
 | 0.25 | 21/11/2026 | Tobias | Acepta D-45 (opción A: `pages/` con componentes de servidor en la web) y D-46 (opción A: la 404 de la ficha responde 200 con `noindex`) |
 | 0.26 | 21/11/2026 | Tobias | Agrega y acepta D-47: carpeta `metadata/` en los módulos de la web, para la vista previa de cada pantalla |
+| 0.27 | 22/11/2026 | Tobias | Agrega y acepta D-48 (zona horaria y hora actual en la ficha) y D-49 (texto de estado y horario de la semana en la ficha), de US-09 |
 
 ## Índice
 
@@ -84,6 +85,8 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-45 | `pages/` con componentes de servidor en los módulos de la web | Aceptada |
 | D-46 | Código HTTP de la página 404 de la ficha | Aceptada |
 | D-47 | Carpeta `metadata/` en los módulos de la web | Aceptada |
+| D-48 | Zona horaria y hora actual en la ficha | Aceptada |
+| D-49 | Texto de estado de la ficha | Aceptada |
 
 ---
 
@@ -514,3 +517,36 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
   - Escribirla dentro de `app/<ruta>/page.tsx`. Es lo que muestra la documentación de Next, pero engorda la ruta, que D-45 deja fina.
 - **Motivo:** la metadata de una pantalla pide datos a la API, así que no puede ir en `domain/` (funciones puras). Se espera más de una (por ejemplo, otras pantallas públicas), y una carpeta propia evita mezclarlas con los componentes.
 - **Nota:** surgió al revisar la ficha de US-08, donde `business-detail.metadata.ts` estaba en `pages/`. Hoy hay una sola; si queda como la única, se sigue pudiendo escribir directo en la ruta.
+
+## D-48 Zona horaria y hora actual en la ficha
+- **Decisión:**
+  - La web toma la zona horaria de la respuesta de la API (`schedule.timezone`), no de una constante. Es la zona de la localidad (D-12).
+  - El estado (`status.state`) sale siempre de la API (D-31). La web no lo recalcula: solo le da formato.
+  - "Hoy" sale de `schedule.today`, nunca del reloj del navegador.
+  - Para el texto relativo ("en 40 min", "mañana", "el viernes") la web usa la hora del servidor. `BusinessDetailPage` la lee con `new Date()` después de pedir el negocio y dentro del `<Suspense>` de la ruta, y la pasa por parámetro a los componentes. Así es compatible con `cacheComponents` (D-45): leer el reloj antes de algo dinámico haría que Next congele la hora al prerenderizar.
+  - La función que arma el texto (`domain/business-status-text.ts`) es pura: recibe el estado, la hora y la zona por parámetro.
+- **Motivo:** el estado ya lo calcula la API con las reglas RN-01 a RN-04, y repetirlo en la web daría dos resultados posibles. La zona viene en la respuesta para que la web sirva en otra localidad sin cambiar código. La hora del servidor y la zona de la localidad dan el mismo texto en cualquier navegador, sin importar la zona de la máquina del visitante.
+- **Descartado:**
+  - Mostrar solo el texto absoluto, sin hora actual en la web. Con `today` (un día de la semana) no se distingue "hoy" de "el próximo <día>" cuando la próxima apertura cae el mismo día de la semana que hoy.
+  - Sumar a la API un campo `todayDate` con la fecha local, porque agrega un campo al contrato para algo que la web resuelve con la hora y la zona.
+- **Nota:** el texto relativo ("en 40 min") puede quedar desfasado si la pestaña queda abierta mucho tiempo; la hora absoluta ("· 12:40") sigue siendo correcta. El listado no usa esto todavía. Surgió al armar la ficha de US-09.
+
+## D-49 Texto de estado de la ficha
+- **Decisión:** la línea de texto bajo la etiqueta de estado de la ficha sigue estas reglas (`domain/business-status-text.ts`):
+
+  | Estado | Texto |
+  |---|---|
+  | `open` | Si faltan 60 minutos o menos, "Cierra en 40 min · 12:40", en negrita. Si no: "Cierra a las 13:01", "Cierra mañana a las 02:00", "Cierra el viernes a las 12:00" o "Cierra el próximo martes a las 09:00". Con `closesAt` en `null`, "Abierto las 24 horas" |
+  | `closed` | Igual que `open`, con "Abre…". Con `nextOpeningAt` en `null`, sin línea |
+  | `closed_today` | "Vuelve mañana a las 09:00" o "Vuelve el viernes a las 09:00". Nunca va en negrita ni dice "en N min": la etiqueta ya dice "Hoy no abre" |
+  | `paused` | Sin línea, solo la etiqueta |
+
+  - Si la hora ya pasó, o la fecha o la zona horaria no son válidas, no hay línea. La ficha no se rompe.
+  - Formato `es-AR` de 24 horas (`00:00`, nunca `24:00`). Los minutos se redondean hacia arriba ("en 1 min", nunca "en 0 min"). Los días se comparan en el calendario local de la zona (D-48). "El próximo <día>" se usa desde los 7 días de diferencia.
+  - **Horario de la semana** (`components/WeeklySchedule.tsx`): los 7 días siempre visibles, sin desplegar. Hoy va resaltado en `brand`, con "Hoy" y `aria-current="date"`. Los turnos se escriben "08:00 – 13:00 · 17:00 – 21:30". Un turno que cruza la medianoche va en el día en que empieza (RN-02). Un día sin turnos dice "Cerrado" (RN-03).
+- **Motivo:** el mockup muestra ejemplos sueltos, no todos los casos. Escribir las reglas evita que la ficha y el listado digan cosas distintas para el mismo negocio. "Mañana" se dice siempre que el cambio es otro día: con turnos encadenados, el cierre de mañana puede ser más tarde que la hora actual, y sin "mañana" se leería como de hoy. La pausa no lleva texto porque la API no guarda el motivo, e inventarlo ("por vacaciones") sería mentir.
+- **Descartado:**
+  - "Cierra a las 02:00" pasada la medianoche, como el mockup, por lo anterior.
+  - Los turnos como en el mockup ("08–13 y 16:30–21:30"), porque mezcla horas con y sin minutos. Con `HH:mm` siempre, se leen igual todos los días.
+  - Un horario plegable, porque el mockup lo muestra entero.
+- **Nota:** las diferencias con el mockup están en la sección 5 de `docs/mockup/web.md`. El texto corto de la fila del listado en celular ("Cierra 02:00") queda pendiente para otra historia.
