@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { describe, expect, it, vi } from 'vitest';
+import { AppError } from '../../../../src/shared/errors/app-error.js';
 import { NotFoundError } from '../../../../src/shared/errors/http-errors.js';
 import { errorHandler } from '../../../../src/shared/middlewares/error-handler.js';
 
@@ -39,5 +40,15 @@ describe('errorHandler', () => {
     expect(res.json).toHaveBeenCalledWith({
       error: { code: 'INTERNAL_ERROR', message: 'Error interno del servidor', details: [] },
     });
+  });
+
+  it('registra en el log un AppError 5xx y no uno 4xx', () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    handle(new AppError(500, 'BROKEN_DATA', 'Error interno del servidor'));
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    handle(new AppError(404, 'NOT_FOUND', 'No existe'));
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });
