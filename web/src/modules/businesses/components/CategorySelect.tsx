@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { startTransition, useOptimistic, type ChangeEvent } from 'react';
+import { startTransition, useId, useOptimistic, type ChangeEvent } from 'react';
 import { listHref } from '../domain/list-href';
 import type { Category } from '../schemas/category-list.schema';
 
@@ -16,6 +16,7 @@ export function CategorySelect({
   category?: string;
 }) {
   const router = useRouter();
+  const id = useId();
   // Muestra el rubro elegido mientras llega la página nueva; después vuelve a mandar el de la URL.
   const [selected, setSelected] = useOptimistic(category ?? '');
 
@@ -33,13 +34,13 @@ export function CategorySelect({
     // Con JavaScript el botón no aparece: el cambio ya navega y sería un segundo paso que no hace
     // nada. "Todo" llega como ?rubro= vacío, que la ruta trata como sin rubro.
     <form method="get" action="/" className="flex flex-col gap-1.5 sm:hidden">
-      <label htmlFor="category-select" className="text-sm font-bold">
+      <label htmlFor={id} className="text-sm font-bold">
         Rubro
       </label>
       <div className="flex gap-2">
         {/* 48 px de alto y texto de 16 px, como Input, para que el celular no haga zoom. */}
         <select
-          id="category-select"
+          id={id}
           name="rubro"
           value={selected}
           onChange={handleChange}

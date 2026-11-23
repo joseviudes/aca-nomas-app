@@ -2,6 +2,7 @@ import { ApiError } from '@/shared/api/api-error';
 import { listCategories } from '../api/businesses.api';
 import { CategorySelect } from '../components/CategorySelect';
 import { CategoryTabs } from '../components/CategoryTabs';
+import { activeCategory } from '../domain/active-category';
 
 // Filtro por rubro del inicio (US-03): desplegable en el celular y pestañas desde sm. Se pide en
 // el servidor; la carga la muestra el <Suspense> de la ruta, separado del listado.
@@ -19,10 +20,13 @@ export async function CategoryFilterPage({ category }: { category?: string }) {
 
   if (categories.length === 0) return null;
 
+  // Se calcula una vez para las dos vistas, así nunca marcan rubros distintos.
+  const active = activeCategory(categories, category);
+
   return (
     <>
-      <CategorySelect categories={categories} category={category} />
-      <CategoryTabs categories={categories} category={category} />
+      <CategorySelect categories={categories} category={active} />
+      <CategoryTabs categories={categories} category={active} />
     </>
   );
 }
