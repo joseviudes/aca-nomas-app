@@ -40,6 +40,7 @@ describe('API docs enabled (D-34)', () => {
     expect(document.paths['/health']?.get).toBeDefined();
     expect(document.paths['/businesses']?.get).toBeDefined();
     expect(document.paths['/businesses/{slug}']?.get).toBeDefined();
+    expect(document.paths['/categories']?.get).toBeDefined();
   });
 
   // La validación corta antes del repositorio, así que no hace falta la base.
