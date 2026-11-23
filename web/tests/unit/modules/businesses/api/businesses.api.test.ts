@@ -10,6 +10,10 @@ import {
   listCategories,
 } from '@/modules/businesses/api/businesses.api';
 import { ApiError } from '@/shared/api/api-error';
+import { cacheLife } from 'next/cache';
+
+// Fuera de Next, 'use cache' es solo un texto y cacheLife no tiene una caché a la que hablarle.
+vi.mock('next/cache', () => ({ cacheLife: vi.fn() }));
 
 // En desarrollo y en pruebas, NEXT_PUBLIC_API_URL vale http://localhost:3000/api (config/env.ts).
 const API_URL = 'http://localhost:3000/api';
@@ -32,6 +36,7 @@ async function expectApiError(promise: Promise<unknown>, status: number, code: s
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.clearAllMocks();
 });
 
 describe('listBusinesses', () => {
@@ -125,14 +130,34 @@ describe('listBusinesses', () => {
 });
 
 describe('listCategories', () => {
-  it('asks for every category in one page, cached for an hour', async () => {
+  it('asks for every category in one page', async () => {
     const fetchMock = mockFetch(json(categoryListFixture()));
 
     await listCategories();
 
     expect(fetchMock).toHaveBeenCalledWith(
       `${API_URL}/categories?limit=100`,
-      expect.objectContaining({ method: 'GET', next: { revalidate: 3600 } }),
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
+  it('keeps a failure for seconds only, so it is asked again on the next visit', async () => {
+    mockFetch(new TypeError('fetch failed'));
+
+    await expectApiError(listCategories(), 0, 'NETWORK_ERROR');
+    expect(cacheLife).toHaveBeenCalledWith('seconds');
+    expect(cacheLife).not.toHaveBeenCalledWith('hours');
+  });
+
+  it('caches the categories for hours with cacheLife, not with fetch options', async () => {
+    const fetchMock = mockFetch(json(categoryListFixture()));
+
+    await listCategories();
+
+    expect(cacheLife).toHaveBeenCalledWith('hours');
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.not.objectContaining({ next: expect.anything() }),
     );
   });
 

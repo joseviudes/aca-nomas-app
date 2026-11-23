@@ -16,7 +16,8 @@ export function CategoryTabs({
   category,
 }: {
   categories: Category[];
-  category?: string;
+  // undefined marca "Todo"; null, ninguna (mientras se lee la URL).
+  category?: string | null;
 }) {
   const tabs = [{ slug: undefined, name: 'Todo' }, ...categories];
 
@@ -24,7 +25,7 @@ export function CategoryTabs({
     <nav aria-label="Rubros" className="hidden border-b border-line sm:block">
       <ul className={cx('flex flex-wrap pb-3', CATEGORY_TABS_GAP_CLASSES)}>
         {tabs.map(({ slug, name }) => {
-          // Sin rubro, la elegida es "Todo".
+          // Sin rubro, la elegida es "Todo"; con null no coincide ninguna.
           const isActive = slug === category;
 
           return (
