@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { InvalidTimezoneError } from '../../../src/modules/opening-hours/domain/invalid-timezone.error.js';
 import type { OpeningHours } from '../../../src/modules/opening-hours/domain/opening-hours.types.js';
 import { OpeningHoursService } from '../../../src/modules/opening-hours/services/opening-hours.service.js';
 
@@ -53,5 +54,28 @@ describe('OpeningHoursService.weeklySchedule', () => {
     const schedule = service.weeklySchedule({ ...TUESDAY_MORNING, isPaused: true }, TIMEZONE);
 
     expect(schedule.days[1]?.shifts).toHaveLength(1);
+  });
+});
+
+// D-51: una zona inválida en la base falla con un 500 controlado, no da un estado ni un día inventados.
+describe('OpeningHoursService con una zona horaria inválida', () => {
+  const service = new OpeningHoursService(() => new Date('2026-11-17T13:00:00Z'));
+
+  it('currentStatus lanza InvalidTimezoneError', () => {
+    expect(() => service.currentStatus(TUESDAY_MORNING, 'Mantilla/Nunca')).toThrow(
+      InvalidTimezoneError,
+    );
+  });
+
+  it('weeklySchedule lanza InvalidTimezoneError', () => {
+    expect(() => service.weeklySchedule(TUESDAY_MORNING, '')).toThrow(InvalidTimezoneError);
+  });
+
+  it('responde 500 con un código estable y sin mostrar la zona', () => {
+    const error = new InvalidTimezoneError('Mantilla/Nunca');
+
+    expect(error.statusCode).toBe(500);
+    expect(error.code).toBe('INVALID_LOCALITY_TIMEZONE');
+    expect(error.message).not.toContain('Mantilla');
   });
 });

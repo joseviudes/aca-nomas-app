@@ -1,3 +1,4 @@
+import { assertValidTimezone } from '../domain/invalid-timezone.error.js';
 import { isOpenNow } from '../domain/is-open-now.js';
 import type { BusinessStatus, OpeningHours } from '../domain/opening-hours.types.js';
 import { weeklySchedule, type WeeklySchedule } from '../domain/weekly-schedule.js';
@@ -9,11 +10,13 @@ export class OpeningHoursService {
   constructor(private readonly now: () => Date = () => new Date()) {}
 
   currentStatus(hours: OpeningHours, timezone: string): BusinessStatus {
+    assertValidTimezone(timezone);
     return isOpenNow(hours, this.now(), timezone);
   }
 
   // El horario de los 7 días en hora local, con el día de hoy de la localidad (US-09).
   weeklySchedule(hours: OpeningHours, timezone: string): WeeklySchedule {
+    assertValidTimezone(timezone);
     return weeklySchedule(hours.shifts, this.now(), timezone);
   }
 }

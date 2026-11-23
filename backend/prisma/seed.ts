@@ -10,6 +10,7 @@ import {
   paymentMethodsSchema,
   type PaymentMethod,
 } from '../src/modules/businesses/schemas/business.schema.js';
+import { assertValidTimezone } from '../src/modules/opening-hours/domain/invalid-timezone.error.js';
 
 // Contraseña de todas las cuentas del seed. Es pública a propósito: solo existe en la base local.
 const SEED_PASSWORD = 'acanomas123';
@@ -233,8 +234,12 @@ async function main(): Promise<void> {
     await tx.category.deleteMany();
     await tx.locality.deleteMany();
 
+    // Una zona inválida rompe el estado y el horario de todos los negocios de la localidad (D-51).
+    const timezone = 'America/Argentina/Buenos_Aires';
+    assertValidTimezone(timezone);
+
     const locality = await tx.locality.create({
-      data: { name: 'Mantilla', timezone: 'America/Argentina/Buenos_Aires' },
+      data: { name: 'Mantilla', timezone },
     });
 
     const categoryIds = new Map<string, string>();
