@@ -34,6 +34,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.26 | 21/11/2026 | Tobias | Agrega y acepta D-47: carpeta `metadata/` en los módulos de la web, para la vista previa de cada pantalla |
 | 0.27 | 22/11/2026 | Tobias | Agrega y acepta D-48 (zona horaria y hora actual en la ficha) y D-49 (texto de estado y horario de la semana en la ficha), de US-09 |
 | 0.28 | 23/11/2026 | Tobias | Agrega y acepta D-50: caché de los datos fijos de la API en la web, de US-03. La nota de D-44 suma `?rubro=` y cómo se trata un parámetro inválido |
+| 0.29 | 23/11/2026 | Josi | Agrega y acepta D-51: una zona horaria inválida en la base responde 500 y se registra, de la duda de la PR #19 |
 
 ## Índice
 
@@ -89,6 +90,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-48 | Zona horaria y hora actual en la ficha | Aceptada |
 | D-49 | Texto de estado y horario de la semana de la ficha | Aceptada |
 | D-50 | Caché de datos fijos de la API en la web | Aceptada |
+| D-51 | Zona horaria inválida en una localidad | Aceptada |
 
 ---
 
@@ -570,3 +572,15 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
   - Lanzar el error dentro de la función cacheada. El filtro vacío quedaría guardado por horas.
   - Pedir los rubros junto con el listado. Se perderían la caché y la precarga.
 - **Nota:** complementa a D-30 y a D-45. Si aparece otro dato fijo (por ejemplo, las localidades), se usa el mismo patrón. Surgió en US-03.
+
+## D-51 Zona horaria inválida en una localidad
+- **Decisión:**
+  - Si `localities.timezone` trae una zona que no existe, la API responde 500 con el código `INVALID_LOCALITY_TIMEZONE` y el mensaje genérico "Error interno del servidor". No muestra la zona al cliente.
+  - `OpeningHoursService` valida la zona antes de calcular el estado (`isOpenNow`) y el horario de la semana (`weeklySchedule`), con `assertValidTimezone`. Así el listado y la ficha fallan igual: ninguno muestra un estado ni un día inventados.
+  - El manejador de errores registra en el log todo `AppError` de código 5xx, con la zona dentro del error. Antes solo registraba los errores inesperados.
+  - El seed valida la zona con la misma función antes de crear la localidad.
+- **Motivo:** una zona inválida es un dato roto del servidor, no un error del cliente. `luxon.ts` ya pide que una zona mal escrita falle y no dé un estado inventado (D-41). Hoy no hay un endpoint que escriba localidades: la zona entra solo por el seed, así que validar ahí y al calcular cubre todos los caminos. La web ya no muestra el texto de estado cuando la API falla.
+- **Descartado:**
+  - Degradar: responder el negocio con `status` y `schedule` en `null`. El listado seguiría andando, pero el dato roto pasaría inadvertido.
+  - Validar solo al escribir. Hoy basta con el seed, pero una zona cargada a mano en la base llegaría igual al cálculo.
+- **Nota:** surgió en la PR #19 (US-09). Cuando exista un endpoint para crear o editar localidades, su esquema de Zod tiene que validar la zona con `assertValidTimezone`. Una localidad mal cargada rompe el listado entero mientras no se corrija el dato.
