@@ -54,19 +54,6 @@
       ]
     },
     {
-      "name": "Rubros",
-      "item": [
-        {
-          "name": "[Pendiente] Listar rubros",
-          "request": {
-            "method": "GET",
-            "url": { "raw": "{{baseUrl}}/categories", "host": ["{{baseUrl}}"], "path": ["categories"] },
-            "description": "US-03. Rubros para el filtro del listado."
-          }
-        }
-      ]
-    },
-    {
       "name": "Cuenta",
       "item": [
         {

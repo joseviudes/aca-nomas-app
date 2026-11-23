@@ -18,7 +18,9 @@ export const businessesPaths: ZodOpenApiPathsObject = {
         'Público, sin sesión (US-01). Trae 20 negocios por página por defecto y 100 como máximo. ' +
         'Una página fuera de rango devuelve data vacía, no un error. status es el estado en el ' +
         'momento de la consulta, en la zona horaria de la localidad: en pausa, "hoy no abro" y ' +
-        'después el horario semanal, en ese orden (RN-01).',
+        'después el horario semanal, en ese orden (RN-01). category (US-03) es el slug de un rubro ' +
+        '(los de GET /api/categories): devuelve solo los negocios de ese rubro, y un rubro que no ' +
+        'existe da una lista vacía, no un error.',
       requestParams: { query: businessListQuerySchema },
       responses: {
         '200': {

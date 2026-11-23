@@ -1,5 +1,6 @@
 import type { BusinessDetail, DaySchedule, Shift } from '../schemas/business-detail.schema';
 import type { BusinessListItem, BusinessListResponse } from '../schemas/business-list.schema';
+import type { CategoryListResponse } from '../schemas/category-list.schema';
 
 // Datos de ejemplo con la forma del contrato (D-40). La web ya usa la API: quedan solo para las
 // pruebas. Nombres inventados; los rubros son los del seed. En el listado, el estado es una muestra
@@ -18,6 +19,14 @@ const CATEGORIES = {
 } as const;
 
 type CategorySlug = keyof typeof CATEGORIES;
+
+// GET /categories con ?limit=100: todos los rubros en una página, ordenados por nombre como la API.
+export function categoryListFixture(): CategoryListResponse {
+  const data = Object.entries(CATEGORIES)
+    .map(([slug, name]) => ({ slug, name }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'es'));
+  return { data, page: 1, limit: 100, total: data.length };
+}
 
 const BUSINESSES: Array<[slug: string, name: string, category: CategorySlug, paused?: true]> = [
   ['almacen-el-colibri', 'Almacén El Colibrí', 'almacen'],
@@ -57,20 +66,26 @@ const businessListItemsFixture: BusinessListItem[] = BUSINESSES.map(
   }),
 );
 
-// Igual que la API: una página fuera de rango devuelve data vacía, no un error.
+// Igual que la API: una página fuera de rango o un rubro que no existe devuelven data vacía, no un
+// error. Con rubro, total cuenta solo los negocios de ese rubro.
 export function businessListFixture({
   page,
   limit,
+  category,
 }: {
   page: number;
   limit: number;
+  category?: string;
 }): BusinessListResponse {
+  const items = category
+    ? businessListItemsFixture.filter((business) => business.category.slug === category)
+    : businessListItemsFixture;
   const start = (page - 1) * limit;
   return {
-    data: businessListItemsFixture.slice(start, start + limit),
+    data: items.slice(start, start + limit),
     page,
     limit,
-    total: businessListItemsFixture.length,
+    total: items.length,
   };
 }
 

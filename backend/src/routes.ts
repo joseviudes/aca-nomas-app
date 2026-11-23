@@ -2,6 +2,7 @@ import { Router } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import { container } from './container.js';
 import { createBusinessesRouter } from './modules/businesses/routes/businesses.routes.js';
+import { createCategoriesRouter } from './modules/businesses/routes/categories.routes.js';
 import { createOpenApiDocument } from './openapi.js';
 
 export interface ApiRouterOptions {
@@ -18,6 +19,7 @@ export function createApiRouter({ apiDocs }: ApiRouterOptions): Router {
   });
 
   router.use('/businesses', createBusinessesRouter(container.businessController));
+  router.use('/categories', createCategoriesRouter(container.categoryController));
 
   if (apiDocs) {
     // Se arma una sola vez al levantar el servidor, no en cada request.

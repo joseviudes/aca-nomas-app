@@ -33,6 +33,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.25 | 21/11/2026 | Tobias | Acepta D-45 (opción A: `pages/` con componentes de servidor en la web) y D-46 (opción A: la 404 de la ficha responde 200 con `noindex`) |
 | 0.26 | 21/11/2026 | Tobias | Agrega y acepta D-47: carpeta `metadata/` en los módulos de la web, para la vista previa de cada pantalla |
 | 0.27 | 22/11/2026 | Tobias | Agrega y acepta D-48 (zona horaria y hora actual en la ficha) y D-49 (texto de estado y horario de la semana en la ficha), de US-09 |
+| 0.28 | 23/11/2026 | Tobias | Agrega y acepta D-50: caché de los datos fijos de la API en la web, de US-03. La nota de D-44 suma `?rubro=` y cómo se trata un parámetro inválido |
 
 ## Índice
 
@@ -87,6 +88,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-47 | Carpeta `metadata/` en los módulos de la web | Aceptada |
 | D-48 | Zona horaria y hora actual en la ficha | Aceptada |
 | D-49 | Texto de estado y horario de la semana de la ficha | Aceptada |
+| D-50 | Caché de datos fijos de la API en la web | Aceptada |
 
 ---
 
@@ -495,6 +497,9 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
   - **B. En inglés, iguales a la API.** `/?page=2&category=panaderia`. No hay traducción, pero la URL que ve el vecino mezcla idiomas.
 - **Motivo:** el vecino ve y comparte esas URLs, igual que las rutas (D-29). La regla afecta a los filtros de US-02 a US-06 (`q`, rubro, abierto ahora, distancia), así que conviene fijarla antes de que cada historia elija la suya.
 - **Nota:** mientras no se decida, rige la opción A. El listado de US-01 ya usa `?pagina=`.
+  - El filtro de US-03 también usa la opción A: `?rubro=`, como `?pagina=`.
+  - Regla aplicada en US-01 y US-03: un parámetro de la URL mal formado o que no existe se ignora, sin mostrar un error. Un rubro inválido se muestra como "Todo", igual que una `?pagina=` inválida vuelve a la 1. Un rubro bien formado que no existe (`?rubro=heladeria`) muestra el estado vacío del listado con "Ver todos".
+  - Conviene decidir D-44 antes de US-02, US-04 y US-06, que suman parámetros.
 
 ## D-45 `pages/` con componentes de servidor en los módulos de la web
 - **Decisión:** opción A. Un módulo de `web/` tiene una carpeta `pages/` con componentes de servidor asíncronos (componentes que piden los datos en el servidor con `await`). La ruta de `app/` queda fina: lee `params` o `searchParams` dentro de un `<Suspense>` y le pasa los valores al componente de `pages/`, que pide los datos y arma la pantalla. La skill `estructura-del-frontend` suma `pages/` al árbol de la web.
@@ -550,3 +555,18 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
   - Los turnos como en el mockup ("08–13 y 16:30–21:30"), porque mezcla horas con y sin minutos. Con `HH:mm` siempre, se leen igual todos los días.
   - Un horario plegable, porque el mockup lo muestra entero.
 - **Nota:** las diferencias con el mockup están en la sección 5 de `docs/mockup/web.md`. El texto corto de la fila del listado en celular ("Cierra 02:00") queda pendiente para otra historia.
+
+## D-50 Caché de datos fijos de la API en la web
+- **Decisión:**
+  - Los datos que no dependen de la URL ni de la hora (hoy, los rubros) se piden en una función con `'use cache'` (la directiva de Next que guarda el resultado de una función en su caché).
+  - Si la API responde, la función usa `cacheLife('hours')`. Si falla, no lanza el error: devuelve el fallo como valor con `cacheLife('seconds')`, y la capa `api/` lo relanza como `ApiError`. La convención de errores no cambia (D-30).
+  - Ese `fetch` no lleva `next.revalidate`: la duración tiene una sola fuente, `cacheLife`.
+  - El rubro elegido, que sale de `searchParams`, se resuelve aparte, en la parte dinámica de la página.
+  - El `fetch` sigue pasando solo por el `http-client` (D-30).
+  - Hoy lo usa `listCategories` en `web/src/modules/businesses/api/businesses.api.ts`.
+- **Motivo:** con `cacheComponents` (D-45), el filtro entra en la parte estática de la página y en la precarga, sin mostrar el esqueleto en cada carga, y los rubros se piden como mucho una vez por hora. Un fallo no queda guardado en la parte estática: dura como mucho un minuto y se vuelve a pedir.
+- **Descartado:**
+  - `next: { revalidate }` en el `fetch` dentro de la parte dinámica. Los rubros quedarían detrás de `searchParams` y nunca entrarían en la parte estática.
+  - Lanzar el error dentro de la función cacheada. El filtro vacío quedaría guardado por horas.
+  - Pedir los rubros junto con el listado. Se perderían la caché y la precarga.
+- **Nota:** complementa a D-30 y a D-45. Si aparece otro dato fijo (por ejemplo, las localidades), se usa el mismo patrón. Surgió en US-03.

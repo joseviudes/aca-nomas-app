@@ -6,19 +6,21 @@ import {
 import { BusinessService } from '../../../src/modules/businesses/services/business.service.js';
 import type { OpeningHours } from '../../../src/modules/opening-hours/domain/opening-hours.types.js';
 import { OpeningHoursService } from '../../../src/modules/opening-hours/services/opening-hours.service.js';
-import { toOffset, type PaginationQuery } from '../../../src/shared/pagination/pagination.js';
+import { toOffset } from '../../../src/shared/pagination/pagination.js';
 import { NotFoundError } from '../../../src/shared/errors/http-errors.js';
 import type {
   BusinessDetailEntry,
+  BusinessListCriteria,
   BusinessListEntry,
   BusinessListPage,
   BusinessRepository,
 } from '../../../src/shared/ports/business.repository.js';
 
-// Repositorio falso en memoria: pagina la lista que recibe y guarda con qué página lo llamaron.
+// Repositorio falso en memoria: filtra por rubro, pagina la lista que recibe y guarda con qué
+// criterios lo llamaron.
 // Las fichas van aparte porque llevan datos que el listado no trae, como la descripción.
 class InMemoryBusinessRepository implements BusinessRepository {
-  lastPagination: PaginationQuery | undefined;
+  lastCriteria: BusinessListCriteria | undefined;
 
   constructor(
     private readonly entries: BusinessListEntry[],
@@ -29,12 +31,15 @@ class InMemoryBusinessRepository implements BusinessRepository {
     return Promise.resolve(this.details.find((detail) => detail.slug === slug) ?? null);
   }
 
-  findPage(pagination: PaginationQuery): Promise<BusinessListPage> {
-    this.lastPagination = pagination;
-    const offset = toOffset(pagination);
+  findPage(criteria: BusinessListCriteria): Promise<BusinessListPage> {
+    this.lastCriteria = criteria;
+    const matching = this.entries.filter(
+      (entry) => !criteria.category || entry.category.slug === criteria.category,
+    );
+    const offset = toOffset(criteria);
     return Promise.resolve({
-      items: this.entries.slice(offset, offset + pagination.limit),
-      total: this.entries.length,
+      items: matching.slice(offset, offset + criteria.limit),
+      total: matching.length,
     });
   }
 }
@@ -171,7 +176,56 @@ describe('BusinessService.list', () => {
 
     await service.list({ page: 2, limit: 2 });
 
-    expect(repository.lastPagination).toEqual({ page: 2, limit: 2 });
+    expect(repository.lastCriteria).toMatchObject({ page: 2, limit: 2 });
+  });
+
+  describe('filtro por rubro (US-03)', () => {
+    const bakery2 = { ...bakery, slug: 'panaderia-don-jose', name: 'Panadería Don José' };
+
+    it('pide al repositorio el rubro de la consulta', async () => {
+      const { repository, service } = serviceWith([bakery]);
+
+      await service.list({ page: 1, limit: 20, category: 'panaderia' });
+
+      expect(repository.lastCriteria).toEqual({ page: 1, limit: 20, category: 'panaderia' });
+    });
+
+    it('lista solo los negocios del rubro y cuenta solo esos en el total', async () => {
+      const { service } = serviceWith([bakery, hardware, bakery2]);
+
+      const result = await service.list({ page: 1, limit: 20, category: 'panaderia' });
+
+      expect(result.data.map((business) => business.slug)).toEqual([
+        'panaderia-la-espiga',
+        'panaderia-don-jose',
+      ]);
+      expect(result.total).toBe(2);
+    });
+
+    it('pagina dentro del rubro elegido', async () => {
+      const { service } = serviceWith([bakery, hardware, bakery2]);
+
+      const result = await service.list({ page: 2, limit: 1, category: 'panaderia' });
+
+      expect(result.data.map((business) => business.slug)).toEqual(['panaderia-don-jose']);
+      expect(result).toMatchObject({ page: 2, limit: 1, total: 2 });
+    });
+
+    it('sin rubro lista todos los negocios', async () => {
+      const { service } = serviceWith([bakery, hardware, bakery2]);
+
+      const result = await service.list({ page: 1, limit: 20 });
+
+      expect(result.total).toBe(3);
+    });
+
+    it('devuelve una lista vacía, no un error, si el rubro no existe', async () => {
+      const { service } = serviceWith([bakery, hardware]);
+
+      const result = await service.list({ page: 1, limit: 20, category: 'astrologia' });
+
+      expect(result).toEqual({ data: [], page: 1, limit: 20, total: 0 });
+    });
   });
 
   it('devuelve page, limit y el total de negocios, no solo los de la página', async () => {
