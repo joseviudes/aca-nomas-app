@@ -34,6 +34,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | 0.26 | 21/11/2026 | Tobias | Agrega y acepta D-47: carpeta `metadata/` en los módulos de la web, para la vista previa de cada pantalla |
 | 0.27 | 22/11/2026 | Tobias | Agrega y acepta D-48 (zona horaria y hora actual en la ficha) y D-49 (texto de estado y horario de la semana en la ficha), de US-09 |
 | 0.28 | 23/11/2026 | Tobias | Agrega y acepta D-50: caché de los datos fijos de la API en la web, de US-03. La nota de D-44 suma `?rubro=` y cómo se trata un parámetro inválido |
+| 0.29 | 23/11/2026 | José | Agrega y acepta D-51: la búsqueda de texto ignora mayúsculas y tildes con la extensión `unaccent` de PostgreSQL, de US-02 |
 
 ## Índice
 
@@ -89,6 +90,7 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
 | D-48 | Zona horaria y hora actual en la ficha | Aceptada |
 | D-49 | Texto de estado y horario de la semana de la ficha | Aceptada |
 | D-50 | Caché de datos fijos de la API en la web | Aceptada |
+| D-51 | Búsqueda de texto sin mayúsculas ni tildes con `unaccent` | Aceptada |
 
 ---
 
@@ -570,3 +572,21 @@ Cada decisión técnica o de proceso queda registrada con su motivo y las altern
   - Lanzar el error dentro de la función cacheada. El filtro vacío quedaría guardado por horas.
   - Pedir los rubros junto con el listado. Se perderían la caché y la precarga.
 - **Nota:** complementa a D-30 y a D-45. Si aparece otro dato fijo (por ejemplo, las localidades), se usa el mismo patrón. Surgió en US-03.
+
+## D-51 Búsqueda de texto sin mayúsculas ni tildes con `unaccent`
+- **Decisión:**
+  - `GET /api/businesses?q=` busca el texto en el nombre y en la descripción, sin distinguir mayúsculas ni tildes: "cafe" encuentra "Café del Puerto".
+  - Se usa la extensión `unaccent` de PostgreSQL (una extensión que saca las tildes de un texto). La activa una migración (`CREATE EXTENSION IF NOT EXISTS unaccent`).
+  - El repositorio (`PrismaBusinessRepository.findIdsMatching`) arma la lista de negocios que coinciden con una consulta SQL propia, porque Prisma no trae `unaccent`. Después la combina con el resto de los filtros (por ejemplo, el rubro) en el `where` de Prisma, así que la página y el total cuentan lo mismo.
+  - La comparación es `strpos(lower(unaccent(campo)), lower(unaccent(q))) > 0`: busca el texto escrito tal cual, en cualquier parte del campo (`pan` encuentra "Panadería" y "Empanadas").
+  - `q` llega sin espacios en los bordes y de hasta 100 caracteres (`MAX_SEARCH_LENGTH`); uno vacío cuenta como ausente. El repositorio no lo vuelve a validar.
+- **Motivo:** no hay nada que mantener: ni columnas extra ni código que normalice el texto en cada alta o edición de un negocio (US-15). Funciona igual con los negocios que ya existen, y los datos guardados quedan como los escribió el dueño. La extensión viene con la imagen `postgres:17` de Docker (D-04) y Supabase la ofrece.
+- **Descartado:**
+  - Guardar columnas con el texto ya normalizado (sin tildes y en minúsculas), calculadas en la aplicación. Hay que mantenerlas en cada escritura y en el seed, y alcanza con olvidarse una vez para que la búsqueda falle sin avisar.
+  - Una columna generada con `unaccent` dentro de la base. `unaccent` no está marcada como inmutable, así que PostgreSQL no la acepta en una columna generada sin una función envoltorio propia.
+  - `ILIKE '%texto%'`. Ignora mayúsculas, pero no tildes, y un `q` con `%` o `_` funcionaría como comodín.
+- **Nota:**
+  - `unaccent` también iguala la `ñ` con la `n`: "nino" encuentra "Niño".
+  - Como `unaccent` no es inmutable, la búsqueda no usa índices y recorre todos los negocios. Alcanza para los de una localidad (D-22). Si el catálogo crece mucho, se revisa esta decisión.
+  - En Supabase, la extensión se crea en el esquema `extensions`. Antes del primer despliegue hay que comprobar que la API la encuentra (tarea de EP-06 sobre Supabase). Si no, se llama como `extensions.unaccent`.
+  - Surgió en US-02.
