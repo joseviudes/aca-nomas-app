@@ -2,20 +2,15 @@ import { http } from '@/shared/api/http-client';
 import { businessDetailSchema } from '../schemas/business-detail.schema';
 import { businessListResponseSchema } from '../schemas/business-list.schema';
 import { categoryListResponseSchema } from '../schemas/category-list.schema';
-import { businessListFixture, categoryListFixture } from './businesses.fixtures';
 
-// No se manda limit: se usan los 20 por página que la API trae por defecto.
+// No se manda limit: se usan los 20 por página que la API trae por defecto. El rubro va solo si
+// hay uno: sin category, la API devuelve todos los negocios.
 // Sin caché: el estado de cada negocio (abierto, cerrado) cambia con la hora.
-export async function listBusinesses({
-  page = 1,
-  category,
-}: { page?: number; category?: string } = {}) {
-  // Datos de ejemplo para el filtro por rubro hasta conectarlo con la API (D-40).
-  if (category) {
-    return businessListResponseSchema.parse(businessListFixture({ page, limit: 20, category }));
-  }
+export function listBusinesses({ page = 1, category }: { page?: number; category?: string } = {}) {
+  const query = new URLSearchParams({ page: String(page) });
+  if (category) query.set('category', category);
 
-  return http.get(`/businesses?page=${page}`, {
+  return http.get(`/businesses?${query}`, {
     schema: businessListResponseSchema,
     cache: 'no-store',
   });
@@ -31,7 +26,11 @@ export function getBusiness(slug: string) {
   });
 }
 
-// Datos de ejemplo hasta conectar con la API (D-40).
-export async function listCategories() {
-  return categoryListResponseSchema.parse(categoryListFixture());
+// Los rubros son una lista fija que se carga con el seed: se guardan una hora en la caché de Next
+// en lugar de pedirlos en cada visita. limit=100 (el máximo de la API) trae todos en una página.
+export function listCategories() {
+  return http.get('/categories?limit=100', {
+    schema: categoryListResponseSchema,
+    next: { revalidate: 3600 },
+  });
 }

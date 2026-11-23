@@ -2,8 +2,13 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   businessDetailFixture,
   businessListFixture,
+  categoryListFixture,
 } from '@/modules/businesses/api/businesses.fixtures';
-import { getBusiness, listBusinesses } from '@/modules/businesses/api/businesses.api';
+import {
+  getBusiness,
+  listBusinesses,
+  listCategories,
+} from '@/modules/businesses/api/businesses.api';
 import { ApiError } from '@/shared/api/api-error';
 
 // En desarrollo y en pruebas, NEXT_PUBLIC_API_URL vale http://localhost:3000/api (config/env.ts).
@@ -49,6 +54,39 @@ describe('listBusinesses', () => {
     expect(fetchMock).toHaveBeenCalledWith(`${API_URL}/businesses?page=1`, expect.anything());
   });
 
+  it('sends the category when there is one', async () => {
+    const fetchMock = mockFetch(
+      json(businessListFixture({ page: 2, limit: 20, category: 'kiosco' })),
+    );
+
+    await listBusinesses({ page: 2, category: 'kiosco' });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      `${API_URL}/businesses?page=2&category=kiosco`,
+      expect.objectContaining({ method: 'GET', cache: 'no-store' }),
+    );
+  });
+
+  it('does not send the category when there is none', async () => {
+    const fetchMock = mockFetch(json(businessListFixture({ page: 1, limit: 20 })));
+
+    await listBusinesses({ page: 1, category: undefined });
+
+    expect(fetchMock).toHaveBeenCalledWith(`${API_URL}/businesses?page=1`, expect.anything());
+  });
+
+  it('returns an empty page for a category without businesses', async () => {
+    const body = businessListFixture({ page: 1, limit: 20, category: 'heladeria' });
+    mockFetch(json(body));
+
+    await expect(listBusinesses({ category: 'heladeria' })).resolves.toEqual({
+      data: [],
+      page: 1,
+      limit: 20,
+      total: 0,
+    });
+  });
+
   it('returns the validated page', async () => {
     const body = businessListFixture({ page: 1, limit: 20 });
     mockFetch(json(body));
@@ -83,6 +121,38 @@ describe('listBusinesses', () => {
     );
 
     await expectApiError(listBusinesses({ page: 1 }), 400, 'VALIDATION_ERROR');
+  });
+});
+
+describe('listCategories', () => {
+  it('asks for every category in one page, cached for an hour', async () => {
+    const fetchMock = mockFetch(json(categoryListFixture()));
+
+    await listCategories();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      `${API_URL}/categories?limit=100`,
+      expect.objectContaining({ method: 'GET', next: { revalidate: 3600 } }),
+    );
+  });
+
+  it('returns the validated categories', async () => {
+    const body = categoryListFixture();
+    mockFetch(json(body));
+
+    await expect(listCategories()).resolves.toEqual(body);
+  });
+
+  it('throws INVALID_RESPONSE when the response does not match the contract', async () => {
+    mockFetch(json({ data: [{ slug: 'kiosco' }], page: 1, limit: 100, total: 1 }));
+
+    await expectApiError(listCategories(), 200, 'INVALID_RESPONSE');
+  });
+
+  it('throws NETWORK_ERROR when the API cannot be reached', async () => {
+    mockFetch(new TypeError('fetch failed'));
+
+    await expectApiError(listCategories(), 0, 'NETWORK_ERROR');
   });
 });
 
