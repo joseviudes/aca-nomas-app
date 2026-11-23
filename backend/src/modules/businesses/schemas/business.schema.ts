@@ -49,7 +49,8 @@ export const businessListItemSchema = z
 
 export type BusinessListItem = z.infer<typeof businessListItemSchema>;
 
-// Tope del texto de búsqueda, para que no llegue a la base una consulta enorme. A confirmar con US-02.
+// Tope del texto de búsqueda, para que no llegue a la base una consulta enorme. Con 100 caracteres
+// sobra para un nombre de negocio (la descripción admite 80).
 export const MAX_SEARCH_LENGTH = 100;
 
 // Mismo formato que los slugs del seed: minúsculas, números y guiones (panaderia, mercado-central).
@@ -65,11 +66,10 @@ function optionalParam<T extends z.ZodType>(schema: T) {
   }, schema.optional());
 }
 
-// Filtros del listado, ya validados y normalizados. Todavía no entran en la ruta: el repositorio no
-// filtra, y publicarlos haría que ?category=panaderia devuelva todos los negocios sin avisar. Cada
-// historia suma su campo a businessListQuerySchema cuando lo aplica, por ejemplo
-// paginationQuerySchema.extend({ q: businessListFiltersSchema.shape.q }), y la regla de lat y lng
-// se suma con US-06.
+// Filtros del listado, ya validados y normalizados. Los que el repositorio todavía no aplica no
+// entran en la ruta: publicarlos haría que ?openNow=true devuelva todos los negocios sin avisar.
+// Cada historia suma su campo a businessListQuerySchema cuando lo aplica, como q (US-02) y
+// category (US-03), y la regla de lat y lng se suma con US-06.
 export const businessListFiltersSchema = z
   .object({
     // US-02: busca en nombre y descripción. Las mayúsculas y las tildes las resuelve el repositorio.
@@ -101,9 +101,10 @@ export const businessListFiltersSchema = z
 export type BusinessListFilters = z.infer<typeof businessListFiltersSchema>;
 
 // Consulta del listado: page y limit (US-01), con 20 por página por defecto, y los filtros de
-// businessListFiltersSchema que ya aplica el repositorio. Hoy, category (US-03); q, openNow, lat y
-// lng se suman con US-02, US-04 y US-06, cuando el repositorio los filtre.
+// businessListFiltersSchema que ya aplica el repositorio. Hoy, q (US-02) y category (US-03);
+// openNow y lat y lng se suman con US-04 y US-06, cuando el repositorio los filtre.
 export const businessListQuerySchema = paginationQuerySchema.extend({
+  q: businessListFiltersSchema.shape.q,
   category: businessListFiltersSchema.shape.category,
 });
 

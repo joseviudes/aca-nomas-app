@@ -26,12 +26,25 @@ describe('businessListQuerySchema', () => {
     expect(businessListQuerySchema.safeParse(query).success).toBe(false);
   });
 
-  it('acepta category (US-03) y descarta los filtros que el repositorio todavía no aplica', () => {
-    expect(businessListQuerySchema.parse({ category: 'Panaderia', openNow: 'true' })).toEqual({
+  it('acepta q (US-02) y category (US-03), y descarta los filtros que el repositorio todavía no aplica', () => {
+    expect(
+      businessListQuerySchema.parse({ q: ' Café ', category: 'Panaderia', openNow: 'true' }),
+    ).toEqual({
       page: 1,
       limit: 20,
+      q: 'Café',
       category: 'panaderia',
     });
+  });
+
+  it.each([{ q: '' }, { q: '   ' }])('toma q %o como ausente', (query) => {
+    expect(businessListQuerySchema.parse(query)).toEqual({ page: 1, limit: 20 });
+  });
+
+  it('rechaza un q de más de 100 caracteres', () => {
+    expect(
+      businessListQuerySchema.safeParse({ q: 'a'.repeat(MAX_SEARCH_LENGTH + 1) }).success,
+    ).toBe(false);
   });
 
   it('rechaza un category que no es un slug', () => {

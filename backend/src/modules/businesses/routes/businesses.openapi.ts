@@ -20,7 +20,11 @@ export const businessesPaths: ZodOpenApiPathsObject = {
         'momento de la consulta, en la zona horaria de la localidad: en pausa, "hoy no abro" y ' +
         'después el horario semanal, en ese orden (RN-01). category (US-03) es el slug de un rubro ' +
         '(los de GET /api/categories): devuelve solo los negocios de ese rubro, y un rubro que no ' +
-        'existe da una lista vacía, no un error.',
+        'existe da una lista vacía, no un error. q (US-02) es el texto a buscar, hasta 100 ' +
+        'caracteres: busca en el nombre y en la descripción, sin distinguir mayúsculas ni tildes ' +
+        '("cafe" encuentra "Café"). Un q vacío cuenta como ausente, y se combina con category: ' +
+        'devuelve los negocios que cumplen los dos. total y la paginación cuentan solo los ' +
+        'negocios encontrados, y si no hay ninguno, data viene vacía.',
       requestParams: { query: businessListQuerySchema },
       responses: {
         '200': {
