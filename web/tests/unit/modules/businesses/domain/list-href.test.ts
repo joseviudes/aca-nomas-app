@@ -7,6 +7,11 @@ describe('listHref', () => {
     expect(listHref({ page: 1 })).toBe('/');
   });
 
+  it.each([0, -1])('treats page %d as the first one', (page) => {
+    expect(listHref({ page })).toBe('/');
+    expect(listHref({ page, category: 'kiosco' })).toBe('/?rubro=kiosco');
+  });
+
   it('puts the other pages in ?pagina=', () => {
     expect(listHref({ page: 3 })).toBe('/?pagina=3');
   });

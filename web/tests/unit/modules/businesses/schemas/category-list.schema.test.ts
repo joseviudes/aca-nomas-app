@@ -60,6 +60,10 @@ describe('listCategoryParamSchema', () => {
     expect(listCategoryParamSchema.parse(['kiosco', 'almacen'])).toBe('kiosco');
   });
 
+  it.each([123, null, ['', 'kiosco'], {}])('means all categories for the non-text %j', (value) => {
+    expect(listCategoryParamSchema.parse(value)).toBeUndefined();
+  });
+
   it.each([undefined, '', '   '])('means all categories for %j', (value) => {
     expect(listCategoryParamSchema.parse(value)).toBeUndefined();
   });
