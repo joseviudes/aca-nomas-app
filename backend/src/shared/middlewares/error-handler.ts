@@ -10,6 +10,8 @@ function isInvalidJson(err: unknown): boolean {
 // Los cuatro parámetros son obligatorios: así Express lo reconoce como manejador de errores.
 export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   if (err instanceof AppError) {
+    // Un AppError 5xx es un dato o una configuración rota del servidor: hay que verlo en el log.
+    if (err.statusCode >= 500) console.error(err);
     res.status(err.statusCode).json(toErrorBody(err.code, err.message, err.details));
     return;
   }
