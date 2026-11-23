@@ -6,7 +6,9 @@ import { ApiError } from './api-error';
 // Hay una copia en panel/src/shared/api/: un cambio acá se repite allá (D-31). La única
 // diferencia es `apiBaseUrl`, porque el panel no corre en un servidor.
 // Se usa `fetch` y no Axios porque Next lo extiende con caché: se pueden pasar
-// `next: { revalidate, tags }` en las opciones y llegan tal cual.
+// `next: { revalidate, tags }` en las opciones y llegan tal cual. Con cacheComponents, los datos
+// que son iguales para todos los visitantes (por ejemplo, los rubros) se guardan con 'use cache' y
+// cacheLife en la carpeta api/ del módulo, no con estas opciones (D-50).
 
 // En el navegador, la URL pública. En el servidor de Next, la interna si existe (D-33).
 function apiBaseUrl(): string {

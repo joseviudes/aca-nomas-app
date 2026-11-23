@@ -18,8 +18,8 @@ export async function CategoryFilterPage({ category }: { category: Promise<strin
   } catch (error) {
     // Sin rubros no hay filtro, pero el listado sigue sirviendo: no se muestra un error por esto.
     // El listado sube a ocupar el lugar del filtro; se acepta ese salto porque es un caso raro.
-    // Un fallo no queda en la parte estática: listCategories no lo guarda y se vuelve a pedir en
-    // la próxima visita, mientras tanto se ve el esqueleto de la ruta.
+    // Un fallo no queda en la parte estática: listCategories lo guarda solo unos segundos (como
+    // mucho un minuto) y en la visita siguiente se vuelve a pedir.
     if (error instanceof ApiError) return null;
 
     throw error;

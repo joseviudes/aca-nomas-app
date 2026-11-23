@@ -44,12 +44,14 @@ type CachedCategories =
   | { ok: true; response: CategoryListResponse }
   | { ok: false; status: number; code: string; message: string };
 
-// Con cacheComponents la caché se declara con 'use cache' y su duración con cacheLife. Por eso el
-// fetch no lleva next.revalidate: serían dos duraciones para lo mismo.
+// Con cacheComponents la caché se declara con 'use cache' y su duración con cacheLife (D-50). Por
+// eso el fetch no lleva next.revalidate: serían dos duraciones para lo mismo.
 // - Si responde, 'hours': se renueva cada hora.
-// - Si falla, no se lanza el error acá adentro: al armar la página en el build, un error dentro de
-//   'use cache' corta el build entero. Se devuelve el fallo con 'seconds', que Next deja fuera de
-//   la parte estática y vuelve a pedir en cada visita, y listCategories lo relanza como ApiError.
+// - Si falla, el fallo no tiene que quedar en la parte estática de la página. Se devuelve con
+//   'seconds', que Next deja fuera de esa parte: dura como mucho un minuto y después se vuelve a
+//   pedir. listCategories lo relanza como ApiError. No se lanza el error acá adentro porque, con
+//   la API apagada, un ApiError lanzado dentro de 'use cache' hizo fallar el armado de "/" en
+//   next build y el build terminó con error.
 async function fetchCategoriesCached(): Promise<CachedCategories> {
   'use cache';
 
