@@ -11,6 +11,7 @@ Qué muestra cada pantalla de la web pública en el mockup, con el detalle del l
 | 0.3 | 21/11/2026 | Tobias | Sección 5: qué arma US-08 en la ficha, qué queda para otras historias y cómo es la página 404 |
 | 0.4 | 22/11/2026 | Tobias | US-09 define el texto de estado de la ficha (D-49). Sección 5: qué arma US-09 y en qué se aparta del mockup, incluida la distribución del horario en escritorio |
 | 0.5 | 22/11/2026 | Tobias | Sección 1: qué arma US-03 en el filtro por rubro y en qué se aparta del mockup. Sección 4: el panel de filtros no entra en US-03 |
+| 0.6 | 22/11/2026 | Tobias | Sección 1: las pestañas de rubros pasan a una segunda fila en lugar de desplazarse de costado; un rubro que no existe se marca como "Todo"; qué pasa si la API no devuelve los rubros |
 
 ## Índice
 
@@ -113,20 +114,22 @@ US-01 arma el listado: encabezado del listado con la cantidad, la grilla o las f
 
 US-03 suma el filtro por rubro arriba del listado: "Todo" y los rubros que devuelve la API (`GET /api/categories`), ordenados por nombre. Elegir uno muestra solo sus negocios y vuelve a la primera página; "Todo" vuelve a `/`.
 
-El rubro va en la URL como `?rubro=` (`/?rubro=panaderia&pagina=2`), en español como `?pagina=`. Es la opción A de D-44, que rige mientras esa decisión esté pendiente. La web lo traduce a `category` al pedir los datos, y la paginación, "Reintentar" y los estados vacíos lo conservan.
+El rubro va en la URL como `?rubro=` (`/?rubro=panaderia&pagina=2`), en español, como `?pagina=`. Es la opción A de D-44, que rige mientras esa decisión esté pendiente. La web lo traduce a `category` al pedir los datos, y la paginación, "Reintentar" y los estados vacíos lo conservan.
 
 Diferencias con el mockup:
 
 | Mockup | Listado | Por qué |
 |---|---|---|
 | Celular: pestañas que se desplazan de costado | Desplegable con la etiqueta "Rubro" y las opciones "Todo" y los rubros | Decisión del equipo: a 390 px solo entran tres pestañas y el resto queda escondido. Al elegir una opción, el listado cambia sin otro botón. Sin JavaScript aparece el botón "Ver" |
-| Escritorio: cinco rubros en las pestañas | "Todo" y los diez rubros del seed | Se muestran todos los que devuelve la API. Si no entran, la fila de pestañas se desplaza de costado, nunca la página |
+| Escritorio: cinco rubros en las pestañas | "Todo" y los diez rubros del seed | Se muestran todos los que devuelve la API. Si no entran en una fila, pasan a la de abajo; con el seed siempre ocupan dos filas. No hay barra de desplazamiento ni rubros escondidos |
 | "Filtros" a la derecha de las pestañas | No está | Abre el panel de filtros de la sección 4, que no entra en US-03 |
-| Estado vacío de un rubro: no lo muestra | Bloque `mint` con "No hay negocios de este rubro todavía." y el botón "Ver todos", que lleva a `/` | Un rubro puede no tener negocios. Lo mismo se muestra si el enlace trae un rubro que no existe |
+| Estado vacío de un rubro: no lo muestra | Bloque `mint` con "No hay negocios de este rubro todavía." y el botón "Ver todos", que lleva a `/` | Un rubro puede no tener negocios. Lo mismo se muestra si el enlace trae un rubro que no existe. En ese caso las pestañas y el desplegable marcan "Todo" |
 
-Un `?rubro=` mal escrito (con espacios, tildes o símbolos) se trata como "Todo", igual que un `?pagina=` inválido vuelve a la primera página: es un enlace mal copiado, no un error para mostrar. Las mayúsculas se pasan a minúsculas, como hace la API.
+Un `?rubro=` mal escrito (con espacios en el medio, tildes o símbolos) se trata como "Todo", igual que un `?pagina=` inválido vuelve a la primera página: es un enlace mal copiado, no un error para mostrar. Las mayúsculas se pasan a minúsculas, como hace la API.
 
-Si la API no devuelve los rubros, el filtro no se muestra y el listado sigue funcionando.
+Si la API no devuelve los rubros, o no hay ninguno cargado, el filtro no se muestra y el listado sigue funcionando. El listado sube y ocupa el lugar del filtro: es un salto que se acepta porque es un caso raro. En la próxima visita se vuelven a pedir.
+
+Un rubro bien escrito que no existe (`/?rubro=heladeria`) se marca como "Todo" en las pestañas y en el desplegable, así las dos vistas dicen lo mismo. En el celular, "Todo" ya está elegido y elegirlo de nuevo no cambia nada: para volver al listado completo está el botón "Ver todos" del estado vacío.
 
 ### Qué no entra en el MVP
 
