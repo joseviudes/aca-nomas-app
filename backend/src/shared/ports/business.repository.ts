@@ -35,8 +35,12 @@ export interface BusinessDetailEntry {
   timezone: string;
 }
 
-// Qué página del listado pedir y con qué filtros. Cada filtro nuevo (US-02, US-04, US-06) se suma acá.
+// Qué página del listado pedir y con qué filtros. Cada filtro nuevo (US-04, US-06) se suma acá.
 export interface BusinessListCriteria extends PaginationQuery {
+  // US-02: texto a buscar en el nombre y en la descripción, ya sin espacios en los bordes. Ignora
+  // mayúsculas y tildes ("cafe" encuentra "Café"). Sin él, no se filtra por texto. Se combina con
+  // category: el negocio tiene que cumplir los dos.
+  q?: string | undefined;
   // US-03: slug del rubro. Sin él, no se filtra por rubro. Un rubro que no existe no da error:
   // ningún negocio lo tiene, así que la lista queda vacía.
   category?: string | undefined;

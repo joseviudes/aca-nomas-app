@@ -16,7 +16,7 @@ import type {
   BusinessRepository,
 } from '../../../src/shared/ports/business.repository.js';
 
-// Repositorio falso en memoria: filtra por rubro, pagina la lista que recibe y guarda con qué
+// Repositorio falso en memoria: filtra por texto y por rubro, pagina la lista que recibe y guarda con qué
 // criterios lo llamaron.
 // Las fichas van aparte porque llevan datos que el listado no trae, como la descripción.
 class InMemoryBusinessRepository implements BusinessRepository {
@@ -34,7 +34,9 @@ class InMemoryBusinessRepository implements BusinessRepository {
   findPage(criteria: BusinessListCriteria): Promise<BusinessListPage> {
     this.lastCriteria = criteria;
     const matching = this.entries.filter(
-      (entry) => !criteria.category || entry.category.slug === criteria.category,
+      (entry) =>
+        (!criteria.category || entry.category.slug === criteria.category) &&
+        (!criteria.q || entry.name.toLowerCase().includes(criteria.q.toLowerCase())),
     );
     const offset = toOffset(criteria);
     return Promise.resolve({
@@ -223,6 +225,62 @@ describe('BusinessService.list', () => {
       const { service } = serviceWith([bakery, hardware]);
 
       const result = await service.list({ page: 1, limit: 20, category: 'astrologia' });
+
+      expect(result).toEqual({ data: [], page: 1, limit: 20, total: 0 });
+    });
+  });
+
+  // El repositorio falso solo busca el texto en el nombre, sin mayúsculas. Las tildes y la
+  // descripción las resuelve la base (D-51), así que se prueban contra la base con el seed.
+  describe('búsqueda por texto (US-02)', () => {
+    const hardware2 = { ...hardware, slug: 'ferreteria-don-jose', name: 'Ferretería Don José' };
+    const bakery2 = { ...bakery, slug: 'panaderia-don-jose', name: 'Panadería Don José' };
+
+    it('pide al repositorio el texto de la consulta', async () => {
+      const { repository, service } = serviceWith([bakery]);
+
+      await service.list({ page: 1, limit: 20, q: 'espiga' });
+
+      expect(repository.lastCriteria).toEqual({ page: 1, limit: 20, q: 'espiga' });
+    });
+
+    it('lista solo los negocios encontrados y cuenta solo esos en el total', async () => {
+      const { service } = serviceWith([bakery, hardware, bakery2]);
+
+      const result = await service.list({ page: 1, limit: 20, q: 'don josé' });
+
+      expect(result.data.map((business) => business.slug)).toEqual(['panaderia-don-jose']);
+      expect(result.total).toBe(1);
+    });
+
+    it('se combina con el rubro: el negocio tiene que cumplir los dos', async () => {
+      const { repository, service } = serviceWith([bakery, bakery2, hardware2]);
+
+      const result = await service.list({ page: 1, limit: 20, q: 'don', category: 'ferreteria' });
+
+      expect(repository.lastCriteria).toEqual({
+        page: 1,
+        limit: 20,
+        q: 'don',
+        category: 'ferreteria',
+      });
+      expect(result.data.map((business) => business.slug)).toEqual(['ferreteria-don-jose']);
+      expect(result.total).toBe(1);
+    });
+
+    it('pagina dentro de lo encontrado', async () => {
+      const { service } = serviceWith([bakery, bakery2, hardware2]);
+
+      const result = await service.list({ page: 2, limit: 1, q: 'don josé' });
+
+      expect(result.data.map((business) => business.slug)).toEqual(['ferreteria-don-jose']);
+      expect(result).toMatchObject({ page: 2, limit: 1, total: 2 });
+    });
+
+    it('devuelve una lista vacía, no un error, si nada coincide', async () => {
+      const { service } = serviceWith([bakery, hardware]);
+
+      const result = await service.list({ page: 1, limit: 20, q: 'astrologia' });
 
       expect(result).toEqual({ data: [], page: 1, limit: 20, total: 0 });
     });

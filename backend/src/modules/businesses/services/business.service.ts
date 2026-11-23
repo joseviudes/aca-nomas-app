@@ -33,6 +33,7 @@ export class BusinessService {
     const { items, total } = await this.businessRepository.findPage({
       page: query.page,
       limit: query.limit,
+      q: query.q,
       category: query.category,
     });
     return toPage(

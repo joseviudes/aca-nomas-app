@@ -1,4 +1,4 @@
-import type { PrismaClient } from '../../../generated/prisma/client.js';
+import type { Prisma, PrismaClient } from '../../../generated/prisma/client.js';
 import type { DayOfWeek, OpeningHours } from '../../opening-hours/domain/opening-hours.types.js';
 import { toOffset } from '../../../shared/pagination/pagination.js';
 import type {
@@ -44,9 +44,27 @@ function toOpeningHours(row: OpeningHoursRow): OpeningHours {
 export class PrismaBusinessRepository implements BusinessRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
+  // US-02: ids de los negocios que tienen el texto en el nombre o en la descripción, sin importar
+  // mayúsculas ni tildes (D-51). Prisma no tiene unaccent, por eso va en SQL. strpos busca el texto
+  // tal cual: con ILIKE, un q con % o _ funcionaría como comodín. unaccent no es inmutable, así que
+  // no usa índices: alcanza para los negocios de una localidad.
+  private async findIdsMatching(text: string): Promise<string[]> {
+    const rows = await this.prisma.$queryRaw<{ id: string }[]>`
+      SELECT id FROM businesses
+      WHERE strpos(lower(unaccent(name)), lower(unaccent(${text}::text))) > 0
+         OR strpos(lower(unaccent(coalesce(description, ''))), lower(unaccent(${text}::text))) > 0`;
+    return rows.map((row) => row.id);
+  }
+
   async findPage(criteria: BusinessListCriteria): Promise<BusinessListPage> {
-    // El mismo where para la página y para el total, así el total cuenta lo que se filtró.
-    const where = criteria.category ? { category: { slug: criteria.category } } : {};
+    // Cada filtro suma una condición y el negocio tiene que cumplirlas todas. El mismo where sirve
+    // para la página y para el total, así el total cuenta lo que se filtró.
+    const conditions: Prisma.BusinessWhereInput[] = [];
+    if (criteria.category) conditions.push({ category: { slug: criteria.category } });
+    if (criteria.q !== undefined) {
+      conditions.push({ id: { in: await this.findIdsMatching(criteria.q) } });
+    }
+    const where: Prisma.BusinessWhereInput = { AND: conditions };
 
     // En una transacción, para que el total y la página se lean de la misma foto de la base.
     const [rows, total] = await this.prisma.$transaction([
