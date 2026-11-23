@@ -12,6 +12,7 @@ Qué muestra cada pantalla de la web pública en el mockup, con el detalle del l
 | 0.4 | 22/11/2026 | Tobias | US-09 define el texto de estado de la ficha (D-49). Sección 5: qué arma US-09 y en qué se aparta del mockup, incluida la distribución del horario en escritorio |
 | 0.5 | 22/11/2026 | Tobias | Sección 1: qué arma US-03 en el filtro por rubro y en qué se aparta del mockup. Sección 4: el panel de filtros no entra en US-03 |
 | 0.6 | 22/11/2026 | Tobias | Sección 1: las pestañas de rubros pasan a una segunda fila en lugar de desplazarse de costado; un rubro que no existe se marca como "Todo"; qué pasa si la API no devuelve los rubros |
+| 0.7 | 23/11/2026 | Tobias | Sección 1: las pestañas de rubros usan una letra más chica que el mockup, para que desde 640 px siempre entren en dos filas |
 
 ## Índice
 
@@ -121,7 +122,8 @@ Diferencias con el mockup:
 | Mockup | Listado | Por qué |
 |---|---|---|
 | Celular: pestañas que se desplazan de costado | Desplegable con la etiqueta "Rubro" y las opciones "Todo" y los rubros | Decisión del equipo: a 390 px solo entran tres pestañas y el resto queda escondido. Al elegir una opción, el listado cambia sin otro botón. Sin JavaScript aparece el botón "Ver" |
-| Escritorio: cinco rubros en las pestañas | "Todo" y los diez rubros del seed | Se muestran todos los que devuelve la API. Si no entran en una fila, pasan a la de abajo; con el seed siempre ocupan dos filas. No hay barra de desplazamiento ni rubros escondidos |
+| Escritorio: cinco rubros en las pestañas | "Todo" y los diez rubros del seed | Se muestran todos los que devuelve la API. No entran en una fila y pasan a la de abajo: con el seed ocupan dos filas desde 640 px. No hay barra de desplazamiento ni rubros escondidos |
+| Pestañas con letra de unos 26 px | 18 px desde 640 px, 20 px desde 768 px y 24 px desde 1024 px (`text-lg`, `text-xl` y `text-2xl`) | Con la letra del mockup, a 640 px las pestañas ocuparían tres filas. La letra sigue siendo `font-display` |
 | "Filtros" a la derecha de las pestañas | No está | Abre el panel de filtros de la sección 4, que no entra en US-03 |
 | Estado vacío de un rubro: no lo muestra | Bloque `mint` con "No hay negocios de este rubro todavía." y el botón "Ver todos", que lleva a `/` | Un rubro puede no tener negocios. Lo mismo se muestra si el enlace trae un rubro que no existe. En ese caso las pestañas y el desplegable marcan "Todo" |
 

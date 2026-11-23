@@ -1,7 +1,8 @@
 import { cx } from '@/shared/ui/class-names';
 import { CATEGORY_TABS_GAP_CLASSES } from './CategoryTabs';
 
-// Lugares por fila de pestañas. Con el seed, las pestañas ocupan dos filas desde sm.
+// Lugares por fila de pestañas. Con el seed, las pestañas ocupan dos filas desde sm: CategoryTabs
+// achica la letra a 640 px para que no pasen a una tercera.
 const TAB_PLACEHOLDERS_PER_ROW = [6, 5];
 
 // Mismo alto que CategorySelect (celular) y CategoryTabs (desde sm, en dos filas), para que el

@@ -6,7 +6,9 @@ import type { Category } from '../schemas/category-list.schema';
 // Pestañas desde sm, como el mockup: los rubros en font-display con un punto brand bajo el elegido.
 // Con "Todo" y los diez rubros del seed no entran en una fila, ni siquiera a 1280 px: pasan a la
 // fila de abajo en lugar de desplazarse de costado, que mostraría una barra en Windows y escondería
-// rubros sin avisar. CategoryFilterSkeleton copia estas medidas.
+// rubros sin avisar. La letra crece con el ancho (18, 20 y 24 px) para que, desde 640 px, nunca
+// pasen de dos filas. CategoryFilterSkeleton copia estas medidas: el alto de cada fila (h-12) no
+// depende de la letra.
 export const CATEGORY_TABS_GAP_CLASSES = 'gap-x-6 gap-y-2 lg:gap-x-8';
 
 // Son enlaces y no botones: cada rubro tiene su URL, que se puede compartir y abre sin JavaScript.
@@ -33,7 +35,7 @@ export function CategoryTabs({
               <Link
                 href={listHref({ category: slug })}
                 aria-current={isActive ? 'page' : undefined}
-                className="flex h-12 flex-col items-center justify-center gap-1 font-display text-xl whitespace-nowrap hover:text-brand lg:text-2xl"
+                className="flex h-12 flex-col items-center justify-center gap-1 font-display text-lg whitespace-nowrap hover:text-brand md:text-xl lg:text-2xl"
               >
                 {name}
                 {/* El punto se dibuja en todas para que la elegida no cambie de alto. */}
