@@ -10,6 +10,7 @@ Qué muestra cada pantalla de la web pública en el mockup, con el detalle del l
 | 0.2 | 17/11/2026 | Tobias | Actualiza los enlaces a las capturas renombradas del listado y de los filtros en celular |
 | 0.3 | 21/11/2026 | Tobias | Sección 5: qué arma US-08 en la ficha, qué queda para otras historias y cómo es la página 404 |
 | 0.4 | 22/11/2026 | Tobias | US-09 define el texto de estado de la ficha (D-49). Sección 5: qué arma US-09 y en qué se aparta del mockup, incluida la distribución del horario en escritorio |
+| 0.5 | 22/11/2026 | Tobias | Sección 1: qué arma US-03 en el filtro por rubro y en qué se aparta del mockup. Sección 4: el panel de filtros no entra en US-03 |
 
 ## Índice
 
@@ -108,6 +109,25 @@ US-01 arma el listado: encabezado del listado con la cantidad, la grilla o las f
 
 **Paginación:** el mockup no la muestra, pero la API devuelve de a 20 negocios (D-25). Por eso el listado suma "Anterior" y "Siguiente" debajo de la grilla.
 
+### Qué hace US-03
+
+US-03 suma el filtro por rubro arriba del listado: "Todo" y los rubros que devuelve la API (`GET /api/categories`), ordenados por nombre. Elegir uno muestra solo sus negocios y vuelve a la primera página; "Todo" vuelve a `/`.
+
+El rubro va en la URL como `?rubro=` (`/?rubro=panaderia&pagina=2`), en español como `?pagina=`. Es la opción A de D-44, que rige mientras esa decisión esté pendiente. La web lo traduce a `category` al pedir los datos, y la paginación, "Reintentar" y los estados vacíos lo conservan.
+
+Diferencias con el mockup:
+
+| Mockup | Listado | Por qué |
+|---|---|---|
+| Celular: pestañas que se desplazan de costado | Desplegable con la etiqueta "Rubro" y las opciones "Todo" y los rubros | Decisión del equipo: a 390 px solo entran tres pestañas y el resto queda escondido. Al elegir una opción, el listado cambia sin otro botón. Sin JavaScript aparece el botón "Ver" |
+| Escritorio: cinco rubros en las pestañas | "Todo" y los diez rubros del seed | Se muestran todos los que devuelve la API. Si no entran, la fila de pestañas se desplaza de costado, nunca la página |
+| "Filtros" a la derecha de las pestañas | No está | Abre el panel de filtros de la sección 4, que no entra en US-03 |
+| Estado vacío de un rubro: no lo muestra | Bloque `mint` con "No hay negocios de este rubro todavía." y el botón "Ver todos", que lleva a `/` | Un rubro puede no tener negocios. Lo mismo se muestra si el enlace trae un rubro que no existe |
+
+Un `?rubro=` mal escrito (con espacios, tildes o símbolos) se trata como "Todo", igual que un `?pagina=` inválido vuelve a la primera página: es un enlace mal copiado, no un error para mostrar. Las mayúsculas se pasan a minúsculas, como hace la API.
+
+Si la API no devuelve los rubros, el filtro no se muestra y el listado sigue funcionando.
+
 ### Qué no entra en el MVP
 
 Los enlaces del encabezado a Oficios y Eventos ya no están en esta pantalla. El resto de la pantalla entra.
@@ -155,6 +175,8 @@ Panel con ancho de celular que se abre desde "Filtros" (US-03 y US-04).
 4. Abajo, fijos: "Limpiar filtros" y el botón "Ver 4 negocios".
 
 Los filtros de entregas y medios de pago y la elección del orden no entran (sección 2 de `diseno.md`) y ya no están.
+
+**No entra en US-03.** El botón "Ver 4 negocios" necesita contar los resultados antes de aplicar los filtros, y el panel junta el rubro con "Solo los abiertos ahora" de US-04. Mientras tanto, en el celular el rubro se elige con el desplegable de la sección 1.
 
 ## 5. Ficha del negocio
 
